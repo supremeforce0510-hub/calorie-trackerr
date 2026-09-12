@@ -3,13 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CalorieTrack</title>
-  <meta name="theme-color" content="#0f172a" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="CalorieTrack" />
-  <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <title>CalorieTrack MVP</title>
   <style>
     :root{
       --bg:#0f172a;
@@ -57,6 +51,31 @@
     .metric{
       background:#0b1220;border:1px solid var(--line);padding:12px;border-radius:14px;text-align:center
     }
+    .metric.calories{background:linear-gradient(145deg,#3b173c,#1f1632);border-color:#7e22ce}
+    .metric.remaining{background:linear-gradient(145deg,#173653,#10233a);border-color:#0284c7}
+    .metric.entries{background:linear-gradient(145deg,#123a30,#102a25);border-color:#059669}
+    .metric.weight{background:linear-gradient(145deg,#463017,#2d2112);border-color:#d97706}
+    .metric.protein{background:linear-gradient(145deg,#402126,#2e171b);border-color:#dc2626}
+    .metric.carbs{background:linear-gradient(145deg,#3a3215,#292311);border-color:#ca8a04}
+    .metric.fat{background:linear-gradient(145deg,#25304c,#171f36);border-color:#4f46e5}
+    .guidance-card{
+      background:linear-gradient(145deg,rgba(34,197,94,.12),rgba(56,189,248,.10));
+      border:1px solid #24576b
+    }
+    .guidance-grid{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px
+    }
+    .guidance-result{
+      background:#0b1220;border:1px solid var(--line);border-radius:14px;padding:13px
+    }
+    .guidance-result strong{display:block;font-size:18px;margin-top:4px}
+    .guidance-note{
+      margin-top:12px;padding:11px 12px;background:#0b1220;border-radius:12px;
+      border:1px solid var(--line);font-size:12px;color:var(--muted);line-height:1.45
+    }
+    .profile-grid{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:10px
+    }
     .metric strong{display:block;font-size:20px;margin-bottom:4px}
     .metric span{font-size:12px;color:var(--muted)}
     .progress{
@@ -65,6 +84,27 @@
     .progress > div{
       height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:.25s
     }
+    .summary-title-row{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px
+    }
+    .summary-date{font-size:13px;color:var(--muted)}
+    .macro-grid{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px
+    }
+    .meal-summary{
+      margin-top:14px;border-top:1px solid var(--line);padding-top:12px
+    }
+    .meal-summary-row{
+      display:flex;justify-content:space-between;gap:12px;padding:7px 0;
+      border-bottom:1px solid rgba(36,50,68,.65);font-size:14px
+    }
+    .meal-summary-row:last-child{border-bottom:0}
+    .meal-summary-row span:last-child{font-weight:700}
+    .weight-summary{
+      margin-top:12px;padding:12px;border-radius:14px;background:#0b1220;border:1px solid var(--line);
+      display:flex;justify-content:space-between;gap:12px;align-items:center
+    }
+    .weight-summary strong{font-size:19px}
     label{display:block;font-size:13px;color:var(--muted);margin:0 0 6px}
     input,select,button{
       width:100%;padding:11px 12px;border-radius:12px;border:1px solid var(--line);
@@ -94,6 +134,9 @@
     .right{text-align:right}
     @media (max-width:640px){
       .summary-grid{grid-template-columns:repeat(2,1fr)}
+      .macro-grid{grid-template-columns:repeat(3,1fr)}
+      .guidance-grid{grid-template-columns:1fr}
+      .profile-grid{grid-template-columns:1fr 1fr}
       .form-grid,.form-grid-4,.grid,.goal-row,.weight-row{grid-template-columns:1fr}
       .topbar{align-items:flex-start;flex-direction:column}
       .datebox{width:100%}
@@ -110,8 +153,12 @@
     <input id="selectedDate" class="datebox" type="date" />
   </div>
 
-  <div class="card">
-    <h2>Daily Summary</h2>
+  <div class="card" id="dailySummaryCard">
+    <div class="summary-title-row">
+      <h2 style="margin:0">Daily Summary</h2>
+      <div class="summary-date" id="summaryDateLabel"></div>
+    </div>
+
     <div class="goal-row">
       <div>
         <label for="calorieGoal">Daily calorie goal</label>
@@ -122,14 +169,79 @@
         <input id="proteinGoal" type="number" min="0" step="1" value="100" />
       </div>
     </div>
+
     <div class="summary-grid">
-      <div class="metric"><strong id="sumCalories">0</strong><span>Calories eaten</span></div>
-      <div class="metric"><strong id="remainingCalories">1800</strong><span>Calories left</span></div>
-      <div class="metric"><strong id="sumProtein">0g</strong><span>Protein</span></div>
-      <div class="metric"><strong id="sumMeals">0</strong><span>Food entries</span></div>
+      <div class="metric calories"><strong id="sumCalories">0</strong><span>Calories eaten</span></div>
+      <div class="metric remaining"><strong id="remainingCalories">1800</strong><span>Calories remaining</span></div>
+      <div class="metric entries"><strong id="sumMeals">0</strong><span>Food entries</span></div>
+      <div class="metric weight"><strong id="sumWeight">—</strong><span>Weight</span></div>
     </div>
+
     <div class="progress"><div id="calorieProgress"></div></div>
     <div class="tiny" id="progressText" style="margin-top:7px">0% of calorie goal</div>
+
+    <div class="macro-grid">
+      <div class="metric protein"><strong id="sumProtein">0g</strong><span>Protein</span></div>
+      <div class="metric carbs"><strong id="sumCarbs">0g</strong><span>Carbs</span></div>
+      <div class="metric fat"><strong id="sumFat">0g</strong><span>Fat</span></div>
+    </div>
+
+    <div class="meal-summary">
+      <div class="tiny" style="margin-bottom:5px">Calories by meal</div>
+      <div id="mealSummary"></div>
+    </div>
+  </div>
+
+  <div class="card guidance-card">
+    <h2>Suggested Daily Goals</h2>
+    <p class="tiny" style="margin-top:-4px">Enter a profile for personalized estimates. Height, age, sex, and activity matter — weight alone isn't enough.</p>
+
+    <div class="profile-grid">
+      <div>
+        <label for="profileAge">Age</label>
+        <input id="profileAge" type="number" min="2" max="120" step="1" placeholder="e.g. 38" />
+      </div>
+      <div>
+        <label for="profileSex">Sex</label>
+        <select id="profileSex">
+          <option value="">Choose</option>
+          <option value="female">Female</option>
+          <option value="male">Male</option>
+        </select>
+      </div>
+      <div>
+        <label for="profileHeight">Height (inches)</label>
+        <input id="profileHeight" type="number" min="30" max="96" step="0.1" placeholder="e.g. 65" />
+      </div>
+      <div>
+        <label for="profileActivity">Activity</label>
+        <select id="profileActivity">
+          <option value="sedentary">Sedentary</option>
+          <option value="light">Lightly active</option>
+          <option value="moderate">Moderately active</option>
+          <option value="active">Very active</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="guidance-grid">
+      <div class="guidance-result">
+        <span class="tiny">Suggested weight</span>
+        <strong id="suggestedWeight">Enter profile</strong>
+      </div>
+      <div class="guidance-result">
+        <span class="tiny">Estimated calories/day</span>
+        <strong id="suggestedCalories">Enter profile</strong>
+      </div>
+      <div class="guidance-result">
+        <span class="tiny">Protein/day</span>
+        <strong id="suggestedProtein">Enter profile</strong>
+      </div>
+    </div>
+
+    <div class="guidance-note" id="guidanceNote">
+      These are general estimates, not a medical prescription. For anyone under 20, healthy weight is based on age- and sex-specific growth charts rather than an adult target weight.
+    </div>
   </div>
 
   <div class="card">
@@ -197,18 +309,9 @@
     <div id="weightLog" style="margin-top:12px"></div>
   </div>
 
-
-  <div class="card" id="installCard">
-    <h2>Install App</h2>
-    <p class="tiny" id="installText">Install CalorieTrack on your home screen for an app-like, offline experience.</p>
-    <div class="actions">
-      <button id="installBtn" class="secondary" style="display:none">Install CalorieTrack</button>
-    </div>
-  </div>
-
   <div class="card">
     <h2>Data</h2>
-    <p class="tiny">Your entries are saved on this device. Export a backup anytime.</p>
+    <p class="tiny">Everything is stored only in this browser on this device.</p>
     <div class="actions">
       <button id="exportBtn" class="secondary">Export JSON</button>
       <button id="resetDayBtn" class="danger">Clear Selected Day</button>
@@ -216,6 +319,250 @@
   </div>
 </div>
 
-<script src="app.js" defer></script>
+<script>
+(function(){
+  const STORAGE_KEY = 'calorieTrackMVP_v1';
+
+  const $ = id => document.getElementById(id);
+
+  const state = loadState();
+
+  function todayLocal(){
+    const d = new Date();
+    const off = d.getTimezoneOffset();
+    return new Date(d.getTime() - off*60*1000).toISOString().slice(0,10);
+  }
+
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return {settings:{calorieGoal:1800, proteinGoal:100}, days:{}};
+      const parsed = JSON.parse(raw);
+      return {
+        settings:{
+          calorieGoal:Number(parsed?.settings?.calorieGoal) || 1800,
+          proteinGoal:Number(parsed?.settings?.proteinGoal) || 100
+        },
+        days: parsed?.days && typeof parsed.days === 'object' ? parsed.days : {}
+      };
+    }catch(e){
+      return {settings:{calorieGoal:1800, proteinGoal:100}, days:{}};
+    }
+  }
+
+  function saveState(){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function getDay(date){
+    if(!state.days[date]){
+      state.days[date] = {foods:[], weights:[]};
+    }
+    if(!Array.isArray(state.days[date].foods)) state.days[date].foods = [];
+    if(!Array.isArray(state.days[date].weights)) state.days[date].weights = [];
+    return state.days[date];
+  }
+
+  function num(value){
+    const n = Number(value);
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  function format1(n){
+    return Math.round((num(n)+Number.EPSILON)*10)/10;
+  }
+
+  function selectedDate(){
+    return $('selectedDate').value || todayLocal();
+  }
+
+  function escapeHtml(text){
+    return String(text).replace(/[&<>"']/g, m => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+    })[m]);
+  }
+
+  function render(){
+    const day = getDay(selectedDate());
+    const foods = day.foods;
+
+    const totals = foods.reduce((acc,f)=>{
+      acc.calories += num(f.calories);
+      acc.protein += num(f.protein);
+      acc.carbs += num(f.carbs);
+      acc.fat += num(f.fat);
+      return acc;
+    },{calories:0,protein:0,carbs:0,fat:0});
+
+    const calorieGoal = Math.max(1, num(state.settings.calorieGoal) || 1800);
+    const proteinGoal = Math.max(0, num(state.settings.proteinGoal) || 100);
+    const remaining = calorieGoal - totals.calories;
+    const pct = Math.max(0, totals.calories / calorieGoal * 100);
+
+    $('calorieGoal').value = calorieGoal;
+    $('proteinGoal').value = proteinGoal;
+    $('sumCalories').textContent = Math.round(totals.calories);
+    $('remainingCalories').textContent = Math.round(remaining);
+    $('sumProtein').textContent = format1(totals.protein) + 'g';
+    $('sumMeals').textContent = foods.length;
+    $('calorieProgress').style.width = Math.min(100,pct) + '%';
+    $('progressText').textContent =
+      Math.round(pct) + '% of calorie goal • ' +
+      format1(totals.carbs) + 'g carbs • ' +
+      format1(totals.fat) + 'g fat • ' +
+      format1(totals.protein) + '/' + format1(proteinGoal) + 'g protein';
+
+    if(!foods.length){
+      $('foodLog').innerHTML = '<div class="empty">No food logged for this day.</div>';
+    }else{
+      $('foodLog').innerHTML = foods.map(f => `
+        <div class="log-item">
+          <div>
+            <div class="log-title">${escapeHtml(f.name)}</div>
+            <div class="log-meta">
+              <span class="pill">${escapeHtml(f.meal)}</span>
+              ${Math.round(num(f.calories))} cal •
+              ${format1(f.protein)}g protein •
+              ${format1(f.carbs)}g carbs •
+              ${format1(f.fat)}g fat
+            </div>
+          </div>
+          <button class="danger" style="width:auto;padding:8px 10px" data-food-delete="${f.id}">Delete</button>
+        </div>
+      `).join('');
+    }
+
+    const weights = day.weights.slice().sort((a,b)=>b.createdAt-a.createdAt);
+    if(!weights.length){
+      $('weightLog').innerHTML = '<div class="empty">No weight logged for this day.</div>';
+    }else{
+      $('weightLog').innerHTML = weights.map(w => `
+        <div class="log-item">
+          <div>
+            <div class="log-title">${format1(w.value)} lb</div>
+            <div class="log-meta">${new Date(w.createdAt).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}</div>
+          </div>
+          <button class="danger" style="width:auto;padding:8px 10px" data-weight-delete="${w.id}">Delete</button>
+        </div>
+      `).join('');
+    }
+
+    saveState();
+  }
+
+  function clearFoodForm(){
+    $('foodName').value='';
+    $('foodCalories').value='';
+    $('foodProtein').value='';
+    $('foodCarbs').value='';
+    $('foodFat').value='';
+    $('mealType').value='Breakfast';
+    $('foodName').focus();
+  }
+
+  $('addFoodBtn').addEventListener('click', ()=>{
+    const name = $('foodName').value.trim();
+    const caloriesRaw = $('foodCalories').value.trim();
+
+    if(!name){
+      alert('Enter a food name.');
+      $('foodName').focus();
+      return;
+    }
+    if(caloriesRaw === '' || num(caloriesRaw) < 0){
+      alert('Enter valid calories.');
+      $('foodCalories').focus();
+      return;
+    }
+
+    const day = getDay(selectedDate());
+    day.foods.push({
+      id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random(),
+      name,
+      meal:$('mealType').value,
+      calories:num(caloriesRaw),
+      protein:num($('foodProtein').value),
+      carbs:num($('foodCarbs').value),
+      fat:num($('foodFat').value),
+      createdAt:Date.now()
+    });
+    clearFoodForm();
+    render();
+  });
+
+  $('clearFoodBtn').addEventListener('click', clearFoodForm);
+
+  $('addWeightBtn').addEventListener('click', ()=>{
+    const v = num($('weightValue').value);
+    if(v <= 0){
+      alert('Enter a valid weight.');
+      $('weightValue').focus();
+      return;
+    }
+    const day = getDay(selectedDate());
+    day.weights.push({
+      id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random(),
+      value:v,
+      createdAt:Date.now()
+    });
+    $('weightValue').value='';
+    render();
+  });
+
+  $('selectedDate').addEventListener('change', render);
+
+  $('calorieGoal').addEventListener('change', ()=>{
+    const v = num($('calorieGoal').value);
+    if(v > 0){
+      state.settings.calorieGoal = v;
+      render();
+    }
+  });
+
+  $('proteinGoal').addEventListener('change', ()=>{
+    const v = num($('proteinGoal').value);
+    if(v >= 0){
+      state.settings.proteinGoal = v;
+      render();
+    }
+  });
+
+  document.addEventListener('click', e=>{
+    const foodId = e.target?.dataset?.foodDelete;
+    const weightId = e.target?.dataset?.weightDelete;
+
+    if(foodId){
+      const day = getDay(selectedDate());
+      day.foods = day.foods.filter(f => f.id !== foodId);
+      render();
+    }
+    if(weightId){
+      const day = getDay(selectedDate());
+      day.weights = day.weights.filter(w => w.id !== weightId);
+      render();
+    }
+  });
+
+  $('resetDayBtn').addEventListener('click', ()=>{
+    if(confirm('Clear all food and weight entries for the selected day?')){
+      state.days[selectedDate()] = {foods:[],weights:[]};
+      render();
+    }
+  });
+
+  $('exportBtn').addEventListener('click', ()=>{
+    const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href=url;
+    a.download='calorie-track-data.json';
+    a.click();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+  });
+
+  $('selectedDate').value = todayLocal();
+  render();
+})();
+</script>
 </body>
 </html>

@@ -15,17 +15,23 @@
   function loadState(){
     try{
       const raw = localStorage.getItem(STORAGE_KEY);
-      if(!raw) return {settings:{calorieGoal:1800, proteinGoal:100}, days:{}};
+      if(!raw) return {settings:{calorieGoal:1800, proteinGoal:100}, profile:{age:'',sex:'',height:'',activity:'sedentary'}, days:{}};
       const parsed = JSON.parse(raw);
       return {
         settings:{
           calorieGoal:Number(parsed?.settings?.calorieGoal) || 1800,
           proteinGoal:Number(parsed?.settings?.proteinGoal) || 100
         },
+        profile:{
+          age: parsed?.profile?.age ?? '',
+          sex: parsed?.profile?.sex ?? '',
+          height: parsed?.profile?.height ?? '',
+          activity: parsed?.profile?.activity || 'sedentary'
+        },
         days: parsed?.days && typeof parsed.days === 'object' ? parsed.days : {}
       };
     }catch(e){
-      return {settings:{calorieGoal:1800, proteinGoal:100}, days:{}};
+      return {settings:{calorieGoal:1800, proteinGoal:100}, profile:{age:'',sex:'',height:'',activity:'sedentary'}, days:{}};
     }
   }
 
@@ -55,10 +61,92 @@
     return $('selectedDate').value || todayLocal();
   }
 
+  function friendlyDate(dateString){
+    const d = new Date(dateString + 'T12:00:00');
+    return d.toLocaleDateString([], {weekday:'short', month:'short', day:'numeric'});
+  }
+
   function escapeHtml(text){
     return String(text).replace(/[&<>"']/g, m => ({
       '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
     })[m]);
+  }
+
+
+  function currentWeightForGuidance(){
+    // Use the most recent saved weight across all dates.
+    const entries = [];
+    Object.values(state.days).forEach(day => {
+      (day.weights || []).forEach(w => entries.push(w));
+    });
+    entries.sort((a,b)=>b.createdAt-a.createdAt);
+    return entries[0] ? num(entries[0].value) : 0;
+  }
+
+  function renderGuidance(){
+    const age = num(state.profile.age);
+    const sex = state.profile.sex;
+    const heightIn = num(state.profile.height);
+    const activity = state.profile.activity || 'sedentary';
+    const weightLb = currentWeightForGuidance();
+
+    $('profileAge').value = state.profile.age;
+    $('profileSex').value = sex;
+    $('profileHeight').value = state.profile.height;
+    $('profileActivity').value = activity;
+
+    if(!age || !sex || !heightIn || !weightLb){
+      $('suggestedWeight').textContent = 'Need age, sex, height + weight';
+      $('suggestedCalories').textContent = 'Need profile + weight';
+      $('suggestedProtein').textContent = 'Need profile + weight';
+      $('guidanceNote').textContent = 'Add your age, sex and height here, then save a weight in the Weight Log. Weight alone is not enough to calculate a safe recommendation.';
+      return;
+    }
+
+    const kg = weightLb * 0.45359237;
+    const cm = heightIn * 2.54;
+
+    if(age < 20){
+      // Avoid giving a target weight or calorie-restriction prescription to minors.
+      let proteinText = 'Growth-based';
+      if(age >= 14 && age <= 18) proteinText = sex === 'female' ? '46 g/day baseline' : '52 g/day baseline';
+      else if(age >= 9 && age <= 13) proteinText = '34 g/day baseline';
+      else if(age >= 4 && age <= 8) proteinText = '19 g/day baseline';
+      else if(age >= 2 && age <= 3) proteinText = '13 g/day baseline';
+
+      $('suggestedWeight').textContent = 'Use BMI-for-age growth chart';
+      $('suggestedCalories').textContent = 'Growth needs vary';
+      $('suggestedProtein').textContent = proteinText;
+      $('guidanceNote').textContent =
+        'For ages 2–19, a healthy weight is not a single number based only on age and pounds. It must use height, exact age and sex on a BMI-for-age growth chart. Calorie needs also depend on growth and activity, so this app does not create a weight-loss calorie target for minors.';
+      return;
+    }
+
+    // Adult healthy-weight range using BMI 18.5–24.9.
+    const lowLb = 18.5 * heightIn * heightIn / 703;
+    const highLb = 24.9 * heightIn * heightIn / 703;
+
+    // Mifflin-St Jeor resting energy equation, then activity multiplier.
+    const bmr = sex === 'male'
+      ? (10 * kg + 6.25 * cm - 5 * age + 5)
+      : (10 * kg + 6.25 * cm - 5 * age - 161);
+
+    const multipliers = {
+      sedentary: 1.2,
+      light: 1.375,
+      moderate: 1.55,
+      active: 1.725
+    };
+    const maintenance = Math.round(bmr * (multipliers[activity] || 1.2));
+
+    // General adult protein baseline: 0.8 g/kg body weight.
+    const protein = Math.round(0.8 * kg);
+
+    $('suggestedWeight').textContent = Math.round(lowLb) + '–' + Math.round(highLb) + ' lb range';
+    $('suggestedCalories').textContent = maintenance.toLocaleString() + ' cal/day';
+    $('suggestedProtein').textContent = protein + ' g/day baseline';
+    $('guidanceNote').textContent =
+      'Adult estimates: the weight range uses the standard BMI 18.5–24.9 screening range; calories estimate maintenance needs from age, sex, height, weight and activity; protein is a general 0.8 g/kg baseline. Pregnancy, medical conditions, athletic training and weight-loss treatment can change these needs.';
   }
 
   function render(){
@@ -78,18 +166,41 @@
     const remaining = calorieGoal - totals.calories;
     const pct = Math.max(0, totals.calories / calorieGoal * 100);
 
+    const latestWeight = day.weights
+      .slice()
+      .sort((a,b)=>b.createdAt-a.createdAt)[0];
+
+    const mealTotals = ['Breakfast','Lunch','Dinner','Snack','Drink'].reduce((acc, meal) => {
+      acc[meal] = foods
+        .filter(f => f.meal === meal)
+        .reduce((sum, f) => sum + num(f.calories), 0);
+      return acc;
+    }, {});
+
     $('calorieGoal').value = calorieGoal;
     $('proteinGoal').value = proteinGoal;
+    $('summaryDateLabel').textContent = friendlyDate(selectedDate());
     $('sumCalories').textContent = Math.round(totals.calories);
     $('remainingCalories').textContent = Math.round(remaining);
-    $('sumProtein').textContent = format1(totals.protein) + 'g';
     $('sumMeals').textContent = foods.length;
+    $('sumWeight').textContent = latestWeight ? format1(latestWeight.value) + ' lb' : '—';
+    $('sumProtein').textContent = format1(totals.protein) + 'g';
+    $('sumCarbs').textContent = format1(totals.carbs) + 'g';
+    $('sumFat').textContent = format1(totals.fat) + 'g';
+
     $('calorieProgress').style.width = Math.min(100,pct) + '%';
     $('progressText').textContent =
       Math.round(pct) + '% of calorie goal • ' +
-      format1(totals.carbs) + 'g carbs • ' +
-      format1(totals.fat) + 'g fat • ' +
-      format1(totals.protein) + '/' + format1(proteinGoal) + 'g protein';
+      (remaining >= 0 ? Math.round(remaining) + ' calories remaining' : Math.abs(Math.round(remaining)) + ' calories over goal') +
+      ' • ' + format1(totals.protein) + '/' + format1(proteinGoal) + 'g protein';
+
+    $('mealSummary').innerHTML = ['Breakfast','Lunch','Dinner','Snack','Drink']
+      .map(meal => `
+        <div class="meal-summary-row">
+          <span>${meal}</span>
+          <span>${Math.round(mealTotals[meal])} cal</span>
+        </div>
+      `).join('');
 
     if(!foods.length){
       $('foodLog').innerHTML = '<div class="empty">No food logged for this day.</div>';
@@ -126,6 +237,7 @@
       `).join('');
     }
 
+    renderGuidance();
     saveState();
   }
 
@@ -281,6 +393,17 @@
       navigator.serviceWorker.register('./service-worker.js').catch(() => {});
     });
   }
+
+  ['profileAge','profileSex','profileHeight','profileActivity'].forEach(id => {
+    $(id).addEventListener('change', () => {
+      state.profile.age = $('profileAge').value;
+      state.profile.sex = $('profileSex').value;
+      state.profile.height = $('profileHeight').value;
+      state.profile.activity = $('profileActivity').value;
+      saveState();
+      renderGuidance();
+    });
+  });
 
   $('selectedDate').value = todayLocal();
   render();
