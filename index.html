@@ -162,7 +162,65 @@
     .guidance-result.weight-guide{border-color:#d97706;background:linear-gradient(145deg,#3b2c18,#17120c)}
     .guidance-result.calorie-guide{border-color:#0284c7;background:linear-gradient(145deg,#173653,#101b2b)}
     .guidance-result.protein-guide{border-color:#dc2626;background:linear-gradient(145deg,#402126,#211316)}
-</style>
+
+    /* V5 app-wide color accents */
+    .summary-card{
+      background:linear-gradient(145deg,rgba(126,34,206,.19),rgba(2,132,199,.10));
+      border-color:#5b4bb7;
+    }
+    .food-card{
+      background:linear-gradient(145deg,rgba(34,197,94,.14),rgba(56,189,248,.08));
+      border-color:#28765a;
+    }
+    .foodlog-card{
+      background:linear-gradient(145deg,rgba(236,72,153,.12),rgba(126,34,206,.08));
+      border-color:#713f72;
+    }
+    .weightlog-card{
+      background:linear-gradient(145deg,rgba(245,158,11,.14),rgba(239,68,68,.07));
+      border-color:#7c5424;
+    }
+    .data-card{
+      background:linear-gradient(145deg,rgba(20,184,166,.12),rgba(59,130,246,.08));
+      border-color:#286a63;
+    }
+    .summary-card h2{color:#e9d5ff}
+    .food-card h2{color:#bbf7d0}
+    .foodlog-card h2{color:#fbcfe8}
+    .weightlog-card h2{color:#fde68a}
+    .data-card h2{color:#99f6e4}
+    #addFoodBtn,#addWeightBtn{
+      background:linear-gradient(90deg,#22c55e,#38bdf8);
+      color:#06131b;
+    }
+    #installBtn{
+      background:linear-gradient(90deg,#a855f7,#38bdf8);
+      color:white;
+    }
+    #exportBtn{
+      background:linear-gradient(90deg,#334155,#475569);
+    }
+    .marshall-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      margin-top:8px;
+      padding:7px 11px;
+      border-radius:999px;
+      background:linear-gradient(90deg,#7e22ce,#0284c7);
+      color:#fff;
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.5px;
+      box-shadow:0 6px 18px rgba(0,0,0,.18);
+    }
+    .marshall-dot{
+      width:8px;height:8px;border-radius:50%;
+      background:#22c55e;
+      box-shadow:0 0 0 3px rgba(34,197,94,.18)
+    }
+
+  </style>
 </head>
 <body>
 <div class="app">
@@ -170,6 +228,7 @@
     <div>
       <h1>CalorieTrack</h1>
       <p style="margin:4px 0 0">Simple daily food + weight tracking</p>
+      <div class="marshall-badge"><span class="marshall-dot"></span>Marshall Certified</div>
     </div>
     <input id="selectedDate" class="datebox" type="date" />
   </div>
@@ -185,7 +244,7 @@
     <div class="install-message" id="installMessage"></div>
   </div>
 
-  <div class="card" id="dailySummaryCard">
+  <div class="card summary-card" id="dailySummaryCard">
     <div class="summary-title-row">
       <h2 style="margin:0">Daily Summary</h2>
       <div class="summary-date" id="summaryDateLabel"></div>
@@ -224,63 +283,7 @@
     </div>
   </div>
 
-  <div class="card guidance-card">
-    <h2>Suggested Daily Goals</h2>
-    <p class="tiny" style="margin-top:-4px">Enter a profile for personalized estimates. Height, age, sex, and activity matter — weight alone isn't enough.</p>
-
-    <div class="profile-grid">
-      <div>
-        <label for="profileAge">Age</label>
-        <input id="profileAge" type="number" min="2" max="120" step="1" placeholder="e.g. 38" />
-      </div>
-      <div>
-        <label for="profileSex">Sex</label>
-        <select id="profileSex">
-          <option value="">Choose</option>
-          <option value="female">Female</option>
-          <option value="male">Male</option>
-        </select>
-      </div>
-      <div>
-        <label for="profileHeight">Height (inches)</label>
-        <input id="profileHeight" type="number" min="30" max="96" step="0.1" placeholder="e.g. 65" />
-      </div>
-      <div>
-        <label for="profileWeight">Weight (lb)</label>
-        <input id="profileWeight" type="number" min="20" max="1000" step="0.1" placeholder="e.g. 210" />
-      </div>
-      <div>
-        <label for="profileActivity">Activity</label>
-        <select id="profileActivity">
-          <option value="sedentary">Sedentary</option>
-          <option value="light">Lightly active</option>
-          <option value="moderate">Moderately active</option>
-          <option value="active">Very active</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="guidance-grid">
-      <div class="guidance-result weight-guide">
-        <span class="tiny">Weight guidance</span>
-        <strong id="suggestedWeight">Enter profile</strong>
-      </div>
-      <div class="guidance-result calorie-guide">
-        <span class="tiny">Estimated calories/day</span>
-        <strong id="suggestedCalories">Enter profile</strong>
-      </div>
-      <div class="guidance-result protein-guide">
-        <span class="tiny">Protein/day</span>
-        <strong id="suggestedProtein">Enter profile</strong>
-      </div>
-    </div>
-
-    <div class="guidance-note" id="guidanceNote">
-      These are general estimates, not a medical prescription. For anyone under 20, healthy weight is based on age- and sex-specific growth charts rather than an adult target weight.
-    </div>
-  </div>
-
-  <div class="card">
+  <div class="card food-card">
     <h2>Add Food</h2>
     <div class="form-grid">
       <div>
@@ -325,12 +328,12 @@
     </div>
   </div>
 
-  <div class="card">
+  <div class="card foodlog-card">
     <h2>Food Log</h2>
     <div id="foodLog"></div>
   </div>
 
-  <div class="card">
+  <div class="card weightlog-card">
     <h2>Weight Log</h2>
     <div class="weight-row">
       <div>
@@ -345,7 +348,7 @@
     <div id="weightLog" style="margin-top:12px"></div>
   </div>
 
-  <div class="card">
+  <div class="card data-card">
     <h2>Data</h2>
     <p class="tiny">Everything is stored only in this browser on this device.</p>
     <div class="actions">

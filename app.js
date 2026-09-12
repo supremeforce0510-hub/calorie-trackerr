@@ -81,129 +81,6 @@
     return state.days[date];
   }
 
-  function latestSavedWeight(){
-    const all = [];
-    Object.values(state.days).forEach(day => {
-      (day.weights || []).forEach(w => all.push(w));
-    });
-    all.sort((a,b) => num(b.createdAt) - num(a.createdAt));
-    return all[0] ? num(all[0].value) : 0;
-  }
-
-  function teenProteinRDA(age, sex){
-    if(age >= 14 && age <= 18) return sex === 'male' ? 52 : 46;
-    if(age >= 9 && age <= 13) return 34;
-    if(age >= 4 && age <= 8) return 19;
-    if(age >= 1 && age <= 3) return 13;
-    return null;
-  }
-
-  // 2023 National Academies total-energy-expenditure equations.
-  // Height in cm, weight in kg.
-  function estimatedCalories(age, sex, heightCm, weightKg, activity){
-    const a = activity || 'sedentary';
-
-    if(age >= 3 && age <= 18){
-      if(sex === 'male'){
-        const formulas = {
-          sedentary: [-447.51, 3.68, 13.01, 13.15],
-          light: [19.12, 3.68, 8.62, 20.28],
-          moderate: [-388.19, 3.68, 12.66, 20.46],
-          active: [-671.75, 3.68, 15.38, 23.25]
-        };
-        const [c,ageC,hC,wC] = formulas[a] || formulas.sedentary;
-        return c + ageC*age + hC*heightCm + wC*weightKg;
-      }else{
-        const formulas = {
-          sedentary: [55.59, -22.25, 8.43, 17.07],
-          light: [-297.54, -22.25, 12.77, 14.73],
-          moderate: [-189.55, -22.25, 11.74, 18.34],
-          active: [-709.59, -22.25, 18.22, 14.25]
-        };
-        const [c,ageC,hC,wC] = formulas[a] || formulas.sedentary;
-        return c + ageC*age + hC*heightCm + wC*weightKg;
-      }
-    }
-
-    if(age >= 19){
-      if(sex === 'male'){
-        const formulas = {
-          sedentary: [753.07, -10.83, 6.50, 14.10],
-          light: [581.47, -10.83, 8.30, 14.94],
-          moderate: [1004.82, -10.83, 6.52, 15.91],
-          active: [-517.88, -10.83, 15.61, 19.11]
-        };
-        const [c,ageC,hC,wC] = formulas[a] || formulas.sedentary;
-        return c + ageC*age + hC*heightCm + wC*weightKg;
-      }else{
-        const formulas = {
-          sedentary: [584.90, -7.01, 5.72, 11.71],
-          light: [575.77, -7.01, 6.60, 12.14],
-          moderate: [710.25, -7.01, 6.54, 12.34],
-          active: [511.83, -7.01, 9.07, 12.56]
-        };
-        const [c,ageC,hC,wC] = formulas[a] || formulas.sedentary;
-        return c + ageC*age + hC*heightCm + wC*weightKg;
-      }
-    }
-    return null;
-  }
-
-  function renderGuidance(){
-    const age = num(state.profile.age);
-    const sex = state.profile.sex;
-    const heightIn = num(state.profile.height);
-    const weightLb = num(state.profile.weight) || latestSavedWeight();
-    const activity = state.profile.activity || 'sedentary';
-
-    $('profileAge').value = state.profile.age;
-    $('profileSex').value = sex;
-    $('profileHeight').value = state.profile.height;
-    $('profileWeight').value = state.profile.weight || (weightLb ? format1(weightLb) : '');
-    $('profileActivity').value = activity;
-
-    const missing = [];
-    if(!age) missing.push('age');
-    if(!sex) missing.push('sex');
-    if(!heightIn) missing.push('height');
-    if(!weightLb) missing.push('weight');
-
-    if(missing.length){
-      $('suggestedWeight').textContent = 'Add ' + missing.join(', ');
-      $('suggestedCalories').textContent = 'Complete profile';
-      $('suggestedProtein').textContent = 'Complete profile';
-      $('guidanceNote').textContent =
-        'Fill in age, sex, height, weight and activity. The numbers update automatically as soon as the profile is complete.';
-      return;
-    }
-
-    const heightCm = heightIn * 2.54;
-    const weightKg = weightLb * 0.45359237;
-    const bmi = weightLb / (heightIn * heightIn) * 703;
-    const calories = estimatedCalories(age, sex, heightCm, weightKg, activity);
-
-    if(age < 20){
-      const protein = teenProteinRDA(age, sex);
-      $('suggestedWeight').textContent = 'BMI ' + format1(bmi) + ' • growth chart';
-      $('suggestedCalories').textContent = calories ? Math.max(0, Math.round(calories)).toLocaleString() + ' cal/day' : 'Growth-based';
-      $('suggestedProtein').textContent = protein ? protein + ' g/day RDA' : 'Age-specific';
-
-      $('guidanceNote').textContent =
-        'For ages 2–19, there is not one safe target weight based on pounds alone. CDC interprets BMI using age- and sex-specific growth-chart percentiles; healthy weight is the 5th to under the 85th percentile. The calorie number shown is an estimated energy need from age, sex, height, weight and activity—not a weight-loss prescription.';
-      return;
-    }
-
-    const lowLb = 18.5 * heightIn * heightIn / 703;
-    const highLb = 24.9 * heightIn * heightIn / 703;
-    const protein = Math.round(0.8 * weightKg);
-
-    $('suggestedWeight').textContent = Math.round(lowLb) + '–' + Math.round(highLb) + ' lb';
-    $('suggestedCalories').textContent = calories ? Math.max(0, Math.round(calories)).toLocaleString() + ' cal/day' : '—';
-    $('suggestedProtein').textContent = protein + ' g/day baseline';
-    $('guidanceNote').textContent =
-      'Adult weight guidance uses the standard BMI 18.5–24.9 screening range. Calories are estimated maintenance needs from age, sex, height, weight and activity. Protein is the general adult RDA baseline of about 0.8 g/kg. Individual needs can differ.';
-  }
-
   function render(){
     const day = getDay(selectedDate());
     const foods = day.foods;
@@ -278,7 +155,6 @@
       </div>
     `).join('') : '<div class="empty">No weight logged for this day.</div>';
 
-    renderGuidance();
     saveState();
   }
 
@@ -323,7 +199,6 @@
       value:v,
       createdAt:Date.now()
     });
-    state.profile.weight = String(v);
     $('weightValue').value='';
     render();
   });
@@ -338,27 +213,6 @@
   $('proteinGoal').addEventListener('change', () => {
     const v = num($('proteinGoal').value);
     if(v >= 0){ state.settings.proteinGoal = v; render(); }
-  });
-
-  ['profileAge','profileSex','profileHeight','profileWeight','profileActivity'].forEach(id => {
-    $(id).addEventListener('input', () => {
-      state.profile.age = $('profileAge').value;
-      state.profile.sex = $('profileSex').value;
-      state.profile.height = $('profileHeight').value;
-      state.profile.weight = $('profileWeight').value;
-      state.profile.activity = $('profileActivity').value;
-      saveState();
-      renderGuidance();
-    });
-    $(id).addEventListener('change', () => {
-      state.profile.age = $('profileAge').value;
-      state.profile.sex = $('profileSex').value;
-      state.profile.height = $('profileHeight').value;
-      state.profile.weight = $('profileWeight').value;
-      state.profile.activity = $('profileActivity').value;
-      saveState();
-      renderGuidance();
-    });
   });
 
   document.addEventListener('click', e => {
