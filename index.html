@@ -341,7 +341,10 @@
         <input id="weightValue" type="number" min="1" step="0.1" placeholder="198.0" />
 
         <label for="endGoalWeight" style="margin-top:10px">End goal weight</label>
-        <input id="endGoalWeight" type="number" min="1" step="0.1" placeholder="Enter goal weight" />
+        <div style="display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center">
+          <input id="endGoalWeight" type="number" min="1" step="0.1" placeholder="Enter goal weight" />
+          <button id="saveEndGoalBtn" type="button" style="width:auto;min-width:88px">Save</button>
+        </div>
       </div>
       <div>
         <label>&nbsp;</label>

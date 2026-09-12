@@ -217,10 +217,17 @@
     if(v >= 0){ state.settings.proteinGoal = v; render(); }
   });
 
-  $('endGoalWeight').addEventListener('change', () => {
+  $('saveEndGoalBtn').addEventListener('click', () => {
     const v = num($('endGoalWeight').value);
-    state.settings.endGoalWeight = v > 0 ? v : '';
+    if(v <= 0){
+      alert('Enter a valid end goal weight.');
+      $('endGoalWeight').focus();
+      return;
+    }
+    state.settings.endGoalWeight = v;
     saveState();
+    $('saveEndGoalBtn').textContent = 'Saved';
+    setTimeout(() => { $('saveEndGoalBtn').textContent = 'Save'; }, 1200);
   });
 
   document.addEventListener('click', e => {
