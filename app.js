@@ -59,6 +59,24 @@
     return Math.round((num(n) + Number.EPSILON) * 10) / 10;
   }
 
+  function latestLoggedWeight(){
+    const all = [];
+    Object.values(state.days || {}).forEach(day => {
+      (day?.weights || []).forEach(w => all.push(w));
+    });
+    if(!all.length) return null;
+    all.sort((a,b) => num(b.createdAt) - num(a.createdAt));
+    return num(all[0].value) || null;
+  }
+
+  function formatDurationWeeks(weeks){
+    if(!Number.isFinite(weeks) || weeks <= 0) return '—';
+    if(weeks < 8) return Math.ceil(weeks) + ' wk';
+    const months = weeks / 4.345;
+    if(months < 18) return format1(months) + ' mo';
+    return format1(months / 12) + ' yr';
+  }
+
   function escapeHtml(text){
     return String(text).replace(/[&<>"']/g, m => ({
       '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
@@ -109,6 +127,46 @@
     $('calorieGoal').value = calorieGoal;
     $('proteinGoal').value = proteinGoal;
     $('endGoalWeight').value = state.settings.endGoalWeight;
+
+    const currentGoalWeight = latestLoggedWeight();
+    const targetGoalWeight = num(state.settings.endGoalWeight);
+    $('goalCurrent').textContent = currentGoalWeight ? format1(currentGoalWeight) + ' lb' : '—';
+    $('goalTarget').textContent = targetGoalWeight > 0 ? format1(targetGoalWeight) + ' lb' : '—';
+
+    if(currentGoalWeight && targetGoalWeight > 0){
+      const diff = Math.abs(currentGoalWeight - targetGoalWeight);
+      $('goalDifference').textContent = format1(diff) + ' lb';
+
+      // Very rough planning estimate:
+      // estimated maintenance ≈ body weight × 12 kcal/day,
+      // 3500 kcal ≈ 1 lb of body-weight change.
+      const estimatedMaintenance = currentGoalWeight * 12;
+      const direction = targetGoalWeight < currentGoalWeight ? 'loss' : (targetGoalWeight > currentGoalWeight ? 'gain' : 'same');
+      let dailyGap = 0;
+
+      if(direction === 'loss') dailyGap = estimatedMaintenance - calorieGoal;
+      if(direction === 'gain') dailyGap = calorieGoal - estimatedMaintenance;
+
+      if(direction === 'same'){
+        $('goalTime').textContent = 'Reached';
+        $('goalEstimateNote').textContent = 'Your current weight matches your saved end goal.';
+      }else if(dailyGap > 0){
+        const weeklyChange = dailyGap * 7 / 3500;
+        const weeks = diff / weeklyChange;
+        $('goalTime').textContent = formatDurationWeeks(weeks);
+        $('goalEstimateNote').textContent =
+          'General estimate using your ' + Math.round(calorieGoal) +
+          ' calorie daily goal and a simple maintenance estimate. Real progress can be faster or slower.';
+      }else{
+        $('goalTime').textContent = 'No estimate';
+        $('goalEstimateNote').textContent =
+          'With the current calorie goal, this simple estimate does not predict movement toward the saved goal. This is only a general planning estimate.';
+      }
+    }else{
+      $('goalDifference').textContent = '—';
+      $('goalTime').textContent = '—';
+      $('goalEstimateNote').textContent = 'Save a current weight and an end goal weight to see a general estimate.';
+    }
     $('summaryDateLabel').textContent = friendlyDate(selectedDate());
     $('sumCalories').textContent = Math.round(totals.calories);
     $('remainingCalories').textContent = Math.round(remaining);
@@ -202,7 +260,13 @@
       createdAt:Date.now()
     });
     $('weightValue').value='';
+    const btn = $('addWeightBtn');
+    btn.textContent = 'Saved ✓';
     render();
+    setTimeout(() => {
+      const b = $('addWeightBtn');
+      if(b) b.textContent = 'Save Weight';
+    }, 1200);
   });
 
   $('selectedDate').addEventListener('change', render);
@@ -226,8 +290,12 @@
     }
     state.settings.endGoalWeight = v;
     saveState();
-    $('saveEndGoalBtn').textContent = 'Saved';
-    setTimeout(() => { $('saveEndGoalBtn').textContent = 'Save'; }, 1200);
+    $('saveEndGoalBtn').textContent = 'Saved ✓';
+    render();
+    setTimeout(() => {
+      const btn = $('saveEndGoalBtn');
+      if(btn) btn.textContent = 'Save Goal';
+    }, 1200);
   });
 
   document.addEventListener('click', e => {

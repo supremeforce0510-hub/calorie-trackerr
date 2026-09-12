@@ -220,6 +220,108 @@
       box-shadow:0 0 0 3px rgba(34,197,94,.18)
     }
 
+  
+    .weight-goal-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:0;
+      margin-top:4px;
+      border:1px solid rgba(217,119,6,.35);
+      border-radius:16px;
+      overflow:hidden;
+      background:rgba(11,18,32,.48);
+    }
+    .weight-goal-panel{
+      padding:14px;
+      min-width:0;
+    }
+    .weight-goal-panel + .weight-goal-panel{
+      border-left:1px solid rgba(217,119,6,.35);
+    }
+    .weight-goal-panel h3{
+      margin:0 0 10px;
+      font-size:15px;
+      color:#fde68a;
+    }
+    .input-with-unit{
+      display:grid;
+      grid-template-columns:1fr auto;
+      align-items:stretch;
+      margin-bottom:10px;
+    }
+    .input-with-unit input{
+      border-top-right-radius:0;
+      border-bottom-right-radius:0;
+      border-right:0;
+    }
+    .input-unit{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-width:46px;
+      padding:0 10px;
+      border:1px solid var(--line);
+      border-left:0;
+      border-radius:0 12px 12px 0;
+      background:#131d2d;
+      color:#cbd5e1;
+      font-weight:800;
+      font-size:13px;
+    }
+    .weight-goal-panel button{
+      width:100%;
+    }
+    .goal-stats{
+      margin-top:14px;
+      padding:14px;
+      border-radius:16px;
+      border:1px solid rgba(217,119,6,.28);
+      background:rgba(11,18,32,.62);
+    }
+    .goal-stats h3{
+      margin:0 0 10px;
+      color:#fde68a;
+      font-size:16px;
+    }
+    .goal-stats-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:9px;
+    }
+    .goal-stat{
+      background:#0b1220;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:11px;
+      text-align:center;
+    }
+    .goal-stat strong{
+      display:block;
+      font-size:17px;
+      color:#fff7d6;
+      margin-bottom:4px;
+    }
+    .goal-stat span{
+      display:block;
+      font-size:11px;
+      color:var(--muted);
+      line-height:1.3;
+    }
+    .goal-estimate-note{
+      margin-top:10px;
+      color:var(--muted);
+      font-size:11px;
+      line-height:1.4;
+    }
+    @media (max-width:640px){
+      .weight-goal-grid{grid-template-columns:1fr}
+      .weight-goal-panel + .weight-goal-panel{
+        border-left:0;
+        border-top:1px solid rgba(217,119,6,.35);
+      }
+      .goal-stats-grid{grid-template-columns:repeat(2,1fr)}
+    }
+
   </style>
 </head>
 <body>
@@ -335,23 +437,43 @@
 
   <div class="card weightlog-card">
     <h2>Weight Log</h2>
-    <div class="weight-row">
-      <div>
-        <label for="weightValue">Weight (lb)</label>
-        <input id="weightValue" type="number" min="1" step="0.1" placeholder="198.0" />
 
-        <label for="endGoalWeight" style="margin-top:10px">End goal weight</label>
-        <div style="display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center">
-          <input id="endGoalWeight" type="number" min="1" step="0.1" placeholder="Enter goal weight" />
-          <button id="saveEndGoalBtn" type="button" style="width:auto;min-width:88px">Save</button>
+    <div class="weight-goal-grid">
+      <div class="weight-goal-panel">
+        <h3>Current Weight</h3>
+        <label for="weightValue">Weight</label>
+        <div class="input-with-unit">
+          <input id="weightValue" type="number" min="1" step="0.1" placeholder="198.0" />
+          <div class="input-unit">lb</div>
         </div>
-      </div>
-      <div>
-        <label>&nbsp;</label>
         <button id="addWeightBtn">Save Weight</button>
       </div>
+
+      <div class="weight-goal-panel">
+        <h3>End Goal Weight</h3>
+        <label for="endGoalWeight">Goal weight</label>
+        <div class="input-with-unit">
+          <input id="endGoalWeight" type="number" min="1" step="0.1" placeholder="140" />
+          <div class="input-unit">lb</div>
+        </div>
+        <button id="saveEndGoalBtn" type="button">Save Goal</button>
+      </div>
     </div>
-    <div id="weightLog" style="margin-top:12px"></div>
+
+    <div class="goal-stats" id="goalStats">
+      <h3>Goal Estimate</h3>
+      <div class="goal-stats-grid">
+        <div class="goal-stat"><strong id="goalCurrent">—</strong><span>Current weight</span></div>
+        <div class="goal-stat"><strong id="goalTarget">—</strong><span>End goal</span></div>
+        <div class="goal-stat"><strong id="goalDifference">—</strong><span>Weight to goal</span></div>
+        <div class="goal-stat"><strong id="goalTime">—</strong><span>Estimated time</span></div>
+      </div>
+      <div class="goal-estimate-note" id="goalEstimateNote">
+        Save a current weight and an end goal weight to see a general estimate.
+      </div>
+    </div>
+
+    <div id="weightLog" style="margin-top:14px"></div>
   </div>
 
   <div class="card data-card">
