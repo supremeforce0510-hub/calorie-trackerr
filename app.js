@@ -12,7 +12,7 @@
 
   function defaultState(){
     return {
-      settings:{calorieGoal:1800, proteinGoal:100},
+      settings:{calorieGoal:1800, proteinGoal:100, endGoalWeight:''},
       profile:{age:'', sex:'', height:'', weight:'', activity:'sedentary'},
       days:{}
     };
@@ -27,7 +27,8 @@
       return {
         settings:{
           calorieGoal:Number(parsed?.settings?.calorieGoal) || 1800,
-          proteinGoal:Number(parsed?.settings?.proteinGoal) || 100
+          proteinGoal:Number(parsed?.settings?.proteinGoal) || 100,
+          endGoalWeight:parsed?.settings?.endGoalWeight ?? ''
         },
         profile:{
           age:parsed?.profile?.age ?? '',
@@ -107,6 +108,7 @@
 
     $('calorieGoal').value = calorieGoal;
     $('proteinGoal').value = proteinGoal;
+    $('endGoalWeight').value = state.settings.endGoalWeight;
     $('summaryDateLabel').textContent = friendlyDate(selectedDate());
     $('sumCalories').textContent = Math.round(totals.calories);
     $('remainingCalories').textContent = Math.round(remaining);
@@ -213,6 +215,12 @@
   $('proteinGoal').addEventListener('change', () => {
     const v = num($('proteinGoal').value);
     if(v >= 0){ state.settings.proteinGoal = v; render(); }
+  });
+
+  $('endGoalWeight').addEventListener('change', () => {
+    const v = num($('endGoalWeight').value);
+    state.settings.endGoalWeight = v > 0 ? v : '';
+    saveState();
   });
 
   document.addEventListener('click', e => {

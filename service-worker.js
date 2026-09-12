@@ -1,4 +1,4 @@
-const CACHE_NAME = 'calorietrack-v5';
+const CACHE_NAME = 'calorietrack-v6';
 const APP_SHELL = [
   './',
   './index.html',
