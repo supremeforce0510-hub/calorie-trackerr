@@ -87,24 +87,28 @@
         difference:null,
         weeks:null,
         timeLabel:'—',
-        note:'Enter a current weight, end goal weight, and daily calorie goal to see a general estimate.'
+        targetDateLabel:'—',
+        note:'Enter current weight, goal weight, and a daily calorie goal.'
       };
     }
 
     const difference = Math.abs(currentWeight - targetWeight);
+
     if(difference === 0){
       return {
         difference:0,
         weeks:0,
         timeLabel:'Reached',
-        note:'Your current weight matches your end goal.'
+        targetDateLabel:'Now',
+        note:'Your current weight matches your goal weight.'
       };
     }
 
-    // General planning estimate only.
-    // Approximate maintenance = current body weight × 12 calories/day.
-    // Approximate 3,500-calorie energy gap = 1 lb of body-weight change.
-    const estimatedMaintenance = currentWeight * 12;
+    // Consistent planning estimate from the inputs available in this MVP.
+    // Estimated maintenance = current weight × 14 calories/day.
+    // 3,500 calories ≈ 1 lb of body-weight change.
+    // Loss is capped at 2 lb/week and gain at 1 lb/week.
+    const estimatedMaintenance = currentWeight * 14;
     const losing = targetWeight < currentWeight;
     const dailyGap = losing
       ? estimatedMaintenance - calorieGoal
@@ -114,27 +118,46 @@
       return {
         difference,
         weeks:null,
-        timeLabel:'No estimate',
-        note:'At this calorie goal, this simple estimate does not predict movement toward the saved goal.'
+        timeLabel:'No progress',
+        targetDateLabel:'—',
+        note: losing
+          ? 'At this calorie goal, this estimate does not create a calorie deficit.'
+          : 'At this calorie goal, this estimate does not create a calorie surplus.'
       };
     }
 
-    const weeklyChange = dailyGap * 7 / 3500;
+    const rawWeeklyChange = dailyGap * 7 / 3500;
+    const weeklyChange = losing
+      ? Math.min(rawWeeklyChange, 2)
+      : Math.min(rawWeeklyChange, 1);
+
     if(weeklyChange <= 0){
       return {
         difference,
         weeks:null,
         timeLabel:'No estimate',
-        note:'There is not enough information for a useful estimate.'
+        targetDateLabel:'—',
+        note:'The estimate could not be calculated from these values.'
       };
     }
 
     const weeks = difference / weeklyChange;
+    const days = Math.ceil(weeks * 7);
+    const targetDate = new Date();
+    targetDate.setDate(targetDate.getDate() + days);
+
+    const targetDateLabel = targetDate.toLocaleDateString([], {
+      month:'short',
+      day:'numeric',
+      year:'numeric'
+    });
+
     return {
       difference,
       weeks,
       timeLabel:formatDurationWeeks(weeks),
-      note:'General estimate using the daily calorie goal above. Real weight change can be faster or slower.'
+      targetDateLabel,
+      note:'Estimate uses your calorie goal, estimated maintenance calories, and the 3,500-calorie-per-pound rule. Actual results vary.'
     };
   }
 
@@ -158,7 +181,7 @@
     $('goalTarget').textContent = target ? format1(target) + ' lb' : '—';
     $('goalDifference').textContent =
       estimate.difference === null ? '—' : format1(estimate.difference) + ' lb';
-    $('goalTime').textContent = estimate.timeLabel;
+    $('goalTime').textContent = (estimate.targetDateLabel && estimate.targetDateLabel !== '—' && estimate.targetDateLabel !== 'Now') ? estimate.timeLabel + ' • ' + estimate.targetDateLabel : estimate.timeLabel;
     $('goalEstimateNote').textContent = estimate.note;
   }
 
@@ -259,14 +282,20 @@
         : (savedGoal > 0 ? Math.abs(num(w.value) - savedGoal) : null);
 
       let savedTime = w.estimatedTimeLabel || '—';
-      if(!w.estimatedTimeLabel && savedGoal > 0){
+      let savedTargetDate = w.estimatedTargetDate || '';
+      if((!w.estimatedTimeLabel || !w.estimatedTargetDate) && savedGoal > 0){
         const oldEstimate = calculateGoalEstimate(
           num(w.value),
           savedGoal,
           num(w.calorieGoalAtSave) || num(state.settings.calorieGoal)
         );
-        savedTime = oldEstimate.timeLabel;
+        if(!w.estimatedTimeLabel) savedTime = oldEstimate.timeLabel;
+        if(!w.estimatedTargetDate) savedTargetDate = oldEstimate.targetDateLabel;
       }
+      const savedTimeDisplay =
+        savedTargetDate && savedTargetDate !== '—' && savedTargetDate !== 'Now'
+          ? savedTime + ' • ' + savedTargetDate
+          : savedTime;
 
       return `
         <div class="weight-history-card">
@@ -288,7 +317,7 @@
               <span>Weight to goal</span>
             </div>
             <div class="weight-history-stat">
-              <strong>${escapeHtml(savedTime)}</strong>
+              <strong>${escapeHtml(savedTimeDisplay)}</strong>
               <span>Estimated time</span>
             </div>
           </div>
@@ -332,32 +361,48 @@
   $('clearFoodBtn').addEventListener('click', clearFoodForm);
 
   $('addWeightBtn').addEventListener('click', () => {
-    const v = num($('weightValue').value);
-    if(v <= 0){ alert('Enter a valid weight.'); $('weightValue').focus(); return; }
-
-    const goal = liveGoalWeight();
+    const current = num($('weightValue').value);
+    const goal = num($('endGoalWeight').value);
     const calorieGoalAtSave = num($('calorieGoal').value) || num(state.settings.calorieGoal) || 1800;
-    const estimate = calculateGoalEstimate(v, goal, calorieGoalAtSave);
+
+    if(current <= 0){
+      alert('Enter a valid current weight.');
+      $('weightValue').focus();
+      return;
+    }
+
+    if(goal <= 0){
+      alert('Enter a valid end goal weight.');
+      $('endGoalWeight').focus();
+      return;
+    }
+
+    state.settings.endGoalWeight = goal;
+    const estimate = calculateGoalEstimate(current, goal, calorieGoalAtSave);
 
     getDay(selectedDate()).weights.push({
       id:crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random(),
-      value:v,
-      goalWeight:goal > 0 ? goal : '',
+      value:current,
+      goalWeight:goal,
       weightToGoal:estimate.difference,
       estimatedWeeks:Number.isFinite(estimate.weeks) ? estimate.weeks : null,
       estimatedTimeLabel:estimate.timeLabel,
+      estimatedTargetDate:estimate.targetDateLabel,
       calorieGoalAtSave,
       createdAt:Date.now()
     });
 
+    saveState();
     $('weightValue').value='';
+
     const btn = $('addWeightBtn');
     btn.textContent = 'Saved ✓';
     render();
+
     setTimeout(() => {
       const b = $('addWeightBtn');
-      if(b) b.textContent = 'Save Weight';
-    }, 1200);
+      if(b) b.textContent = 'Save Weight + Goal';
+    }, 1400);
   });
 
   $('selectedDate').addEventListener('change', render);
@@ -385,7 +430,7 @@
     $('saveEndGoalBtn').textContent = 'Saved ✓';
     setTimeout(() => {
       const btn = $('saveEndGoalBtn');
-      if(btn) btn.textContent = 'Save Goal';
+      if(btn) btn.textContent = 'Update Goal';
     }, 1200);
   });
 
