@@ -355,7 +355,9 @@
     const svg=$('weightChart'); if(!a.length){svg.innerHTML='<text x="320" y="95" text-anchor="middle" fill="#94a3b8">Log weight to build your trend</text>';$('chartRange').textContent='No weigh-ins yet';return}
     const vals=a.map(x=>num(x.value)),lo=Math.min(...vals),hi=Math.max(...vals),spread=Math.max(2,hi-lo),pad=28,W=640,H=185;
     const pts=a.map((w,i)=>({x:a.length===1?W/2:pad+i*(W-pad*2)/(a.length-1),y:H-pad-((num(w.value)-lo)/spread)*(H-pad*2),w}));
-    svg.innerHTML=`<polyline points="${pts.map(p=>p.x+','+p.y).join(' ')}" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>${pts.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="5" fill="#a855f7"><title>${p.w.date}: ${format1(p.w.value)} lb</title></circle>`).join('')}`;
+    const linePts=pts.map(p=>p.x+','+p.y).join(' ');
+    const areaPts=`${pts[0].x},${H-pad} ${linePts} ${pts.at(-1).x},${H-pad}`;
+    svg.innerHTML=`<defs><linearGradient id="v18Line" x1="0" x2="1"><stop offset="0%" stop-color="#a855f7"/><stop offset="55%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#22d3ee"/></linearGradient><linearGradient id="v18Area" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#38bdf8" stop-opacity=".22"/><stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/></linearGradient></defs><line x1="${pad}" y1="${H-pad}" x2="${W-pad}" y2="${H-pad}" stroke="#334155" stroke-opacity=".65"/><line x1="${pad}" y1="${pad}" x2="${W-pad}" y2="${pad}" stroke="#334155" stroke-opacity=".24"/><polygon points="${areaPts}" fill="url(#v18Area)"/><polyline points="${linePts}" fill="none" stroke="url(#v18Line)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>${pts.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="5" fill="#0b1220" stroke="#7dd3fc" stroke-width="3"><title>${p.w.date}: ${format1(p.w.value)} lb</title></circle>`).join('')}`;
     $('chartRange').textContent=`${friendlyDate(a[0].date)} → ${friendlyDate(a.at(-1).date)}`;
   }
   function renderDashboard(){
@@ -377,19 +379,9 @@
   function celebrate(title,msg,key){state.engagement.celebratedMilestones=state.engagement.celebratedMilestones||[];if(state.engagement.celebratedMilestones.includes(key))return;state.engagement.celebratedMilestones.push(key);saveState();const p=$('milestonePop');p.innerHTML=`<strong>🏆 ${escapeHtml(title)}</strong>${escapeHtml(msg)}`;p.classList.add('show');clearTimeout(mileTimer);mileTimer=setTimeout(()=>p.classList.remove('show'),4200)}
   function checkMilestones(){const w=allWeights();if(w.length>1){const lost=num(w[0].value)-num(w.at(-1).value);[5,10,15,25,50].forEach(m=>{if(lost>=m)celebrate(`${m} lb milestone!`,`You've moved ${m} pounds from your starting weight.`,'loss-'+m)});const g=num(state.settings.endGoalWeight);if(g&&Math.abs(num(w.at(-1).value)-g)<.05)celebrate('Goal reached!','You reached your saved goal weight.','goal-'+g)}const st=currentStreakInfo().count;[7,15,30,60,100].forEach(m=>{if(st>=m)celebrate(`${m}-day streak!`,'You kept showing up.','streak-'+m)})}
 
-  function allFoodHistory(){
-    const rows=[];
-    Object.entries(state.days||{}).forEach(([date,d])=>(d?.foods||[]).forEach(f=>rows.push({...f,date})));
-    return rows.sort((a,b)=>num(b.createdAt)-num(a.createdAt));
-  }
 
-  function renderFoodSearch(){
-    const box=$('foodSearchResults'); if(!box) return;
-    const q=$('foodSearchInput').value.trim().toLowerCase();
-    if(!q){box.innerHTML='<div class="tiny" style="padding-top:8px">Type a food name to search your history.</div>';return}
-    const rows=allFoodHistory().filter(f=>String(f.name).toLowerCase().includes(q)).slice(0,20);
-    box.innerHTML=rows.length?rows.map(f=>`<div class="search-item"><div><b>${escapeHtml(f.name)}</b><div class="log-meta">${friendlyDate(f.date)} • ${escapeHtml(f.meal)} • ${Math.round(num(f.calories))} cal</div></div><button type="button" data-search-add="${f.id}" data-search-date="${f.date}">Add Again</button></div>`).join(''):'<div class="empty">No matching foods found.</div>';
-  }
+
+
 
   function renderCheckin(){
     const day=getDay(selectedDate());
@@ -436,33 +428,13 @@
     $('badgeGrid').innerHTML=b.map(x=>`<div class="badge ${x.on?'unlocked':''}"><span class="badge-icon">${x.icon}</span><strong>${escapeHtml(x.name)}</strong><span>${escapeHtml(x.desc)}</span></div>`).join('');
   }
 
-  function applyTheme(){
-    document.body.classList.remove('theme-purple','theme-green','theme-red','theme-gold');
-    document.body.classList.add('theme-'+(state.settings.theme||'purple'));
-    $('themeSelect').value=state.settings.theme||'purple';
-    $('reminderEnabled').checked=Boolean(state.settings.reminderEnabled);
-    $('reminderTime').value=state.settings.reminderTime||'19:00';
-  }
 
-  function hasLoggedToday(){
-    const d=state.days?.[todayLocal()];
-    return !!((d?.foods?.length||0)||(d?.weights?.length||0));
-  }
 
-  function maybeShowReminder(){
-    const banner=$('reminderBanner'); if(!banner)return;
-    banner.classList.remove('show');
-    if(!state.settings.reminderEnabled||hasLoggedToday())return;
-    const now=new Date(), parts=(state.settings.reminderTime||'19:00').split(':').map(Number);
-    const nowMin=now.getHours()*60+now.getMinutes(), target=parts[0]*60+parts[1];
-    if(nowMin>=target) banner.classList.add('show');
-  }
 
-  function renderSharePreview(){
-    const w=allWeights(), current=w.length?num(w.at(-1).value):0, start=w.length?num(w[0].value):0, goal=num(state.settings.endGoalWeight);
-    const change=start&&current?current-start:0, streak=currentStreakInfo().count, days=(state.engagement?.usedDates||[]).length;
-    $('sharePreview').innerHTML=`<b>CalorieTrack Progress</b><div class="log-meta" style="margin-top:6px">${current?format1(current)+' lb current':'No weight yet'}${goal?' • '+format1(goal)+' lb goal':''}<br>${start&&current?(change>0?'+':'')+format1(change)+' lb change • ':''}${streak} day streak • ${days} days tracked</div>`;
-  }
+
+
+
+
 
   let undoState=null, undoTimer=null;
   function showUndo(message,fn){
@@ -470,20 +442,7 @@
     clearTimeout(undoTimer); undoTimer=setTimeout(()=>{$('undoToast').classList.remove('show');undoState=null},5000);
   }
 
-  function makeProgressCardBlob(){
-    const w=allWeights(), current=w.length?num(w.at(-1).value):0, start=w.length?num(w[0].value):0, goal=num(state.settings.endGoalWeight);
-    const streak=currentStreakInfo().count, days=(state.engagement?.usedDates||[]).length;
-    const delta=start&&current?current-start:0;
-    const canvas=document.createElement('canvas'); canvas.width=1080; canvas.height=1080;
-    const c=canvas.getContext('2d'), grad=c.createLinearGradient(0,0,1080,1080);grad.addColorStop(0,'#17122b');grad.addColorStop(1,'#10243a');c.fillStyle=grad;c.fillRect(0,0,1080,1080);
-    c.fillStyle='#f8fafc';c.font='bold 72px sans-serif';c.fillText('CalorieTrack',70,110);
-    c.fillStyle='#c4b5fd';c.font='bold 34px sans-serif';c.fillText('MY PROGRESS',70,170);
-    const stat=(label,value,y)=>{c.fillStyle='#94a3b8';c.font='28px sans-serif';c.fillText(label,70,y);c.fillStyle='#f8fafc';c.font='bold 58px sans-serif';c.fillText(value,70,y+62)};
-    stat('Current weight',current?format1(current)+' lb':'—',280); stat('Goal weight',goal?format1(goal)+' lb':'—',440);
-    stat('Total change',start&&current?(delta>0?'+':'')+format1(delta)+' lb':'—',600); stat('Current streak',streak+' day'+(streak===1?'':'s'),760);
-    c.fillStyle='#38bdf8';c.font='bold 34px sans-serif';c.fillText(days+' days tracked',70,940);
-    return new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
-  }
+
 
   function historyDates(){
     const usage = state.engagement?.usedDates || [];
@@ -763,9 +722,6 @@
     renderCheckin();
     renderMonthlySummary();
     renderAchievements();
-    renderSharePreview();
-    applyTheme();
-    maybeShowReminder();
     checkMilestones();
   }
 
@@ -907,57 +863,10 @@
   }
   bindScale('moodButtons','mood');bindScale('hungerButtons','hunger');
 
-  $('foodSearchInput').addEventListener('input',renderFoodSearch);
-  $('foodSearchResults').addEventListener('click',e=>{
-    const b=e.target.closest('[data-search-add]');if(!b)return;
-    const source=state.days?.[b.dataset.searchDate]?.foods?.find(f=>f.id===b.dataset.searchAdd);if(!source)return;
-    getDay(selectedDate()).foods.push({...source,id:crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random(),createdAt:Date.now()});render();
-  });
-
-  $('copyMealBtn').addEventListener('click',()=>{
-    const from=$('copyMealDate').value, meal=$('copyMealType').value;
-    if(!from){alert('Choose the date you want to copy from.');return}
-    const source=(state.days?.[from]?.foods||[]).filter(f=>f.meal===meal);
-    if(!source.length){alert(`No ${meal.toLowerCase()} foods were logged on that date.`);return}
-    source.forEach(f=>getDay(selectedDate()).foods.push({...f,id:crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random(),createdAt:Date.now()}));
-    render();alert(`${source.length} item${source.length===1?'':'s'} copied into ${meal}.`);
-  });
-
-  $('saveSettingsBtn').addEventListener('click',async()=>{
-    state.settings.theme=$('themeSelect').value;
-    state.settings.reminderEnabled=$('reminderEnabled').checked;
-    state.settings.reminderTime=$('reminderTime').value||'19:00';
-    saveState();applyTheme();maybeShowReminder();
-    if(state.settings.reminderEnabled && 'Notification' in window && Notification.permission==='default'){
-      try{await Notification.requestPermission()}catch(_){}
-    }
-    const b=$('saveSettingsBtn');b.textContent='Saved ✓';setTimeout(()=>b.textContent='Save Settings',1000);
-  });
-  $('themeSelect').addEventListener('change',()=>{state.settings.theme=$('themeSelect').value;saveState();applyTheme()});
-  $('dismissReminderBtn').addEventListener('click',()=>{$('reminderBanner').classList.remove('show')});
-
-  $('importBtn').addEventListener('click',async()=>{
-    const file=$('importFile').files?.[0];if(!file){alert('Choose a CalorieTrack JSON backup first.');return}
-    try{
-      const parsed=JSON.parse(await file.text());
-      if(!parsed || typeof parsed!=='object' || !parsed.settings || !parsed.days) throw new Error('Invalid backup');
-      if(!confirm('Import this backup? This will replace the CalorieTrack data currently stored on this device.'))return;
-      localStorage.setItem(STORAGE_KEY,JSON.stringify(parsed));location.reload();
-    }catch(err){alert('That file does not look like a valid CalorieTrack JSON backup.')}
-  });
-
-  $('shareProgressBtn').addEventListener('click',async()=>{
-    const blob=await makeProgressCardBlob();if(!blob)return;
-    const file=new File([blob],'calorietrack-progress.png',{type:'image/png'});
-    if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
-      try{await navigator.share({title:'My CalorieTrack Progress',text:'My CalorieTrack progress',files:[file]});return}catch(err){if(err?.name==='AbortError')return}
-    }
-    const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='calorietrack-progress.png';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
-  });
-
   $('undoBtn').addEventListener('click',()=>{
     if(undoState){const fn=undoState;undoState=null;fn();$('undoToast').classList.remove('show')}
   });
+
 
   $('selectedDate').addEventListener('change', render);
 
@@ -1024,22 +933,6 @@
     a.click();
     setTimeout(()=>URL.revokeObjectURL(url),1000);
   });
-
-
-  function maybeSendBrowserReminder(){
-    maybeShowReminder();
-    if(!state.settings.reminderEnabled || hasLoggedToday() || !('Notification' in window) || Notification.permission!=='granted') return;
-    const [h,m]=(state.settings.reminderTime||'19:00').split(':').map(Number), now=new Date();
-    if(now.getHours()*60+now.getMinutes() < h*60+m) return;
-    const key='calorieTrackReminderNotifiedDate';
-    if(localStorage.getItem(key)===todayLocal()) return;
-    try{
-      new Notification('CalorieTrack',{body:'Remember to log today 🔥'});
-      localStorage.setItem(key,todayLocal());
-    }catch(_){}
-  }
-  setInterval(maybeSendBrowserReminder,60000);
-
   // ----- PWA installation -----
   let deferredInstallPrompt = null;
   const installBtn = $('installBtn');
@@ -1168,11 +1061,7 @@
 
   recordAppOpen();
   $('selectedDate').value = todayLocal();
-  $('copyMealDate').value = addDays(todayLocal(),-1);
-  applyTheme();
   render();
-  renderFoodSearch();
-  maybeSendBrowserReminder();
 
   // Show the daily streak card immediately on each app launch.
   requestAnimationFrame(showStreakPopup);

@@ -830,6 +830,111 @@
     body.theme-red .live-clock{border-color:#9f3c27;background:linear-gradient(145deg,rgba(239,68,68,.24),rgba(249,115,22,.18))}
     body.theme-gold .live-clock{border-color:#927022;background:linear-gradient(145deg,rgba(245,158,11,.24),rgba(234,179,8,.18))}
 
+
+    /* ===== V18 Premium Glass / Neon visual system ===== */
+    :root{
+      --v18-bg:#070a11;--v18-panel:rgba(15,23,42,.72);--v18-panel2:rgba(8,15,28,.84);
+      --v18-line:rgba(148,163,184,.14);--v18-shadow:0 18px 55px rgba(0,0,0,.34);
+      --protein:#a78bfa;--carbs:#38bdf8;--fat:#f59e0b;
+    }
+    body{
+      background:
+        radial-gradient(circle at 12% 5%,rgba(126,34,206,.16),transparent 29rem),
+        radial-gradient(circle at 92% 18%,rgba(14,165,233,.12),transparent 28rem),
+        radial-gradient(circle at 48% 90%,rgba(34,197,94,.06),transparent 32rem),
+        var(--v18-bg);
+      background-attachment:fixed;
+    }
+    .app{position:relative}
+    .card{
+      position:relative;overflow:hidden;
+      background:linear-gradient(145deg,rgba(17,24,39,.84),rgba(8,15,28,.76)) !important;
+      border:1px solid rgba(148,163,184,.15) !important;
+      box-shadow:var(--v18-shadow),inset 0 1px 0 rgba(255,255,255,.035);
+      backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+      transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
+    }
+    .card::before{
+      content:"";position:absolute;inset:0 0 auto 0;height:1px;pointer-events:none;
+      background:linear-gradient(90deg,transparent,rgba(167,139,250,.72),rgba(56,189,248,.72),transparent);
+      opacity:.8;
+    }
+    .progress-dashboard::before{background:linear-gradient(90deg,transparent,#a855f7,#38bdf8,transparent)}
+    .week-card::before{background:linear-gradient(90deg,transparent,#22c55e,#38bdf8,transparent)}
+    .fav-card::before{background:linear-gradient(90deg,transparent,#ec4899,#a855f7,transparent)}
+    .weight-card::before{background:linear-gradient(90deg,transparent,#f59e0b,#ef4444,transparent)}
+    .month-card::before{background:linear-gradient(90deg,transparent,#38bdf8,#22c55e,transparent)}
+    .achievements-card::before{background:linear-gradient(90deg,transparent,#f59e0b,#ec4899,transparent)}
+    @media(hover:hover){
+      .card:hover{transform:translateY(-2px);box-shadow:0 24px 68px rgba(0,0,0,.42),0 0 28px rgba(56,189,248,.045)}
+      button:not(:disabled):hover{transform:translateY(-1px);filter:brightness(1.08)}
+    }
+    button{transition:transform .16s ease,filter .16s ease,box-shadow .16s ease}
+    button:active{transform:scale(.975)}
+    button:not(.danger){
+      box-shadow:0 8px 24px rgba(2,132,199,.12),inset 0 1px 0 rgba(255,255,255,.12);
+    }
+    button.danger{
+      background:rgba(127,29,29,.24)!important;color:#fca5a5!important;border:1px solid rgba(248,113,113,.25)!important;
+      box-shadow:none!important;
+    }
+    input,select,textarea{
+      background:rgba(5,10,20,.72)!important;border-color:rgba(148,163,184,.18)!important;
+      box-shadow:inset 0 1px 7px rgba(0,0,0,.2);
+    }
+    input:focus,select:focus,textarea:focus{border-color:#38bdf8!important;box-shadow:0 0 0 3px rgba(56,189,248,.11)!important}
+    h1{
+      background:linear-gradient(90deg,#f8fafc 10%,#c4b5fd 52%,#7dd3fc);
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+      letter-spacing:-.8px;
+    }
+    h2{letter-spacing:-.35px}
+    .v16-stat,.week-stat,.dash-stat{
+      background:linear-gradient(145deg,rgba(5,10,20,.76),rgba(15,23,42,.62))!important;
+      border-color:rgba(148,163,184,.12)!important;
+    }
+    .v16-stat strong,.dash-stat strong,.week-stat strong{
+      text-shadow:0 0 18px rgba(125,211,252,.12);
+    }
+    #sumProtein{color:var(--protein);text-shadow:0 0 18px rgba(167,139,250,.28)}
+    #sumCarbs{color:var(--carbs);text-shadow:0 0 18px rgba(56,189,248,.25)}
+    #sumFat{color:var(--fat);text-shadow:0 0 18px rgba(245,158,11,.23)}
+    .progress{
+      background:rgba(15,23,42,.9)!important;overflow:visible!important;box-shadow:inset 0 1px 6px rgba(0,0,0,.35);
+    }
+    #calorieProgress{
+      position:relative;background:linear-gradient(90deg,#7c3aed,#2563eb,#06b6d4)!important;
+      box-shadow:0 0 16px rgba(56,189,248,.32);
+      transition:width .45s cubic-bezier(.2,.8,.2,1);
+    }
+    #calorieProgress::after{
+      content:"";position:absolute;right:-3px;top:50%;width:8px;height:8px;border-radius:50%;
+      transform:translateY(-50%);background:#e0f2fe;box-shadow:0 0 13px #38bdf8;
+    }
+    .goal-ring{
+      background:conic-gradient(from -90deg,#a855f7 0%,#38bdf8 var(--p),#1e293b var(--p),#1e293b 100%)!important;
+      box-shadow:0 0 34px rgba(56,189,248,.14),inset 0 0 18px rgba(168,85,247,.10);
+    }
+    .goal-ring::after{background:linear-gradient(145deg,#080d18,#0c1423)!important;box-shadow:inset 0 0 20px rgba(0,0,0,.5)}
+    .goal-ring-text strong{text-shadow:0 0 22px rgba(56,189,248,.28)}
+    .chart-box{background:linear-gradient(180deg,rgba(5,10,20,.8),rgba(12,20,35,.65))!important;border-color:rgba(56,189,248,.12)!important}
+    #weightChart{filter:drop-shadow(0 0 6px rgba(56,189,248,.22))}
+    .streak-modal{background:linear-gradient(155deg,rgba(10,15,28,.97),rgba(19,15,39,.96))!important;box-shadow:0 30px 90px rgba(0,0,0,.58),0 0 45px color-mix(in srgb,var(--flame-color,#ef4444) 18%,transparent)!important}
+    .badge{filter:saturate(.55);background:linear-gradient(145deg,#090f1b,#0d1524)!important}
+    .badge.unlocked{
+      filter:none;box-shadow:0 0 22px rgba(245,158,11,.11),inset 0 1px 0 rgba(255,255,255,.04);
+      border-color:rgba(245,158,11,.42)!important;
+    }
+    .badge.unlocked .badge-icon{filter:drop-shadow(0 0 8px rgba(245,158,11,.38))}
+    .fav-item,.log-item{transition:background .18s ease,border-color .18s ease}
+    .fav-item:hover,.log-item:hover{background:rgba(255,255,255,.018)}
+    .pin-btn.pinned{box-shadow:0 0 18px rgba(245,158,11,.18)!important}
+    .history-drawer{background:linear-gradient(180deg,rgba(8,13,24,.98),rgba(10,17,30,.98))!important;backdrop-filter:blur(18px)}
+    .history-tab{box-shadow:0 10px 28px rgba(126,34,206,.24)!important}
+    .live-clock{box-shadow:0 8px 24px rgba(56,189,248,.08),inset 0 1px 0 rgba(255,255,255,.04)}
+    .marshall-badge{box-shadow:0 0 18px rgba(168,85,247,.08)}
+    @media(prefers-reduced-motion:reduce){.card,button,#calorieProgress{transition:none!important}}
+
 </style>
 </head>
 <body>
@@ -848,10 +953,7 @@
       <input id="selectedDate" class="datebox" type="date" />
     </div>
   </div>
-
-  <div id="reminderBanner" class="reminder-banner"><span>⏰ Remember to log today.</span><button id="dismissReminderBtn" type="button" style="width:auto">Got it</button></div>
-
-  <div class="card progress-dashboard">
+<div class="card progress-dashboard">
     <div class="v16-head"><div><div class="v16-kicker">Your Progress</div><h2 style="margin:3px 0 0">Progress Dashboard</h2></div><div class="tiny" id="dashMessage"></div></div>
     <div class="goal-ring-layout">
       <div class="goal-ring" id="goalRing"><div class="goal-ring-text"><strong id="ringRemaining">—</strong><span>to goal</span></div></div>
@@ -885,18 +987,7 @@
     <div class="actions"><button id="saveCheckinBtn" type="button">Save Day Details</button></div>
   </div>
 
-  <div class="card tools-card">
-    <div class="v16-head"><div><div class="v16-kicker">Find + Reuse</div><h2 style="margin:3px 0 0">Food History</h2></div><div class="tiny">Search anything you've logged before.</div></div>
-    <input id="foodSearchInput" placeholder="Search food history..." />
-    <div id="foodSearchResults" class="search-results"></div>
-    <hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
-    <h3 style="margin:0 0 10px">Copy a previous meal</h3>
-    <div class="tool-grid-3">
-      <div><label for="copyMealDate">From date</label><input id="copyMealDate" type="date"></div>
-      <div><label for="copyMealType">Meal</label><select id="copyMealType"><option>Breakfast</option><option>Lunch</option><option>Dinner</option><option>Snack</option><option>Drink</option></select></div>
-      <div style="align-self:end"><button id="copyMealBtn" type="button">Copy Meal</button></div>
-    </div>
-  </div>
+  
 
   <div class="card month-card">
     <div class="v16-head"><div><div class="v16-kicker">This Month</div><h2 style="margin:3px 0 0">Monthly Summary</h2></div><div class="tiny" id="monthLabel"></div></div>
@@ -914,34 +1005,9 @@
     <div id="badgeGrid" class="badge-grid"></div>
   </div>
 
-  <div class="card settings-card">
-    <div class="v16-head"><div><div class="v16-kicker">Personalize</div><h2 style="margin:3px 0 0">App Settings</h2></div></div>
-    <div class="tool-grid">
-      <div><label for="themeSelect">Theme</label><select id="themeSelect"><option value="purple">Purple + Blue</option><option value="green">Green + Teal</option><option value="red">Red + Orange</option><option value="gold">Black + Gold</option></select></div>
-      <div><label for="reminderTime">Daily reminder time</label><input id="reminderTime" type="time" value="19:00"></div>
-    </div>
-    <div class="reminder-row" style="margin-top:12px">
-      <div><input id="reminderEnabled" type="checkbox" aria-label="Enable daily reminder"></div>
-      <div><label style="margin:0">Daily reminder</label><div class="tiny">Shows an in-app reminder when you open CalorieTrack after your chosen time. Browser notifications are used when your device allows them.</div></div>
-      <button id="saveSettingsBtn" type="button">Save Settings</button>
-    </div>
-  </div>
+  
 
-  <div class="card tools-card">
-    <div class="v16-head"><div><div class="v16-kicker">Backup + Share</div><h2 style="margin:3px 0 0">Data & Progress Card</h2></div></div>
-    <div class="tool-grid">
-      <div>
-        <label for="importFile">Import CalorieTrack JSON backup</label>
-        <input id="importFile" type="file" accept=".json,application/json">
-        <button id="importBtn" type="button" style="margin-top:8px">Import Backup</button>
-      </div>
-      <div>
-        <label>Shareable progress card</label>
-        <div id="sharePreview" class="share-card-preview">Your progress card will use your current saved stats.</div>
-        <button id="shareProgressBtn" type="button" style="margin-top:8px">Share Progress Card</button>
-      </div>
-    </div>
-  </div>
+  
 
   <div class="card install-card">
     <div class="install-row">
