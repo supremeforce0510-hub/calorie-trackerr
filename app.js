@@ -15,7 +15,8 @@
       settings:{calorieGoal:1800, proteinGoal:100, endGoalWeight:''},
       profile:{age:'', sex:'', height:'', weight:'', activity:'sedentary'},
       days:{},
-      engagement:{usedDates:[]}
+      engagement:{usedDates:[], celebratedMilestones:[]},
+      favorites:[]
     };
   }
 
@@ -40,10 +41,10 @@
         },
         days:parsed?.days && typeof parsed.days === 'object' ? parsed.days : {},
         engagement:{
-          usedDates:Array.isArray(parsed?.engagement?.usedDates)
-            ? parsed.engagement.usedDates.filter(v => /^\d{4}-\d{2}-\d{2}$/.test(String(v)))
-            : []
-        }
+          usedDates:Array.isArray(parsed?.engagement?.usedDates) ? parsed.engagement.usedDates.filter(v => /^\d{4}-\d{2}-\d{2}$/.test(String(v))) : [],
+          celebratedMilestones:Array.isArray(parsed?.engagement?.celebratedMilestones) ? parsed.engagement.celebratedMilestones : []
+        },
+        favorites:Array.isArray(parsed?.favorites) ? parsed.favorites : []
       };
     }catch(_){
       return fallback;
@@ -327,6 +328,45 @@
   }
 
 
+
+  function allWeights(){
+    const a=[]; Object.entries(state.days||{}).forEach(([date,d])=>(d?.weights||[]).forEach(w=>a.push({...w,date})));
+    return a.sort((x,y)=>(num(x.createdAt)||parseLocalDate(x.date).getTime())-(num(y.createdAt)||parseLocalDate(y.date).getTime()));
+  }
+  function longestStreak(){
+    const d=[...new Set(state.engagement?.usedDates||[])].sort(); if(!d.length)return 0;
+    let best=1,run=1; for(let i=1;i<d.length;i++){run=dateDiffDays(d[i-1],d[i])===1?run+1:1;best=Math.max(best,run)} return best;
+  }
+  function weekDates(offset=0){let m=mondayOfWeek(todayLocal());m=addDays(m,offset*7);return Array.from({length:7},(_,i)=>addDays(m,i))}
+  function weekStats(ds){
+    const used=new Set(state.engagement?.usedDates||[]), today=todayLocal();
+    const tracked=ds.filter(x=>x<=today&&(used.has(x)||(state.days?.[x]?.foods?.length||0)||(state.days?.[x]?.weights?.length||0)));
+    let cal=0,pro=0;tracked.forEach(x=>(state.days?.[x]?.foods||[]).forEach(f=>{cal+=num(f.calories);pro+=num(f.protein)}));
+    const ww=allWeights().filter(w=>ds.includes(w.date));
+    return {days:tracked.length,cal:tracked.length?cal/tracked.length:0,pro:tracked.length?pro/tracked.length:0,w:ww.length>1?num(ww.at(-1).value)-num(ww[0].value):null};
+  }
+  function renderChart(a){
+    const svg=$('weightChart'); if(!a.length){svg.innerHTML='<text x="320" y="95" text-anchor="middle" fill="#94a3b8">Log weight to build your trend</text>';$('chartRange').textContent='No weigh-ins yet';return}
+    const vals=a.map(x=>num(x.value)),lo=Math.min(...vals),hi=Math.max(...vals),spread=Math.max(2,hi-lo),pad=28,W=640,H=185;
+    const pts=a.map((w,i)=>({x:a.length===1?W/2:pad+i*(W-pad*2)/(a.length-1),y:H-pad-((num(w.value)-lo)/spread)*(H-pad*2),w}));
+    svg.innerHTML=`<polyline points="${pts.map(p=>p.x+','+p.y).join(' ')}" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>${pts.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="5" fill="#a855f7"><title>${p.w.date}: ${format1(p.w.value)} lb</title></circle>`).join('')}`;
+    $('chartRange').textContent=`${friendlyDate(a[0].date)} → ${friendlyDate(a.at(-1).date)}`;
+  }
+  function renderDashboard(){
+    const w=allWeights(),start=w.length?num(w[0].value):0,current=w.length?num(w.at(-1).value):0,goal=num(state.settings.endGoalWeight),st=currentStreakInfo().count,best=longestStreak();
+    $('dashStart').textContent=start?format1(start)+' lb':'—';$('dashCurrent').textContent=current?format1(current)+' lb':'—';$('dashGoal').textContent=goal?format1(goal)+' lb':'—';$('dashStreak').textContent=st;$('dashBest').textContent=best;
+    $('dashChange').textContent=start&&current?((current-start>0?'+':'')+format1(current-start)+' lb'):'—';
+    let rem=null,p=0;if(start&&current&&goal){rem=Math.abs(current-goal);const total=Math.abs(start-goal);p=total?Math.max(0,Math.min(100,(1-rem/total)*100)):100}
+    $('ringRemaining').textContent=rem===null?'—':format1(rem)+' lb';$('goalRing').style.setProperty('--p',p+'%');$('dashMessage').textContent=current&&goal?`${format1(rem)} lb to goal • ${st} day${st===1?'':'s'} streak`:'Log weight and a goal to fill your progress ring.';renderChart(w.slice(-30));
+  }
+  function renderWeek(){
+    const a=weekDates(0),b=weekDates(-1),x=weekStats(a),y=weekStats(b);$('weekRange').textContent=`${friendlyDate(a[0])} – ${friendlyDate(a[6])}`;$('weekDays').textContent=x.days;$('weekCalories').textContent=Math.round(x.cal);$('weekProtein').textContent=format1(x.pro)+'g';$('weekWeight').textContent=x.w===null?'—':(x.w>0?'+':'')+format1(x.w)+' lb';$('weekStreak').textContent=currentStreakInfo().count;
+    $('weekCompare').textContent=y.days?`Last week comparison: ${Math.abs(Math.round(x.cal-y.cal))} ${x.cal>=y.cal?'more':'fewer'} avg calories • ${Math.abs(format1(x.pro-y.pro))}g ${x.pro>=y.pro?'more':'less'} avg protein.`:'Your comparison will build as you log more weeks.';
+  }
+  function renderFavs(){const f=state.favorites||[];$('favList').innerHTML=f.length?f.map(x=>`<div class="fav-item"><div><b>${escapeHtml(x.name)}</b><div class="log-meta">${escapeHtml(x.meal)} • ${Math.round(num(x.calories))} cal • ${format1(x.protein)}g protein</div></div><div class="fav-actions"><button data-fav-add="${x.id}">Add Again</button><button class="danger" data-fav-del="${x.id}">Delete</button></div></div>`).join(''):'<div class="empty">No favorites yet.</div>'}
+  let mileTimer;
+  function celebrate(title,msg,key){state.engagement.celebratedMilestones=state.engagement.celebratedMilestones||[];if(state.engagement.celebratedMilestones.includes(key))return;state.engagement.celebratedMilestones.push(key);saveState();const p=$('milestonePop');p.innerHTML=`<strong>🏆 ${escapeHtml(title)}</strong>${escapeHtml(msg)}`;p.classList.add('show');clearTimeout(mileTimer);mileTimer=setTimeout(()=>p.classList.remove('show'),4200)}
+  function checkMilestones(){const w=allWeights();if(w.length>1){const lost=num(w[0].value)-num(w.at(-1).value);[5,10,15,25,50].forEach(m=>{if(lost>=m)celebrate(`${m} lb milestone!`,`You've moved ${m} pounds from your starting weight.`,'loss-'+m)});const g=num(state.settings.endGoalWeight);if(g&&Math.abs(num(w.at(-1).value)-g)<.05)celebrate('Goal reached!','You reached your saved goal weight.','goal-'+g)}const st=currentStreakInfo().count;[7,15,30,60,100].forEach(m=>{if(st>=m)celebrate(`${m}-day streak!`,'You kept showing up.','streak-'+m)})}
   function historyDates(){
     const usage = state.engagement?.usedDates || [];
     const dataDates = Object.keys(state.days || {}).filter(date => {
@@ -598,6 +638,10 @@
 
     saveState();
     renderHistory();
+    renderDashboard();
+    renderWeek();
+    renderFavs();
+    checkMilestones();
   }
 
   function clearFoodForm(){
@@ -710,6 +754,17 @@
       closeHistory();
       closeStreakPopup();
     }
+  });
+
+  $('saveFavBtn').addEventListener('click',()=>{
+    const name=$('favName').value.trim();if(!name){alert('Enter a food name.');return}
+    state.favorites.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random(),name,meal:$('favMeal').value,calories:num($('favCalories').value),protein:num($('favProtein').value),carbs:num($('favCarbs').value),fat:num($('favFat').value)});
+    ['favName','favCalories','favProtein','favCarbs','favFat'].forEach(id=>$(id).value='');saveState();renderFavs();
+  });
+  $('favList').addEventListener('click',e=>{
+    const add=e.target.closest('[data-fav-add]'),del=e.target.closest('[data-fav-del]');
+    if(add){const f=state.favorites.find(x=>x.id===add.dataset.favAdd);if(f){getDay(selectedDate()).foods.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random(),name:f.name,meal:f.meal,calories:num(f.calories),protein:num(f.protein),carbs:num(f.carbs),fat:num(f.fat),createdAt:Date.now()});render()}}
+    if(del){state.favorites=state.favorites.filter(x=>x.id!==del.dataset.favDel);saveState();renderFavs()}
   });
 
   $('selectedDate').addEventListener('change', render);

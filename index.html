@@ -773,7 +773,22 @@
       }
     }
 
-  </style>
+  
+.progress-dashboard{background:linear-gradient(145deg,rgba(126,34,206,.18),rgba(2,132,199,.1));border-color:#5b4bb7}
+.v16-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.v16-kicker{font-size:11px;color:#c4b5fd;font-weight:900;text-transform:uppercase;letter-spacing:.7px}
+.goal-ring-layout{display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:center;margin-top:14px}
+.goal-ring{--p:0%;width:145px;height:145px;border-radius:50%;display:grid;place-items:center;position:relative;background:conic-gradient(#38bdf8 var(--p),#1e293b 0)}
+.goal-ring:after{content:"";position:absolute;inset:13px;border-radius:50%;background:#0b1220;border:1px solid #334155}
+.goal-ring-text{position:relative;z-index:2;text-align:center}.goal-ring-text strong{display:block;font-size:23px}.goal-ring-text span{font-size:11px;color:var(--muted)}
+.v16-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.v16-stat{background:#0b1220;border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}.v16-stat strong{display:block;font-size:16px}.v16-stat span{font-size:10px;color:var(--muted)}
+.chart-box{margin-top:14px;background:#0b1220;border:1px solid var(--line);border-radius:14px;padding:10px}#weightChart{display:block;width:100%;height:185px}
+.week-card{background:linear-gradient(145deg,rgba(34,197,94,.1),rgba(2,132,199,.08));border-color:#24576b}.week-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px}.week-compare{margin-top:10px;padding:10px;border-radius:11px;background:#0b1220;color:#cbd5e1;font-size:12px}
+.fav-card{background:linear-gradient(145deg,rgba(236,72,153,.1),rgba(126,34,206,.08));border-color:#6d285e}.fav-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;margin-top:10px}.fav-list{margin-top:12px}.fav-item{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}.fav-actions{display:flex;gap:6px}.fav-actions button{width:auto;padding:8px}
+.milestone-pop{position:fixed;left:50%;bottom:20px;transform:translate(-50%,100px);z-index:150;width:min(420px,calc(100% - 30px));padding:14px;border-radius:16px;background:linear-gradient(135deg,#4c1d95,#075985);border:1px solid #a78bfa;opacity:0;transition:.35s;color:#fff;box-shadow:0 18px 45px rgba(0,0,0,.4)}.milestone-pop.show{transform:translate(-50%,0);opacity:1}.milestone-pop strong{display:block;margin-bottom:3px}
+@media(max-width:640px){.goal-ring-layout{grid-template-columns:1fr;justify-items:center}.v16-stats{grid-template-columns:repeat(2,1fr);width:100%}.week-grid{grid-template-columns:repeat(2,1fr)}.fav-grid{grid-template-columns:1fr}}
+
+</style>
 </head>
 <body>
 <div class="app">
@@ -792,6 +807,29 @@
     </div>
   </div>
 
+
+  <div class="card progress-dashboard">
+    <div class="v16-head"><div><div class="v16-kicker">Your Progress</div><h2 style="margin:3px 0 0">Progress Dashboard</h2></div><div class="tiny" id="dashMessage"></div></div>
+    <div class="goal-ring-layout">
+      <div class="goal-ring" id="goalRing"><div class="goal-ring-text"><strong id="ringRemaining">—</strong><span>to goal</span></div></div>
+      <div class="v16-stats">
+        <div class="v16-stat"><strong id="dashStart">—</strong><span>Starting weight</span></div><div class="v16-stat"><strong id="dashCurrent">—</strong><span>Current weight</span></div><div class="v16-stat"><strong id="dashGoal">—</strong><span>Goal weight</span></div>
+        <div class="v16-stat"><strong id="dashChange">—</strong><span>Total change</span></div><div class="v16-stat"><strong id="dashStreak">0</strong><span>Current streak</span></div><div class="v16-stat"><strong id="dashBest">0</strong><span>Longest streak</span></div>
+      </div>
+    </div>
+    <div class="chart-box"><div class="tiny" id="chartRange">Weight trend</div><svg id="weightChart" viewBox="0 0 640 185" aria-label="Weight trend chart"></svg></div>
+  </div>
+  <div class="card week-card">
+    <div class="v16-head"><div><div class="v16-kicker">This Week</div><h2 style="margin:3px 0 0">Your Week in CalorieTrack</h2></div><div class="tiny" id="weekRange"></div></div>
+    <div class="week-grid"><div class="v16-stat"><strong id="weekDays">0</strong><span>Days tracked</span></div><div class="v16-stat"><strong id="weekCalories">0</strong><span>Avg calories</span></div><div class="v16-stat"><strong id="weekProtein">0g</strong><span>Avg protein</span></div><div class="v16-stat"><strong id="weekWeight">—</strong><span>Weight change</span></div><div class="v16-stat"><strong id="weekStreak">0</strong><span>Current streak</span></div></div>
+    <div class="week-compare" id="weekCompare">Your comparison will build as you log more weeks.</div>
+  </div>
+  <div class="card fav-card">
+    <div class="v16-head"><div><div class="v16-kicker">Quick Add</div><h2 style="margin:3px 0 0">Favorite Foods</h2></div><div class="tiny">Save once, add again in one tap.</div></div>
+    <div class="fav-grid"><div><label>Food name</label><input id="favName" placeholder="Protein shake"></div><div><label>Meal</label><select id="favMeal"><option>Breakfast</option><option>Lunch</option><option>Dinner</option><option>Snack</option><option>Drink</option></select></div><div><label>Calories</label><input id="favCalories" type="number" min="0"></div></div>
+    <div class="fav-grid" style="grid-template-columns:repeat(3,1fr)"><div><label>Protein (g)</label><input id="favProtein" type="number" min="0" step=".1"></div><div><label>Carbs (g)</label><input id="favCarbs" type="number" min="0" step=".1"></div><div><label>Fat (g)</label><input id="favFat" type="number" min="0" step=".1"></div></div>
+    <div class="actions"><button id="saveFavBtn" type="button">Save Favorite</button></div><div id="favList" class="fav-list"></div>
+  </div>
   <div class="card install-card">
     <div class="install-row">
       <div>
@@ -993,6 +1031,7 @@
   </div>
 </div>
 
+<div id="milestonePop" class="milestone-pop" aria-live="polite"></div>
 <script src="./app.js" defer></script>
 </body>
 </html>
