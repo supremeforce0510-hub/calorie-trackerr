@@ -1003,10 +1003,54 @@
     }
     @media(max-width:640px){.streak-tab{right:14px;bottom:72px;min-width:92px;min-height:44px}}
 
+
+    /* ===== V22 HOME + MENU NAVIGATION ===== */
+    .feature-section{display:none !important}
+    .feature-section.active{display:block !important}
+    .app.home-view .topbar-right{display:none}
+    .app.section-view .home-hero{display:none}
+    .home-hero{
+      margin-top:18px;padding:34px 22px 30px;text-align:center;border-radius:28px;
+      border:1px solid rgba(255,255,255,.11);
+      background:radial-gradient(circle at 50% 0%,rgba(139,92,246,.14),transparent 38%),linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.022));
+      box-shadow:0 24px 70px rgba(0,0,0,.28);
+      min-height:430px;display:flex;flex-direction:column;align-items:center;justify-content:center
+    }
+    .home-logo-wrap{width:min(330px,88vw);aspect-ratio:1/1;border-radius:26px;overflow:hidden;box-shadow:0 24px 65px rgba(0,0,0,.45),0 0 35px rgba(139,92,246,.08);border:1px solid rgba(255,255,255,.1);margin-bottom:22px}
+    .home-logo{width:100%;height:100%;object-fit:cover;display:block}
+    .home-kicker{font-size:.78rem;font-weight:900;letter-spacing:.22em;color:#a78bfa;margin-bottom:9px}
+    .home-hero h2{margin:0;font-size:clamp(1.45rem,5vw,2rem)}
+    .home-hero p{max-width:590px;margin:12px auto 0;color:#cbd5e1;line-height:1.65}
+    .home-hero .home-hint{font-size:.92rem;color:#94a3b8;margin-top:18px}
+    .quick-nav{position:fixed;right:16px;bottom:18px;z-index:92;display:flex;gap:8px;padding:7px;border-radius:999px;background:rgba(8,12,22,.9);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.1);box-shadow:0 14px 42px rgba(0,0,0,.38)}
+    .quick-nav .quick-nav-btn{position:static !important;right:auto !important;bottom:auto !important;width:auto !important;min-width:0 !important;min-height:42px !important;margin:0 !important;padding:9px 13px !important;border-radius:999px !important;font-size:.86rem !important;font-weight:900 !important;white-space:nowrap;pointer-events:auto;touch-action:manipulation}
+    .quick-nav .menu-tab{background:linear-gradient(90deg,#7c3aed,#2563eb)}
+    .quick-nav .history-tab{background:linear-gradient(90deg,#4338ca,#2563eb)}
+    .quick-nav .streak-tab{background:linear-gradient(90deg,#dc2626,#f97316)}
+    .menu-backdrop{position:fixed;inset:0;z-index:119;background:rgba(2,6,23,.62);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .22s ease}
+    .menu-backdrop.open{opacity:1;pointer-events:auto}
+    .menu-drawer{position:fixed;top:0;right:0;z-index:120;height:100vh;height:100dvh;width:min(390px,92vw);padding:18px;overflow-y:auto;background:linear-gradient(180deg,rgba(15,23,42,.985),rgba(3,7,18,.995));border-left:1px solid rgba(255,255,255,.11);box-shadow:-22px 0 70px rgba(0,0,0,.42);transform:translateX(105%);transition:transform .24s ease}
+    .menu-drawer.open{transform:translateX(0)}
+    .menu-header{display:flex;align-items:center;justify-content:space-between;padding:4px 2px 16px}
+    .menu-close{width:42px;height:42px;border-radius:50%;padding:0;font-size:1.55rem;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1)}
+    .menu-group{padding:12px 0;border-top:1px solid rgba(255,255,255,.07)}
+    .menu-group-title{padding:0 7px 8px;font-size:.72rem;font-weight:900;letter-spacing:.13em;text-transform:uppercase;color:#64748b}
+    .menu-item{width:100%;display:flex;align-items:center;gap:12px;text-align:left;padding:13px 14px;margin:4px 0;border-radius:14px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06);color:#e5e7eb;font-weight:800}
+    .menu-item span{flex:1}
+    .menu-item:active{transform:scale(.985)}
+    @media(max-width:640px){
+      .quick-nav{left:10px;right:10px;bottom:max(10px,env(safe-area-inset-bottom));justify-content:center}
+      .quick-nav .quick-nav-btn{flex:1;padding:9px 8px !important;font-size:.82rem !important}
+      .home-hero{min-height:calc(100dvh - 190px);padding:24px 15px 84px;margin-top:10px}
+      .home-logo-wrap{width:min(300px,82vw)}
+      .app.section-view{padding-bottom:88px}
+      .app.section-view .topbar-right{display:flex}
+    }
+
 </style>
 </head>
 <body>
-<div class="app">
+<div class="app home-view" id="appShell">
   <div class="topbar">
     <div class="brand-lockup">
       <img id="brandLogo" class="brand-logo" src="./icons/icon-192.png" alt="IRONLOG logo">
@@ -1024,7 +1068,15 @@
       <input id="selectedDate" class="datebox" type="date" />
     </div>
   </div>
-<div class="card progress-dashboard">
+<section id="homeHero" class="home-hero" aria-label="IRONLOG home">
+  <div class="home-logo-wrap"><img class="home-logo" src="./ironlog-logo.png" alt="IRONLOG logo"></div>
+  <div class="home-kicker">TRACK • TRAIN • PROGRESS</div>
+  <h2>Everything you need. Nothing in the way.</h2>
+  <p>IRONLOG keeps your calories, weight, workouts, calories burned, lifting PRs, favorite foods, streaks, and progress together in one place.</p>
+  <p class="home-hint">Use <strong>Menu</strong> below to open any part of the app.</p>
+</section>
+
+<div id="sectionProgress" class="card progress-dashboard feature-section">
     <div class="v16-head"><div><div class="v16-kicker">Your Progress</div><h2 style="margin:3px 0 0">Progress Dashboard</h2></div><div class="tiny" id="dashMessage"></div></div>
     <div class="goal-ring-layout">
       <div class="goal-ring" id="goalRing"><div class="goal-ring-text"><strong id="ringRemaining">—</strong><span>to goal</span></div></div>
@@ -1040,32 +1092,19 @@
       <div id="dashPRHighlights" class="pr-highlight-list"></div>
     </div>
   </div>
-  <div class="card week-card">
+  <div id="sectionWeek" class="card week-card feature-section">
     <div class="v16-head"><div><div class="v16-kicker">This Week</div><h2 style="margin:3px 0 0">Your Week in IRONLOG</h2></div><div class="tiny" id="weekRange"></div></div>
     <div class="week-grid"><div class="v16-stat"><strong id="weekDays">0</strong><span>Days tracked</span></div><div class="v16-stat"><strong id="weekCalories">0</strong><span>Avg calories</span></div><div class="v16-stat"><strong id="weekProtein">0g</strong><span>Avg protein</span></div><div class="v16-stat"><strong id="weekWeight">—</strong><span>Weight change</span></div><div class="v16-stat"><strong id="weekStreak">0</strong><span>Current streak</span></div></div>
     <div class="week-compare" id="weekCompare">Your comparison will build as you log more weeks.</div>
   </div>
-  <div class="card fav-card">
+  <div id="sectionFavorites" class="card fav-card feature-section">
     <div class="v16-head"><div><div class="v16-kicker">Quick Add</div><h2 style="margin:3px 0 0">Favorite Foods</h2></div><div class="tiny">Save once, add again in one tap.</div></div>
     <div class="fav-grid"><div><label>Food name</label><input id="favName" placeholder="Protein shake"></div><div><label>Meal</label><select id="favMeal"><option>Breakfast</option><option>Lunch</option><option>Dinner</option><option>Snack</option><option>Drink</option></select></div><div><label>Calories</label><input id="favCalories" type="number" min="0"></div></div>
     <div class="fav-grid" style="grid-template-columns:repeat(3,1fr)"><div><label>Protein (g)</label><input id="favProtein" type="number" min="0" step=".1"></div><div><label>Carbs (g)</label><input id="favCarbs" type="number" min="0" step=".1"></div><div><label>Fat (g)</label><input id="favFat" type="number" min="0" step=".1"></div></div>
     <div class="actions"><button id="saveFavBtn" type="button">Save Favorite</button></div><div id="favList" class="fav-list"></div>
   </div>
 
-  <div class="card tools-card">
-    <div class="v16-head"><div><div class="v16-kicker">Daily Details</div><h2 style="margin:3px 0 0">Notes + Check-In</h2></div><div class="tiny">Saved separately for the selected day.</div></div>
-    <label for="dayNote">Daily note</label>
-    <textarea id="dayNote" placeholder="Worked a double, ate out, low appetite, great energy..."></textarea>
-    <div class="checkin-row" style="margin-top:12px">
-      <div><label>Mood (1–5)</label><div id="moodButtons" class="scale-buttons"></div></div>
-      <div><label>Hunger (1–5)</label><div id="hungerButtons" class="scale-buttons"></div></div>
-    </div>
-    <div class="actions"><button id="saveCheckinBtn" type="button">Save Day Details</button></div>
-  </div>
-
-  
-
-  <div class="card month-card">
+  <div id="sectionMonth" class="card month-card feature-section">
     <div class="v16-head"><div><div class="v16-kicker">This Month</div><h2 style="margin:3px 0 0">Monthly Summary</h2></div><div class="tiny" id="monthLabel"></div></div>
     <div class="month-grid">
       <div class="v16-stat"><strong id="monthDays">0</strong><span>Days tracked</span></div>
@@ -1076,7 +1115,7 @@
     </div>
   </div>
 
-  <div class="card achievements-card">
+  <div id="sectionAchievements" class="card achievements-card feature-section">
     <div class="v16-head"><div><div class="v16-kicker">Collection</div><h2 style="margin:3px 0 0">Achievements</h2></div><div class="tiny" id="badgeCount"></div></div>
     <div id="badgeGrid" class="badge-grid"></div>
   </div>
@@ -1085,7 +1124,7 @@
 
   
 
-  <div class="card install-card">
+  <div id="sectionInstall" class="card install-card feature-section">
     <div class="install-row">
       <div>
         <h2 style="margin-bottom:4px">Install IRONLOG</h2>
@@ -1096,7 +1135,7 @@
     <div class="install-message" id="installMessage"></div>
   </div>
 
-  <div class="card summary-card" id="dailySummaryCard">
+  <div id="sectionSummary" class="card summary-card feature-section" id="dailySummaryCard">
     <div class="summary-title-row">
       <h2 style="margin:0">Daily Summary</h2>
       <div class="summary-date" id="summaryDateLabel"></div>
@@ -1135,7 +1174,7 @@
     </div>
   </div>
 
-  <div class="card food-card">
+  <div id="sectionAddFood" class="card food-card feature-section">
     <h2>Add Food</h2>
     <div class="form-grid">
       <div>
@@ -1180,7 +1219,7 @@
     </div>
   </div>
 
-  <div class="card exercise-card">
+  <div id="sectionExercise" class="card exercise-card feature-section">
     <div class="v16-head"><div><div class="v16-kicker">Activity</div><h2 style="margin:3px 0 0">Exercise + Calories Burned</h2></div><div class="tiny">Log the calories you burned during exercise.</div></div>
     <div class="exercise-grid">
       <div>
@@ -1223,7 +1262,7 @@
     <div id="exerciseLog" class="exercise-log"></div>
   </div>
 
-  <div class="card pr-card">
+  <div id="sectionPR" class="card pr-card feature-section">
     <div class="v16-head"><div><div class="v16-kicker">Strength</div><h2 style="margin:3px 0 0">Weight Lifting PR Log</h2></div><div class="tiny">PR = personal record.</div></div>
     <div class="pr-form-grid">
       <div>
@@ -1281,12 +1320,12 @@
     <div id="prLog" class="pr-log"></div>
   </div>
 
-  <div class="card foodlog-card">
+  <div id="sectionFoodLog" class="card foodlog-card feature-section">
     <h2>Food Log</h2>
     <div id="foodLog"></div>
   </div>
 
-  <div class="card weightlog-card">
+  <div id="sectionWeightLog" class="card weightlog-card feature-section">
     <h2>Weight Log</h2>
 
     <div class="weight-goal-grid">
@@ -1327,7 +1366,7 @@
     <div id="weightLog" style="margin-top:14px"></div>
   </div>
 
-  <div class="card data-card">
+  <div id="sectionData" class="card data-card feature-section">
     <h2>Data</h2>
     <p class="tiny">Everything is stored only in this browser on this device.</p>
     <div class="actions">
@@ -1338,8 +1377,53 @@
 </div>
 
 
-<button id="historyTab" class="history-tab" type="button" aria-label="Open day history">History</button>
-<button id="streakTab" class="streak-tab" type="button" aria-label="Open streak">🔥 Streak</button>
+<nav class="quick-nav" aria-label="Quick navigation">
+  <button id="menuTab" class="quick-nav-btn menu-tab" type="button" aria-label="Open IRONLOG menu">☰ Menu</button>
+  <button id="historyTab" class="quick-nav-btn history-tab" type="button" aria-label="Open day history">History</button>
+  <button id="streakTab" class="quick-nav-btn streak-tab" type="button" aria-label="Open streak">🔥 Streak</button>
+</nav>
+
+<div id="menuBackdrop" class="menu-backdrop"></div>
+<aside id="menuDrawer" class="menu-drawer" aria-label="IRONLOG menu" aria-hidden="true">
+  <div class="menu-header">
+    <div><div class="tiny">IRONLOG</div><h2 style="margin:3px 0 0">Menu</h2></div>
+    <button id="menuClose" class="menu-close" type="button" aria-label="Close menu">×</button>
+  </div>
+
+  <div class="menu-group"><div class="menu-group-title">Home</div>
+    <button class="menu-item" type="button" data-menu-home>⌂ <span>Home</span></button>
+  </div>
+
+  <div class="menu-group"><div class="menu-group-title">Progress</div>
+    <button class="menu-item" type="button" data-menu-section="sectionProgress">↗ <span>Progress Dashboard</span></button>
+    <button class="menu-item" type="button" data-menu-section="sectionWeek">▦ <span>Weekly Report</span></button>
+    <button class="menu-item" type="button" data-menu-section="sectionMonth">◫ <span>Monthly Summary</span></button>
+    <button class="menu-item" type="button" data-menu-section="sectionAchievements">★ <span>Achievements</span></button>
+  </div>
+
+  <div class="menu-group"><div class="menu-group-title">Food</div>
+    <button class="menu-item" type="button" data-menu-section="sectionSummary">◉ <span>Daily Summary</span></button>
+    <button class="menu-item" type="button" data-menu-section="sectionAddFood">＋ <span>Add Food</span></button>
+    <button class="menu-item" type="button" data-menu-section="sectionFoodLog">☷ <span>Food Log</span></button>
+    <button class="menu-item" type="button" data-menu-section="sectionFavorites">♥ <span>Favorite Foods</span></button>
+  </div>
+
+  <div class="menu-group"><div class="menu-group-title">Training</div>
+    <button class="menu-item" type="button" data-menu-section="sectionExercise">⚡ <span>Exercise + Calories Burned</span></button>
+    <button class="menu-item" type="button" data-menu-section="sectionPR">◆ <span>Weight Lifting PR Log</span></button>
+  </div>
+
+  <div class="menu-group"><div class="menu-group-title">Weight</div>
+    <button class="menu-item" type="button" data-menu-section="sectionWeightLog">◈ <span>Weight Log + Goal</span></button>
+  </div>
+
+  <div class="menu-group"><div class="menu-group-title">App</div>
+    <button class="menu-item" type="button" data-menu-history>◷ <span>Day History</span></button>
+    <button class="menu-item" type="button" data-menu-streak>🔥 <span>Streak</span></button>
+    <button class="menu-item" type="button" data-menu-section="sectionData">⇩ <span>Data + Export</span></button>
+    <button class="menu-item" type="button" data-menu-section="sectionInstall">⬡ <span>Install App</span></button>
+  </div>
+</aside>
 <div id="historyBackdrop" class="history-backdrop"></div>
 <aside id="historyDrawer" class="history-drawer" aria-label="Day history" aria-hidden="true">
   <div class="history-header">

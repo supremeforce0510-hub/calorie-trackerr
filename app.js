@@ -420,13 +420,6 @@
 
 
 
-  function renderCheckin(){
-    const day=getDay(selectedDate());
-    $('dayNote').value=day.note||'';
-    const make=(id,value)=>{$(id).innerHTML=[1,2,3,4,5].map(n=>`<button type="button" data-scale="${n}" class="${num(value)===n?'selected':''}">${n}</button>`).join('')};
-    make('moodButtons',day.mood); make('hungerButtons',day.hunger);
-  }
-
   function renderMonthlySummary(){
     const today=parseLocalDate(todayLocal()), y=today.getFullYear(), m=today.getMonth();
     const prefix=`${y}-${String(m+1).padStart(2,'0')}-`;
@@ -522,7 +515,7 @@
             ${Math.round(calories)} cal • ${foods.length} food entr${foods.length === 1 ? 'y' : 'ies'} •
             ${latestWeight ? format1(latestWeight.value) + ' lb' : 'no weight'}
             ${burned ? ' • '+Math.round(burned)+' burned' : ''}${prs.length ? ' • '+prs.length+' PR'+(prs.length===1?'':'s') : ''}
-            ${day.note ? ' • note saved' : ''}${num(day.mood) ? ' • mood '+num(day.mood)+'/5' : ''}${num(day.hunger) ? ' • hunger '+num(day.hunger)+'/5' : ''}
+            
           </div>
         </button>
       `;
@@ -807,7 +800,6 @@
     renderDashboard();
     renderWeek();
     renderFavs();
-    renderCheckin();
     renderMonthlySummary();
     renderAchievements();
     checkMilestones();
@@ -949,16 +941,45 @@
     }, 1400);
   });
 
+
+  // ----- V22 menu navigation -----
+  function closeMenu(){
+    const drawer=$('menuDrawer'),backdrop=$('menuBackdrop');
+    drawer.classList.remove('open');backdrop.classList.remove('open');drawer.setAttribute('aria-hidden','true');
+  }
+  function openMenu(){
+    const drawer=$('menuDrawer'),backdrop=$('menuBackdrop');
+    drawer.classList.add('open');backdrop.classList.add('open');drawer.setAttribute('aria-hidden','false');
+  }
+  function showHome(){
+    document.querySelectorAll('.feature-section').forEach(el=>el.classList.remove('active'));
+    const shell=$('appShell');shell.classList.add('home-view');shell.classList.remove('section-view');
+    closeMenu();window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function showSection(id){
+    const target=document.getElementById(id);if(!target)return;
+    document.querySelectorAll('.feature-section').forEach(el=>el.classList.remove('active'));
+    target.classList.add('active');
+    const shell=$('appShell');shell.classList.remove('home-view');shell.classList.add('section-view');
+    closeMenu();window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  const menuTabButton=$('menuTab');
+  menuTabButton.addEventListener('click',openMenu);
+  menuTabButton.addEventListener('touchend',e=>{e.preventDefault();openMenu()},{passive:false});
+  $('menuClose').addEventListener('click',closeMenu);
+  $('menuBackdrop').addEventListener('click',closeMenu);
+  $('menuDrawer').addEventListener('click',e=>{
+    const sectionButton=e.target.closest('[data-menu-section]');
+    if(sectionButton){showSection(sectionButton.dataset.menuSection);return}
+    if(e.target.closest('[data-menu-home]')){showHome();return}
+    if(e.target.closest('[data-menu-history]')){closeMenu();openHistory();return}
+    if(e.target.closest('[data-menu-streak]')){closeMenu();launchStreakPopup();return}
+  });
+
   const historyTabButton = $('historyTab');
   historyTabButton.addEventListener('click', openHistory);
-  historyTabButton.addEventListener('pointerup', e => {
-    // Some ChromeOS/trackpad combinations can swallow an edge-positioned click.
-    // Pointerup gives the side button a reliable fallback without changing behavior.
-    if(e.pointerType === 'touch' || e.pointerType === 'pen'){
-      e.preventDefault();
-      openHistory();
-    }
-  });
+  historyTabButton.addEventListener('touchend',e=>{e.preventDefault();openHistory()},{passive:false});
   $('historyClose').addEventListener('click', closeHistory);
   $('historyBackdrop').addEventListener('click', closeHistory);
 
@@ -972,13 +993,12 @@
   });
 
   const streakTabButton=$('streakTab');
-  streakTabButton.addEventListener('click', launchStreakPopup);
-  streakTabButton.addEventListener('pointerup',e=>{
-    if(e.pointerType==='touch' || e.pointerType==='pen'){
-      e.preventDefault();
-      launchStreakPopup();
-    }
-  });
+  function openStreakFromButton(e){
+    if(e && e.type==='touchend') e.preventDefault();
+    launchStreakPopup();
+  }
+  streakTabButton.addEventListener('click',openStreakFromButton);
+  streakTabButton.addEventListener('touchend',openStreakFromButton,{passive:false});
 
   $('streakClose').addEventListener('click', closeStreakPopup);
   $('streakContinue').addEventListener('click', closeStreakPopup);
@@ -988,6 +1008,7 @@
 
   document.addEventListener('keydown', e => {
     if(e.key === 'Escape'){
+      closeMenu();
       closeHistory();
       closeStreakPopup();
     }
@@ -1005,19 +1026,6 @@
     if(del){const idx=state.favorites.findIndex(x=>x.id===del.dataset.favDel);if(idx>=0){const removed=state.favorites.splice(idx,1)[0];saveState();renderFavs();showUndo('Favorite deleted.',()=>{state.favorites.splice(idx,0,removed);saveState();renderFavs()})}}
   });
 
-
-  $('saveCheckinBtn').addEventListener('click',()=>{
-    const d=getDay(selectedDate());d.note=$('dayNote').value.trim();saveState();
-    const btn=$('saveCheckinBtn');btn.textContent='Saved ✓';setTimeout(()=>btn.textContent='Save Day Details',1000);
-    renderHistory();
-  });
-  function bindScale(id,key){
-    $(id).addEventListener('click',e=>{
-      const b=e.target.closest('[data-scale]');if(!b)return;
-      getDay(selectedDate())[key]=num(b.dataset.scale);saveState();renderCheckin();
-    });
-  }
-  bindScale('moodButtons','mood');bindScale('hungerButtons','hunger');
 
   $('undoBtn').addEventListener('click',()=>{
     if(undoState){const fn=undoState;undoState=null;fn();$('undoToast').classList.remove('show')}
@@ -1235,6 +1243,7 @@
 
   try{
     render();
+    showHome();
   }catch(err){
     console.error('IRONLOG render error:',err);
   }
