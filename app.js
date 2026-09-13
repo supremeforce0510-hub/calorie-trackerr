@@ -436,9 +436,12 @@
     const streak = currentStreakInfo();
     const tier = streakTier(streak.count);
     const flame = $('streakFlame');
+    const flameStage = $('streakFlameStage');
 
     flame.classList.remove('red','purple','green');
     flame.classList.add(tier);
+    flameStage.classList.remove('red','purple','green');
+    flameStage.classList.add(tier);
 
     $('streakCount').textContent = streak.count;
     $('streakLabel').textContent = streak.count === 1 ? 'day streak' : 'days streak';

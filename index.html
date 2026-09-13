@@ -568,18 +568,76 @@
     }
     .streak-flame-wrap{
       text-align:center;
-      margin:3px auto 4px;
+      margin:5px auto 4px;
+      position:relative;
+      min-height:112px;
+    }
+    .streak-flame-stage{
+      position:relative;
+      width:104px;
+      height:108px;
+      margin:0 auto;
+      display:flex;
+      align-items:center;
+      justify-content:center;
     }
     .streak-flame{
-      width:72px;
-      height:82px;
+      width:82px;
+      height:96px;
       display:block;
-      margin:0 auto;
-      filter:drop-shadow(0 8px 12px rgba(0,0,0,.25));
+      position:relative;
+      z-index:3;
+      transform-origin:50% 88%;
+      animation:flameDance 1.05s ease-in-out infinite alternate;
+      filter:drop-shadow(0 9px 14px rgba(0,0,0,.30));
+      overflow:visible;
     }
+    .streak-flame .outer{fill:currentColor}
+    .streak-flame .inner{fill:rgba(255,255,255,.32)}
     .streak-flame.red{color:#ef4444}
     .streak-flame.purple{color:#a855f7}
     .streak-flame.green{color:#22c55e}
+    .streak-flame.red .inner{fill:#fb923c}
+    .streak-flame.purple .inner{fill:#d8b4fe}
+    .streak-flame.green .inner{fill:#86efac}
+    .flame-spark{
+      position:absolute;
+      z-index:2;
+      border-radius:50%;
+      background:currentColor;
+      opacity:.72;
+      animation:sparkFloat 1.65s ease-in-out infinite;
+    }
+    .flame-spark.one{
+      width:10px;height:10px;left:13px;top:25px;animation-delay:-.3s
+    }
+    .flame-spark.two{
+      width:7px;height:7px;right:15px;top:8px;animation-delay:-.9s
+    }
+    .flame-spark.three{
+      width:13px;height:13px;right:3px;top:40px;animation-delay:-1.25s
+    }
+    .flame-spark.four{
+      width:6px;height:6px;left:28px;top:3px;animation-delay:-.65s
+    }
+    .streak-flame-stage.red{color:#ef4444}
+    .streak-flame-stage.purple{color:#a855f7}
+    .streak-flame-stage.green{color:#22c55e}
+    @keyframes flameDance{
+      0%{transform:translateY(1px) rotate(-2deg) scale(.97,1.02)}
+      35%{transform:translateY(-2px) rotate(1deg) scale(1.02,.98)}
+      70%{transform:translateY(0) rotate(-1deg) scale(.99,1.04)}
+      100%{transform:translateY(-3px) rotate(2deg) scale(1.04,.97)}
+    }
+    @keyframes sparkFloat{
+      0%{transform:translateY(10px) scale(.65);opacity:0}
+      25%{opacity:.75}
+      70%{opacity:.42}
+      100%{transform:translateY(-15px) scale(1.05);opacity:0}
+    }
+    @media (prefers-reduced-motion:reduce){
+      .streak-flame,.flame-spark{animation:none}
+    }
     .streak-count{
       text-align:center;
       font-size:44px;
@@ -895,9 +953,16 @@
     </div>
 
     <div class="streak-flame-wrap">
-      <svg id="streakFlame" class="streak-flame red" viewBox="0 0 64 80" aria-hidden="true">
-        <path fill="currentColor" d="M35 2c2 13-8 17-6 28 1 5 5 8 5 14 0 5-4 9-9 9-7 0-12-6-12-14 0-12 8-21 17-29 1 8 4 12 5 16 6-6 8-14 7-24 12 10 19 23 19 38 0 22-14 38-32 38S1 64 1 45C1 27 15 14 35 2z"/>
-      </svg>
+      <div id="streakFlameStage" class="streak-flame-stage red">
+        <span class="flame-spark one"></span>
+        <span class="flame-spark two"></span>
+        <span class="flame-spark three"></span>
+        <span class="flame-spark four"></span>
+        <svg id="streakFlame" class="streak-flame red" viewBox="0 0 90 110" aria-hidden="true">
+          <path class="outer" d="M48 3c7 15 24 25 30 43 9 28-8 58-34 61C19 110 3 91 6 65c2-19 13-28 24-40 6-7 11-14 18-22z"/>
+          <path class="inner" d="M46 43c4 9 14 16 17 27 4 15-5 29-19 30-13 1-22-10-20-23 1-10 8-16 14-22 3-4 6-8 8-12z"/>
+        </svg>
+      </div>
       <div id="streakCount" class="streak-count">1</div>
       <div id="streakLabel" class="streak-label">day streak</div>
     </div>
