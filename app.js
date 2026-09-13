@@ -620,7 +620,7 @@
     }else if(streak.count >= 5){
       $('streakStatus').textContent = 'Purple fire unlocked — keep the streak moving.';
     }else{
-      $('streakStatus').textContent = 'Open CalorieTrack every day to keep this streak alive.';
+      $('streakStatus').textContent = 'Open IRONLOG every day to keep this streak alive.';
     }
 
     renderWeekStrip(streak);
@@ -1071,7 +1071,7 @@
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'calorie-track-data.json';
+    a.download = 'ironlog-data.json';
     a.click();
     setTimeout(()=>URL.revokeObjectURL(url),1000);
   });
@@ -1091,7 +1091,7 @@
   }
 
   if(standalone()){
-    installText.textContent = 'CalorieTrack is installed on this device.';
+    installText.textContent = 'IRONLOG is installed on this device.';
     installBtn.textContent = 'Installed';
     installBtn.disabled = true;
   }
@@ -1100,7 +1100,7 @@
     event.preventDefault();
     deferredInstallPrompt = event;
     if(!standalone()){
-      installText.textContent = 'Ready to install on this device.';
+      installText.textContent = 'IRONLOG is ready to install on this device.';
       installBtn.textContent = 'Install App';
       installBtn.disabled = false;
     }
@@ -1108,7 +1108,7 @@
 
   installBtn.addEventListener('click', async () => {
     if(standalone()){
-      showInstallMessage('CalorieTrack is already installed on this device.');
+      showInstallMessage('IRONLOG is already installed on this device.');
       return;
     }
 
@@ -1116,7 +1116,7 @@
       deferredInstallPrompt.prompt();
       const result = await deferredInstallPrompt.userChoice;
       if(result.outcome === 'accepted'){
-        installText.textContent = 'Installing CalorieTrack…';
+        installText.textContent = 'Installing IRONLOG…';
       }
       deferredInstallPrompt = null;
       return;
@@ -1126,12 +1126,12 @@
     if(/iphone|ipad|ipod/.test(ua)){
       showInstallMessage('On iPhone/iPad: open this page in Safari, tap Share, then choose “Add to Home Screen.”');
     }else{
-      showInstallMessage('In Chrome, tap the ⋮ menu and choose “Install app” or “Add to Home screen.” If you already installed CalorieTrack, Chrome may not offer the install option again.');
+      showInstallMessage('In Chrome, tap the ⋮ menu and choose “Install app” or “Add to Home screen.” If you already installed IRONLOG, Chrome may not offer the install option again.');
     }
   });
 
   window.addEventListener('appinstalled', () => {
-    installText.textContent = 'CalorieTrack is installed on this device.';
+    installText.textContent = 'IRONLOG is installed on this device.';
     installBtn.textContent = 'Installed';
     installBtn.disabled = true;
     installMessage.style.display = 'none';

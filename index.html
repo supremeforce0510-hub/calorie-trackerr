@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="apple-touch-icon" href="./icons/icon-192.png" />
-  <title>CalorieTrack</title>
+  <title>IRONLOG</title>
   <style>
     :root{
       --bg:#0f172a;
@@ -981,15 +981,31 @@
       #dashLatestPR{display:block;text-align:left;margin-top:5px}
     }
 
+
+    /* ===== V20 IRONLOG branding ===== */
+    .brand-lockup{display:flex;align-items:center;gap:12px}
+    .brand-logo{
+      width:64px;height:64px;object-fit:cover;border-radius:14px;
+      border:1px solid rgba(255,255,255,.16);
+      box-shadow:0 10px 30px rgba(0,0,0,.34),0 0 22px rgba(167,139,250,.09)
+    }
+    @media(max-width:520px){
+      .brand-logo{width:54px;height:54px;border-radius:12px}
+      .brand-lockup{gap:10px}
+    }
+
 </style>
 </head>
 <body>
 <div class="app">
   <div class="topbar">
-    <div>
-      <h1>CalorieTrack</h1>
-      <p style="margin:4px 0 0">Simple daily food + weight tracking</p>
+    <div class="brand-lockup">
+      <img id="brandLogo" class="brand-logo" src="./icons/icon-192.png" alt="IRONLOG logo">
+      <div>
+        <h1>IRONLOG</h1>
+      <p style="margin:4px 0 0">TRACK • TRAIN • PROGRESS</p>
       <div class="marshall-badge"><span class="marshall-dot"></span>Marshall Certified</div>
+      </div>
     </div>
     <div class="topbar-right">
       <div class="live-clock" aria-live="polite" aria-label="Live device clock">
@@ -1016,7 +1032,7 @@
     </div>
   </div>
   <div class="card week-card">
-    <div class="v16-head"><div><div class="v16-kicker">This Week</div><h2 style="margin:3px 0 0">Your Week in CalorieTrack</h2></div><div class="tiny" id="weekRange"></div></div>
+    <div class="v16-head"><div><div class="v16-kicker">This Week</div><h2 style="margin:3px 0 0">Your Week in IRONLOG</h2></div><div class="tiny" id="weekRange"></div></div>
     <div class="week-grid"><div class="v16-stat"><strong id="weekDays">0</strong><span>Days tracked</span></div><div class="v16-stat"><strong id="weekCalories">0</strong><span>Avg calories</span></div><div class="v16-stat"><strong id="weekProtein">0g</strong><span>Avg protein</span></div><div class="v16-stat"><strong id="weekWeight">—</strong><span>Weight change</span></div><div class="v16-stat"><strong id="weekStreak">0</strong><span>Current streak</span></div></div>
     <div class="week-compare" id="weekCompare">Your comparison will build as you log more weeks.</div>
   </div>
@@ -1063,7 +1079,7 @@
   <div class="card install-card">
     <div class="install-row">
       <div>
-        <h2 style="margin-bottom:4px">Install CalorieTrack</h2>
+        <h2 style="margin-bottom:4px">Install IRONLOG</h2>
         <div class="tiny" id="installText">Install it on your home screen for an app-like experience.</div>
       </div>
       <button id="installBtn">Install App</button>
