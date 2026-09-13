@@ -370,16 +370,22 @@
   }
 
   function openHistory(){
-    $('historyDrawer').classList.add('open');
-    $('historyBackdrop').classList.add('open');
-    $('historyDrawer').setAttribute('aria-hidden','false');
+    const drawer = $('historyDrawer');
+    const backdrop = $('historyBackdrop');
+    if(drawer.classList.contains('open')) return;
+    drawer.classList.add('open');
+    backdrop.classList.add('open');
+    drawer.setAttribute('aria-hidden','false');
     renderHistory();
   }
 
   function closeHistory(){
-    $('historyDrawer').classList.remove('open');
-    $('historyBackdrop').classList.remove('open');
-    $('historyDrawer').setAttribute('aria-hidden','true');
+    const drawer = $('historyDrawer');
+    const backdrop = $('historyBackdrop');
+    if(!drawer.classList.contains('open')) return;
+    drawer.classList.remove('open');
+    backdrop.classList.remove('open');
+    drawer.setAttribute('aria-hidden','true');
   }
 
   function mondayOfWeek(dateString){
@@ -671,7 +677,16 @@
     }, 1400);
   });
 
-  $('historyTab').addEventListener('click', openHistory);
+  const historyTabButton = $('historyTab');
+  historyTabButton.addEventListener('click', openHistory);
+  historyTabButton.addEventListener('pointerup', e => {
+    // Some ChromeOS/trackpad combinations can swallow an edge-positioned click.
+    // Pointerup gives the side button a reliable fallback without changing behavior.
+    if(e.pointerType === 'touch' || e.pointerType === 'pen'){
+      e.preventDefault();
+      openHistory();
+    }
+  });
   $('historyClose').addEventListener('click', closeHistory);
   $('historyBackdrop').addEventListener('click', closeHistory);
 
