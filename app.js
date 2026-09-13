@@ -534,29 +534,57 @@
   });
 
 
-  // ----- Live Eastern Time clock -----
-  function updateLiveClock(){
-    const now = new Date();
+  // ----- Live device clock -----
+  let liveClockTimer = null;
 
-    const timeText = new Intl.DateTimeFormat('en-US', {
-      timeZone:'America/New_York',
-      hour:'numeric',
-      minute:'2-digit',
-      second:'2-digit',
-      hour12:true
-    }).format(now);
-
-    const zonePart = new Intl.DateTimeFormat('en-US', {
-      timeZone:'America/New_York',
-      timeZoneName:'short'
-    }).formatToParts(now).find(part => part.type === 'timeZoneName');
-
-    $('liveClockTime').textContent = timeText;
-    $('liveClockZone').textContent = zonePart ? zonePart.value : 'ET';
+  function getDeviceZoneLabel(now){
+    try{
+      const parts = new Intl.DateTimeFormat('en-US', {
+        timeZoneName:'short'
+      }).formatToParts(now);
+      const zone = parts.find(part => part.type === 'timeZoneName');
+      return zone && zone.value ? zone.value : 'Local Time';
+    }catch(err){
+      return 'Local Time';
+    }
   }
 
-  updateLiveClock();
-  setInterval(updateLiveClock, 1000);
+  function updateLiveClock(){
+    const timeEl = document.getElementById('liveClockTime');
+    const zoneEl = document.getElementById('liveClockZone');
+    if(!timeEl || !zoneEl) return;
+
+    const now = new Date();
+
+    let timeText;
+    try{
+      timeText = new Intl.DateTimeFormat('en-US', {
+        hour:'numeric',
+        minute:'2-digit',
+        second:'2-digit',
+        hour12:true
+      }).format(now);
+    }catch(err){
+      timeText = now.toLocaleTimeString();
+    }
+
+    timeEl.textContent = timeText;
+    zoneEl.textContent = getDeviceZoneLabel(now);
+  }
+
+  function startLiveClock(){
+    updateLiveClock();
+    if(liveClockTimer) clearInterval(liveClockTimer);
+    liveClockTimer = setInterval(updateLiveClock, 1000);
+  }
+
+  startLiveClock();
+
+  // Refresh immediately when the app comes back into view so the clock
+  // always catches up to the phone/computer's current time.
+  document.addEventListener('visibilitychange', () => {
+    if(!document.hidden) updateLiveClock();
+  });
 
   // ----- Service worker -----
   if('serviceWorker' in navigator){
