@@ -1074,6 +1074,33 @@
     .badge{position:relative;filter:grayscale(1);opacity:.42;background:#080d18!important;border-color:#263244!important}.badge.unlocked{filter:none;opacity:1}.badge.unlocked.tier-bronze{border-color:#b45309!important;background:linear-gradient(145deg,rgba(180,83,9,.22),rgba(120,53,15,.08))!important;box-shadow:0 0 18px rgba(180,83,9,.09)}.badge.unlocked.tier-silver{border-color:#94a3b8!important;background:linear-gradient(145deg,rgba(148,163,184,.18),rgba(71,85,105,.08))!important;box-shadow:0 0 18px rgba(148,163,184,.08)}.badge.unlocked.tier-gold{border-color:#f59e0b!important;background:linear-gradient(145deg,rgba(245,158,11,.22),rgba(126,34,206,.08))!important;box-shadow:0 0 20px rgba(245,158,11,.11)}.badge.unlocked.tier-diamond{border-color:#22d3ee!important;background:linear-gradient(145deg,rgba(34,211,238,.18),rgba(168,85,247,.13))!important;box-shadow:0 0 22px rgba(34,211,238,.12)}.badge-tier{display:inline-block!important;margin-top:6px!important;font-size:8px!important;text-transform:uppercase;letter-spacing:.12em;color:#64748b!important}.badge.unlocked .badge-tier{color:#e2e8f0!important}.achievements-note{font-size:11px;color:#94a3b8;margin:0 0 10px}
     @media(max-width:640px){.home-dashboard{padding-bottom:76px}.goal-life-grid{grid-template-columns:1fr}.home-pr-board{grid-template-columns:1fr}.pr-home-summary{grid-template-columns:1fr}.exercise-progress-controls{grid-template-columns:1fr}.home-goal-pr{grid-template-columns:1fr}.home-hero{min-height:auto;padding-bottom:26px}.home-dashboard-card{padding:15px}}
 
+
+
+    /* ===== V24 Achievement Gallery ===== */
+    .achievement-summary{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:10px 0 14px;padding:12px 14px;border:1px solid #29364a;border-radius:14px;background:linear-gradient(145deg,#0a111d,#101827)}
+    .achievement-summary strong{font-size:22px;line-height:1}.achievement-summary span{display:block;color:#94a3b8;font-size:11px;margin-top:4px}
+    .achievement-gallery{display:grid;gap:12px}
+    .achievement-group{border:1px solid #273447;border-radius:15px;background:linear-gradient(145deg,rgba(8,14,24,.96),rgba(14,23,38,.92));padding:12px}
+    .achievement-group-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+    .achievement-group-title{display:flex;align-items:center;gap:9px;min-width:0}.achievement-group-title .cat-icon{font-size:20px}.achievement-group-title strong{font-size:14px}.achievement-group-title span{display:block;font-size:10px;color:#94a3b8;margin-top:2px}
+    .achievement-group-count{font-size:11px;font-weight:800;color:#cbd5e1;white-space:nowrap}
+    .achievement-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(58px,1fr));gap:8px}
+    .achievement-tile{min-height:64px;border-radius:9px!important;padding:6px!important;border:1px solid #4b5563!important;background:linear-gradient(145deg,#222936,#111720)!important;color:#e5e7eb!important;display:grid;place-items:center;position:relative;overflow:hidden;cursor:pointer;box-shadow:inset 0 0 0 1px rgba(255,255,255,.025);transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease;filter:grayscale(1);opacity:.62}
+    .achievement-tile:hover,.achievement-tile:focus-visible{transform:translateY(-2px);border-color:#94a3b8!important;outline:none}
+    .achievement-tile.unlocked{filter:none;opacity:1;background:linear-gradient(145deg,#6f4517,#2c1c0c)!important;border-color:#b7791f!important;box-shadow:inset 0 0 0 1px rgba(255,220,130,.18),0 0 14px rgba(245,158,11,.08)}
+    .achievement-tile.unlocked.tier-silver{background:linear-gradient(145deg,#46505d,#1f2731)!important;border-color:#94a3b8!important}
+    .achievement-tile.unlocked.tier-gold{background:linear-gradient(145deg,#745314,#312006)!important;border-color:#f59e0b!important}
+    .achievement-tile.unlocked.tier-diamond{background:linear-gradient(145deg,#155e75,#312e81)!important;border-color:#67e8f9!important}
+    .achievement-tile .achievement-tile-icon{font-size:26px;line-height:1;filter:drop-shadow(0 2px 3px rgba(0,0,0,.45))}
+    .achievement-tile .lock-mark{position:absolute;right:4px;bottom:3px;font-size:9px;color:#9ca3af}.achievement-tile.unlocked .lock-mark{color:#fde68a}
+    .achievement-detail-backdrop{position:fixed;inset:0;background:rgba(2,6,12,.76);backdrop-filter:blur(5px);z-index:190;display:none;align-items:center;justify-content:center;padding:18px}.achievement-detail-backdrop.open{display:flex}
+    .achievement-detail{width:min(420px,100%);border-radius:20px;border:1px solid #46556b;background:linear-gradient(160deg,#111a29,#080d16);box-shadow:0 24px 70px rgba(0,0,0,.58);padding:20px;text-align:center;position:relative}
+    .achievement-detail.unlocked{border-color:#b7791f;box-shadow:0 24px 70px rgba(0,0,0,.58),0 0 30px rgba(245,158,11,.10)}
+    .achievement-detail-close{position:absolute;right:10px;top:10px;width:34px!important;height:34px;padding:0!important;border-radius:50%!important;background:#172033!important;color:#cbd5e1!important}
+    .achievement-detail-icon{width:76px;height:76px;margin:4px auto 12px;border-radius:15px;display:grid;place-items:center;font-size:38px;background:#171e2a;border:1px solid #536071;filter:grayscale(1);opacity:.7}.achievement-detail.unlocked .achievement-detail-icon{filter:none;opacity:1;background:linear-gradient(145deg,#754b18,#322008);border-color:#d89b34}
+    .achievement-detail h3{margin:0 36px 6px;font-size:20px}.achievement-detail p{margin:0;color:#cbd5e1;font-size:13px;line-height:1.5}.achievement-detail-meta{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:14px}.achievement-pill{padding:6px 9px;border-radius:999px;border:1px solid #334155;background:#101827;color:#94a3b8;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}.achievement-detail.unlocked .achievement-status{border-color:#b7791f;color:#fde68a;background:#2b1d0a}
+    .achievement-detail-hint{margin-top:14px!important;color:#94a3b8!important;font-size:11px!important}
+    @media(max-width:640px){.achievement-strip{grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}.achievement-tile{min-height:58px;padding:4px!important}.achievement-tile .achievement-tile-icon{font-size:23px}.achievement-group{padding:10px}.achievement-group-head{align-items:flex-start}}
 </style>
 </head>
 <body>
@@ -1195,9 +1222,10 @@
   </div>
 
   <div id="sectionAchievements" class="card achievements-card feature-section">
-    <div class="v16-head"><div><div class="v16-kicker">Collection</div><h2 style="margin:3px 0 0">Achievements</h2></div><div class="tiny" id="badgeCount"></div></div>
-    <p class="achievements-note">Every IRONLOG achievement is shown here from day one. Locked badges stay muted until you earn them.</p>
-    <div id="badgeGrid" class="badge-grid"></div>
+    <div class="v16-head"><div><div class="v16-kicker">Collection</div><h2 style="margin:3px 0 0">🏆 Achievements</h2></div><div class="tiny" id="badgeCount"></div></div>
+    <p class="achievements-note">All 67 achievements are visible from day one. Locked achievements stay grey. Unlocked achievements light up in full color. Tap any achievement to see what it is and how to unlock it.</p>
+    <div class="achievement-summary"><div><strong id="achievementUnlockedCount">0 / 67</strong><span>Unlocked</span></div><div class="tiny">Tap a badge for details</div></div>
+    <div id="badgeGrid" class="achievement-gallery"></div>
   </div>
 
   
@@ -1553,6 +1581,20 @@
   </div>
 </div>
 
+<div id="achievementDetailBackdrop" class="achievement-detail-backdrop" aria-hidden="true">
+  <div id="achievementDetail" class="achievement-detail" role="dialog" aria-modal="true" aria-labelledby="achievementDetailName">
+    <button id="achievementDetailClose" class="achievement-detail-close" type="button" aria-label="Close achievement details">×</button>
+    <div id="achievementDetailIcon" class="achievement-detail-icon">🏆</div>
+    <h3 id="achievementDetailName">Achievement</h3>
+    <p id="achievementDetailDesc"></p>
+    <div class="achievement-detail-meta">
+      <span id="achievementDetailStatus" class="achievement-pill achievement-status">Locked</span>
+      <span id="achievementDetailTier" class="achievement-pill">Bronze</span>
+      <span id="achievementDetailCategory" class="achievement-pill">Progress</span>
+    </div>
+    <p id="achievementDetailHint" class="achievement-detail-hint"></p>
+  </div>
+</div>
 <div id="achievementPop" class="achievement-pop" aria-live="polite"></div>
 <div id="milestonePop" class="milestone-pop" aria-live="polite"></div>
 <div id="undoToast" class="toast" aria-live="polite"><span id="undoText">Deleted.</span><button id="undoBtn" type="button">Undo</button></div>

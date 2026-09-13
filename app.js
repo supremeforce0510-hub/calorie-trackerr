@@ -678,11 +678,47 @@
     }
   }
 
+  function achievementCategoryFor(id){
+    if(id.startsWith('streak-'))return {key:'streak',icon:'🔥',name:'Streak Achievements',desc:'Build consistency. Show up for yourself.'};
+    if(id.startsWith('food-')||id.startsWith('protein-')||id.startsWith('calorie-'))return {key:'food',icon:'🍽️',name:'Food + Nutrition Achievements',desc:'Fuel your body. Stay on track.'};
+    if(id.startsWith('weight-')||id.startsWith('weightmove-')||id==='goal-reached')return {key:'weight',icon:'⚖️',name:'Weight Achievements',desc:'Track progress. Celebrate change.'};
+    if(id.startsWith('workout-')||id.startsWith('minutes-')||id.startsWith('burn-'))return {key:'workout',icon:'🏋️',name:'Workout Achievements',desc:'Put in the work. Get stronger.'};
+    if(id.startsWith('pr-')||id.startsWith('lifts-')||id.startsWith('primp-'))return {key:'pr',icon:'👑',name:'PR Achievements',desc:'Set records. Raise the bar.'};
+    return {key:'lifestyle',icon:'⭐',name:'Tracking + Lifestyle Achievements',desc:'Small habits. Big results.'};
+  }
+
+  function openAchievementDetail(id){
+    const a=achievementDefinitions().find(x=>x.id===id);if(!a)return;
+    const unlockedSet=new Set(state.engagement?.unlockedAchievements||[]),on=unlockedSet.has(a.id),cat=achievementCategoryFor(a.id);
+    $('achievementDetailIcon').textContent=a.icon;
+    $('achievementDetailName').textContent=a.name;
+    $('achievementDetailDesc').textContent=a.desc;
+    $('achievementDetailStatus').textContent=on?'Unlocked':'Locked';
+    $('achievementDetailTier').textContent=a.tier;
+    $('achievementDetailCategory').textContent=cat.name.replace(' Achievements','');
+    $('achievementDetailHint').textContent=on?'You unlocked this achievement.':'Unlock requirement: '+a.desc+'.';
+    $('achievementDetail').classList.toggle('unlocked',on);
+    $('achievementDetailBackdrop').classList.add('open');
+    $('achievementDetailBackdrop').setAttribute('aria-hidden','false');
+  }
+  function closeAchievementDetail(){
+    $('achievementDetailBackdrop').classList.remove('open');
+    $('achievementDetailBackdrop').setAttribute('aria-hidden','true');
+  }
+
   function renderAchievements(){
     const b=achievementDefinitions(), unlockedSet=new Set(state.engagement?.unlockedAchievements||[]);
     const unlocked=b.filter(x=>unlockedSet.has(x.id)).length;
     $('badgeCount').textContent=`${unlocked}/${b.length} unlocked`;
-    $('badgeGrid').innerHTML=b.map(x=>{const on=unlockedSet.has(x.id);return `<div class="badge tier-${x.tier} ${on?'unlocked':''}"><span class="badge-icon">${x.icon}</span><strong>${escapeHtml(x.name)}</strong><span>${escapeHtml(x.desc)}</span><span class="badge-tier">${escapeHtml(x.tier)}</span></div>`}).join('');
+    if($('achievementUnlockedCount'))$('achievementUnlockedCount').textContent=`${unlocked} / ${b.length}`;
+    const order=['streak','food','weight','workout','pr','lifestyle'];
+    const groups=new Map();
+    b.forEach(a=>{const c=achievementCategoryFor(a.id);if(!groups.has(c.key))groups.set(c.key,{...c,items:[]});groups.get(c.key).items.push(a)});
+    $('badgeGrid').innerHTML=order.map(key=>{
+      const g=groups.get(key);if(!g)return '';
+      const got=g.items.filter(a=>unlockedSet.has(a.id)).length;
+      return `<section class="achievement-group"><div class="achievement-group-head"><div class="achievement-group-title"><span class="cat-icon">${g.icon}</span><div><strong>${escapeHtml(g.name)}</strong><span>${escapeHtml(g.desc)}</span></div></div><div class="achievement-group-count">${got} / ${g.items.length}</div></div><div class="achievement-strip">${g.items.map(a=>{const on=unlockedSet.has(a.id);return `<button type="button" class="achievement-tile tier-${a.tier} ${on?'unlocked':''}" data-achievement-id="${escapeHtml(a.id)}" aria-label="${escapeHtml(a.name)} — ${on?'unlocked':'locked'}"><span class="achievement-tile-icon">${a.icon}</span><span class="lock-mark">${on?'✓':'🔒'}</span></button>`}).join('')}</div></section>`;
+    }).join('');
   }
 
 
@@ -1170,6 +1206,15 @@
     }, 1400);
   });
 
+
+  // ----- V24 achievement gallery interactions -----
+  $('badgeGrid').addEventListener('click',e=>{
+    const tile=e.target.closest('[data-achievement-id]');
+    if(tile)openAchievementDetail(tile.dataset.achievementId);
+  });
+  $('achievementDetailClose').addEventListener('click',closeAchievementDetail);
+  $('achievementDetailBackdrop').addEventListener('click',e=>{if(e.target===$('achievementDetailBackdrop'))closeAchievementDetail()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('achievementDetailBackdrop').classList.contains('open'))closeAchievementDetail()});
 
   // ----- V22 menu navigation -----
   function closeMenu(){
