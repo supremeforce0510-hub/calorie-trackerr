@@ -14,7 +14,8 @@
     return {
       settings:{calorieGoal:1800, proteinGoal:100, endGoalWeight:''},
       profile:{age:'', sex:'', height:'', weight:'', activity:'sedentary'},
-      days:{}
+      days:{},
+      engagement:{usedDates:[]}
     };
   }
 
@@ -37,7 +38,12 @@
           weight:parsed?.profile?.weight ?? '',
           activity:parsed?.profile?.activity || 'sedentary'
         },
-        days:parsed?.days && typeof parsed.days === 'object' ? parsed.days : {}
+        days:parsed?.days && typeof parsed.days === 'object' ? parsed.days : {},
+        engagement:{
+          usedDates:Array.isArray(parsed?.engagement?.usedDates)
+            ? parsed.engagement.usedDates.filter(v => /^\d{4}-\d{2}-\d{2}$/.test(String(v)))
+            : []
+        }
       };
     }catch(_){
       return fallback;
@@ -48,6 +54,118 @@
 
   function saveState(){
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+
+  function parseLocalDate(dateString){
+    const parts = String(dateString).split('-').map(Number);
+    return new Date(parts[0], (parts[1] || 1) - 1, parts[2] || 1, 12, 0, 0, 0);
+  }
+
+  function localDateString(date){
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2,'0');
+    const d = String(date.getDate()).padStart(2,'0');
+    return `${y}-${m}-${d}`;
+  }
+
+  function addDays(dateString, amount){
+    const d = parseLocalDate(dateString);
+    d.setDate(d.getDate() + amount);
+    return localDateString(d);
+  }
+
+  function dateDiffDays(a, b){
+    const da = parseLocalDate(a);
+    const db = parseLocalDate(b);
+    return Math.round((db - da) / 86400000);
+  }
+
+  function inferHistoricalUsageDates(){
+    return Object.keys(state.days || {}).filter(date => {
+      const day = state.days[date];
+      return Array.isArray(day?.foods) && day.foods.length > 0 ||
+             Array.isArray(day?.weights) && day.weights.length > 0;
+    });
+  }
+
+  function recordAppOpen(){
+    if(!state.engagement || typeof state.engagement !== 'object'){
+      state.engagement = {usedDates:[]};
+    }
+    if(!Array.isArray(state.engagement.usedDates)){
+      state.engagement.usedDates = [];
+    }
+
+    // On the first version with streak tracking, preserve real prior usage
+    // when a day already contains logged food or weight data.
+    if(state.engagement.usedDates.length === 0){
+      state.engagement.usedDates = inferHistoricalUsageDates();
+    }
+
+    const today = todayLocal();
+    if(!state.engagement.usedDates.includes(today)){
+      state.engagement.usedDates.push(today);
+    }
+
+    state.engagement.usedDates = [...new Set(state.engagement.usedDates)]
+      .filter(v => /^\d{4}-\d{2}-\d{2}$/.test(v))
+      .sort();
+
+    saveState();
+  }
+
+  function currentStreakInfo(){
+    const today = todayLocal();
+    const used = new Set(state.engagement?.usedDates || []);
+    let count = 0;
+    let cursor = today;
+
+    while(used.has(cursor)){
+      count++;
+      cursor = addDays(cursor,-1);
+    }
+
+    const currentDates = new Set();
+    for(let i=0;i<count;i++){
+      currentDates.add(addDays(today,-i));
+    }
+
+    const previousDates = (state.engagement?.usedDates || []).filter(d => d < today);
+    const previousLatest = previousDates.length ? previousDates[previousDates.length - 1] : null;
+    const brokeBeforeToday = previousLatest ? dateDiffDays(previousLatest,today) > 1 : false;
+
+    return {count,currentDates,brokeBeforeToday,previousLatest};
+  }
+
+  function streakTier(count){
+    if(count > 15) return 'green';
+    if(count >= 5) return 'purple';
+    return 'red';
+  }
+
+  function quoteForDate(dateString){
+    const quotes = [
+      'Small choices stack up. Keep showing up.',
+      'Consistency beats perfection every single time.',
+      'One good day becomes a pattern when you repeat it.',
+      'Your future self is built by what you do today.',
+      'Progress counts even when it feels small.',
+      'Keep the promise you made to yourself today.',
+      'You do not need a perfect day — just a present one.',
+      'Every check-in is proof that you are still moving forward.',
+      'The goal is not flawless. The goal is consistent.',
+      'A little effort today is still momentum.',
+      'Keep collecting days. The results will follow.',
+      'You are building the habit every time you come back.',
+      'Show up today. Let tomorrow worry about tomorrow.',
+      'The streak is the reminder — you are the reason.',
+      'One day at a time is still a real plan.',
+      'Do the next small thing and let it count.'
+    ];
+    let hash = 0;
+    for(const ch of dateString) hash = ((hash * 31) + ch.charCodeAt(0)) >>> 0;
+    return quotes[hash % quotes.length];
   }
 
   function num(v){
@@ -208,6 +326,150 @@
     return state.days[date];
   }
 
+
+  function historyDates(){
+    const usage = state.engagement?.usedDates || [];
+    const dataDates = Object.keys(state.days || {}).filter(date => {
+      const day = state.days[date];
+      return (day?.foods?.length || 0) > 0 || (day?.weights?.length || 0) > 0;
+    });
+    return [...new Set([...usage,...dataDates])].sort().reverse();
+  }
+
+  function renderHistory(){
+    const list = $('historyList');
+    if(!list) return;
+
+    const dates = historyDates();
+    if(!dates.length){
+      list.innerHTML = '<div class="history-empty">Your used days will appear here.</div>';
+      return;
+    }
+
+    list.innerHTML = dates.map(date => {
+      const day = state.days?.[date] || {foods:[],weights:[]};
+      const foods = Array.isArray(day.foods) ? day.foods : [];
+      const weights = Array.isArray(day.weights) ? day.weights : [];
+      const calories = foods.reduce((sum,f) => sum + num(f.calories),0);
+      const latestWeight = weights.slice().sort((a,b)=>num(b.createdAt)-num(a.createdAt))[0];
+      const label = date === todayLocal() ? 'Today' : friendlyDate(date);
+
+      return `
+        <button class="history-day ${date === selectedDate() ? 'selected' : ''}" type="button" data-history-date="${date}">
+          <div class="history-day-title">
+            <span>${escapeHtml(label)}</span>
+            <span>${escapeHtml(date)}</span>
+          </div>
+          <div class="history-day-meta">
+            ${Math.round(calories)} cal • ${foods.length} food entr${foods.length === 1 ? 'y' : 'ies'} •
+            ${latestWeight ? format1(latestWeight.value) + ' lb' : 'no weight'}
+          </div>
+        </button>
+      `;
+    }).join('');
+  }
+
+  function openHistory(){
+    $('historyDrawer').classList.add('open');
+    $('historyBackdrop').classList.add('open');
+    $('historyDrawer').setAttribute('aria-hidden','false');
+    renderHistory();
+  }
+
+  function closeHistory(){
+    $('historyDrawer').classList.remove('open');
+    $('historyBackdrop').classList.remove('open');
+    $('historyDrawer').setAttribute('aria-hidden','true');
+  }
+
+  function mondayOfWeek(dateString){
+    const d = parseLocalDate(dateString);
+    const day = d.getDay(); // Sun=0
+    const diff = day === 0 ? -6 : 1 - day;
+    d.setDate(d.getDate() + diff);
+    return localDateString(d);
+  }
+
+  function renderWeekStrip(streak){
+    const today = todayLocal();
+    const monday = mondayOfWeek(today);
+    const used = new Set(state.engagement?.usedDates || []);
+    const letters = ['M','T','W','T','F','S','S'];
+    const pieces = [];
+
+    for(let i=0;i<7;i++){
+      const date = addDays(monday,i);
+      const inCurrent = streak.currentDates.has(date);
+      const oldUsed = used.has(date) && !inCurrent;
+      const isToday = date === today;
+      let cls = '';
+      if(inCurrent) cls = 'active';
+      else if(oldUsed && date < today) cls = 'broken';
+
+      let connectorClass = '';
+      if(i < 6){
+        const nextDate = addDays(monday,i+1);
+        const bothCurrent = streak.currentDates.has(date) && streak.currentDates.has(nextDate);
+        const priorSegment = date < today && !bothCurrent &&
+          (used.has(date) || used.has(nextDate)) &&
+          !streak.currentDates.has(nextDate);
+
+        if(bothCurrent) connectorClass = 'active';
+        else if(priorSegment) connectorClass = 'broken';
+      }
+
+      pieces.push(`
+        <div class="week-day ${cls} ${isToday ? 'today' : ''}">
+          <div class="week-letter">${letters[i]}</div>
+          <div class="week-node-wrap">
+            <div class="week-node">${inCurrent ? '✓' : (oldUsed ? '×' : String(parseLocalDate(date).getDate()))}</div>
+            ${i < 6 ? `<div class="week-connector ${connectorClass}"></div>` : ''}
+          </div>
+        </div>
+      `);
+    }
+
+    $('weekRow').innerHTML = pieces.join('');
+  }
+
+  function showStreakPopup(){
+    const streak = currentStreakInfo();
+    const tier = streakTier(streak.count);
+    const flame = $('streakFlame');
+
+    flame.classList.remove('red','purple','green');
+    flame.classList.add(tier);
+
+    $('streakCount').textContent = streak.count;
+    $('streakLabel').textContent = streak.count === 1 ? 'day streak' : 'days streak';
+    $('streakQuote').textContent = quoteForDate(todayLocal());
+
+    if(streak.brokeBeforeToday && streak.count === 1){
+      $('streakStatus').textContent = 'Your last streak ended. Today starts a brand-new streak.';
+    }else if(streak.count >= 16){
+      $('streakStatus').textContent = 'Green fire unlocked — 16+ days strong.';
+    }else if(streak.count >= 5){
+      $('streakStatus').textContent = 'Purple fire unlocked — keep the streak moving.';
+    }else{
+      $('streakStatus').textContent = 'Open CalorieTrack every day to keep this streak alive.';
+    }
+
+    renderWeekStrip(streak);
+
+    const overlay = $('streakOverlay');
+    overlay.classList.remove('hidden','closing');
+  }
+
+  function closeStreakPopup(){
+    const overlay = $('streakOverlay');
+    if(overlay.classList.contains('hidden') || overlay.classList.contains('closing')) return;
+    overlay.classList.add('closing');
+    setTimeout(() => {
+      overlay.classList.add('hidden');
+      overlay.classList.remove('closing');
+    }, 310);
+  }
+
   function render(){
     const day = getDay(selectedDate());
     const foods = day.foods;
@@ -326,6 +588,7 @@
     }).join('') : '<div class="empty">No weight logged for this day.</div>';
 
     saveState();
+    renderHistory();
   }
 
   function clearFoodForm(){
@@ -403,6 +666,32 @@
       const b = $('addWeightBtn');
       if(b) b.textContent = 'Save Weight + Goal';
     }, 1400);
+  });
+
+  $('historyTab').addEventListener('click', openHistory);
+  $('historyClose').addEventListener('click', closeHistory);
+  $('historyBackdrop').addEventListener('click', closeHistory);
+
+  $('historyList').addEventListener('click', e => {
+    const button = e.target.closest('[data-history-date]');
+    if(!button) return;
+    $('selectedDate').value = button.dataset.historyDate;
+    render();
+    closeHistory();
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+
+  $('streakClose').addEventListener('click', closeStreakPopup);
+  $('streakContinue').addEventListener('click', closeStreakPopup);
+  $('streakOverlay').addEventListener('click', e => {
+    if(e.target === $('streakOverlay')) closeStreakPopup();
+  });
+
+  document.addEventListener('keydown', e => {
+    if(e.key === 'Escape'){
+      closeHistory();
+      closeStreakPopup();
+    }
   });
 
   $('selectedDate').addEventListener('change', render);
@@ -597,6 +886,10 @@
     });
   }
 
+  recordAppOpen();
   $('selectedDate').value = todayLocal();
   render();
+
+  // Show the daily streak card immediately on each app launch.
+  requestAnimationFrame(showStreakPopup);
 })();

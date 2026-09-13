@@ -412,6 +412,294 @@
       }
     }
 
+  
+    /* ----- Day history side drawer ----- */
+    .history-tab{
+      position:fixed;
+      right:0;
+      top:46%;
+      transform:translateY(-50%);
+      width:auto;
+      z-index:40;
+      padding:12px 10px;
+      border-radius:14px 0 0 14px;
+      background:linear-gradient(180deg,#7e22ce,#0284c7);
+      color:white;
+      box-shadow:0 8px 22px rgba(0,0,0,.28);
+      writing-mode:vertical-rl;
+      letter-spacing:.6px;
+    }
+    .history-backdrop{
+      position:fixed;
+      inset:0;
+      background:rgba(2,6,23,.64);
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .28s ease;
+      z-index:59;
+    }
+    .history-backdrop.open{
+      opacity:1;
+      pointer-events:auto;
+    }
+    .history-drawer{
+      position:fixed;
+      top:0;
+      right:0;
+      width:min(390px,92vw);
+      height:100%;
+      z-index:60;
+      background:linear-gradient(180deg,#111827,#0b1220);
+      border-left:1px solid #5b4bb7;
+      transform:translateX(104%);
+      transition:transform .32s cubic-bezier(.2,.8,.2,1);
+      box-shadow:-18px 0 45px rgba(0,0,0,.35);
+      display:flex;
+      flex-direction:column;
+    }
+    .history-drawer.open{transform:translateX(0)}
+    .history-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:18px 16px 14px;
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(145deg,rgba(126,34,206,.18),rgba(2,132,199,.12));
+    }
+    .history-header h2{margin:0}
+    .history-close{
+      width:42px;
+      min-width:42px;
+      height:42px;
+      padding:0;
+      border-radius:50%;
+      background:#1e293b;
+      color:#fff;
+      font-size:20px;
+    }
+    .history-list{
+      overflow:auto;
+      padding:12px;
+      flex:1;
+    }
+    .history-day{
+      width:100%;
+      text-align:left;
+      padding:12px;
+      margin-bottom:9px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:#111827;
+      color:var(--text);
+      display:block;
+    }
+    .history-day:hover{border-color:#5b4bb7}
+    .history-day.selected{
+      border-color:#38bdf8;
+      background:linear-gradient(145deg,rgba(2,132,199,.18),rgba(126,34,206,.12));
+    }
+    .history-day-title{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      font-weight:800;
+      margin-bottom:6px;
+    }
+    .history-day-meta{
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.45;
+    }
+    .history-empty{
+      padding:20px 10px;
+      color:var(--muted);
+      text-align:center;
+    }
+
+    /* ----- Streak popup ----- */
+    .streak-overlay{
+      position:fixed;
+      inset:0;
+      z-index:100;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      background:rgba(2,6,23,.78);
+      backdrop-filter:blur(5px);
+      opacity:1;
+      transition:opacity .3s ease;
+    }
+    .streak-overlay.hidden{display:none}
+    .streak-overlay.closing{opacity:0}
+    .streak-modal{
+      width:min(430px,100%);
+      border-radius:24px;
+      border:1px solid #5b4bb7;
+      background:
+        radial-gradient(circle at top,rgba(126,34,206,.22),transparent 38%),
+        linear-gradient(180deg,#111827,#0b1220);
+      box-shadow:0 28px 70px rgba(0,0,0,.45);
+      padding:20px;
+      transform:translateY(0) scale(1);
+      opacity:1;
+      transition:transform .3s cubic-bezier(.2,.8,.2,1),opacity .3s ease;
+    }
+    .streak-overlay.closing .streak-modal{
+      transform:translateY(-28px) scale(.97);
+      opacity:0;
+    }
+    .streak-top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .streak-close{
+      width:42px;
+      min-width:42px;
+      height:42px;
+      border-radius:50%;
+      padding:0;
+      background:#1e293b;
+      color:#fff;
+      font-size:20px;
+    }
+    .streak-flame-wrap{
+      text-align:center;
+      margin:3px auto 4px;
+    }
+    .streak-flame{
+      width:72px;
+      height:82px;
+      display:block;
+      margin:0 auto;
+      filter:drop-shadow(0 8px 12px rgba(0,0,0,.25));
+    }
+    .streak-flame.red{color:#ef4444}
+    .streak-flame.purple{color:#a855f7}
+    .streak-flame.green{color:#22c55e}
+    .streak-count{
+      text-align:center;
+      font-size:44px;
+      font-weight:900;
+      line-height:1;
+      margin-top:2px;
+    }
+    .streak-label{
+      text-align:center;
+      color:#cbd5e1;
+      font-weight:800;
+      margin-top:5px;
+    }
+    .streak-quote{
+      margin:16px 0 14px;
+      padding:12px 14px;
+      border-radius:14px;
+      background:rgba(15,23,42,.78);
+      border:1px solid var(--line);
+      color:#e2e8f0;
+      text-align:center;
+      line-height:1.45;
+      font-size:14px;
+    }
+    .week-strip{
+      margin-top:12px;
+      padding:13px 8px 8px;
+      border-radius:16px;
+      background:#090f1b;
+      border:1px solid var(--line);
+    }
+    .week-row{
+      display:grid;
+      grid-template-columns:repeat(7,1fr);
+      gap:4px;
+      align-items:start;
+    }
+    .week-day{
+      position:relative;
+      text-align:center;
+      min-width:0;
+    }
+    .week-letter{
+      color:#94a3b8;
+      font-size:10px;
+      font-weight:800;
+      margin-bottom:7px;
+    }
+    .week-node-wrap{
+      position:relative;
+      height:32px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .week-node{
+      position:relative;
+      z-index:2;
+      width:27px;
+      height:27px;
+      border-radius:50%;
+      border:2px solid #334155;
+      background:#172033;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:11px;
+      font-weight:900;
+      color:#64748b;
+    }
+    .week-day.active .week-node{
+      background:#f59e0b;
+      border-color:#fbbf24;
+      color:#1f1300;
+    }
+    .week-day.broken .week-node{
+      background:#7f1d1d;
+      border-color:#ef4444;
+      color:#fee2e2;
+    }
+    .week-day.today .week-node{
+      box-shadow:0 0 0 3px rgba(56,189,248,.28);
+    }
+    .week-connector{
+      position:absolute;
+      top:50%;
+      left:50%;
+      width:calc(100% + 4px);
+      height:5px;
+      transform:translateY(-50%);
+      background:#263244;
+      z-index:1;
+    }
+    .week-connector.active{background:#f59e0b}
+    .week-connector.broken{background:#ef4444}
+    .streak-status{
+      text-align:center;
+      color:var(--muted);
+      font-size:12px;
+      margin-top:10px;
+      min-height:18px;
+    }
+    .streak-action{
+      margin-top:14px;
+      background:linear-gradient(90deg,#7e22ce,#0284c7);
+      color:white;
+    }
+
+    @media (max-width:640px){
+      .history-tab{
+        top:auto;
+        bottom:18px;
+        right:12px;
+        transform:none;
+        writing-mode:horizontal-tb;
+        border-radius:999px;
+        padding:11px 15px;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -582,6 +870,48 @@
   </div>
 </div>
 
+
+<button id="historyTab" class="history-tab" type="button" aria-label="Open day history">History</button>
+<div id="historyBackdrop" class="history-backdrop"></div>
+<aside id="historyDrawer" class="history-drawer" aria-label="Day history" aria-hidden="true">
+  <div class="history-header">
+    <div>
+      <h2>Day History</h2>
+      <div class="tiny">Tap any saved day to view it.</div>
+    </div>
+    <button id="historyClose" class="history-close" type="button" aria-label="Close history">×</button>
+  </div>
+  <div id="historyList" class="history-list"></div>
+</aside>
+
+<div id="streakOverlay" class="streak-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="streakTitle">
+  <div id="streakModal" class="streak-modal">
+    <div class="streak-top">
+      <div>
+        <div class="tiny">DAILY CHECK-IN</div>
+        <h2 id="streakTitle" style="margin:3px 0 0">You're showing up 🔥</h2>
+      </div>
+      <button id="streakClose" class="streak-close" type="button" aria-label="Close streak popup">×</button>
+    </div>
+
+    <div class="streak-flame-wrap">
+      <svg id="streakFlame" class="streak-flame red" viewBox="0 0 64 80" aria-hidden="true">
+        <path fill="currentColor" d="M35 2c2 13-8 17-6 28 1 5 5 8 5 14 0 5-4 9-9 9-7 0-12-6-12-14 0-12 8-21 17-29 1 8 4 12 5 16 6-6 8-14 7-24 12 10 19 23 19 38 0 22-14 38-32 38S1 64 1 45C1 27 15 14 35 2z"/>
+      </svg>
+      <div id="streakCount" class="streak-count">1</div>
+      <div id="streakLabel" class="streak-label">day streak</div>
+    </div>
+
+    <div id="streakQuote" class="streak-quote">Small choices stack up. Keep showing up.</div>
+
+    <div class="week-strip">
+      <div id="weekRow" class="week-row"></div>
+      <div id="streakStatus" class="streak-status"></div>
+    </div>
+
+    <button id="streakContinue" class="streak-action" type="button">Keep going</button>
+  </div>
+</div>
 
 <script src="./app.js" defer></script>
 </body>
