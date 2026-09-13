@@ -89,7 +89,9 @@
     return Object.keys(state.days || {}).filter(date => {
       const day = state.days[date];
       return Array.isArray(day?.foods) && day.foods.length > 0 ||
-             Array.isArray(day?.weights) && day.weights.length > 0;
+             Array.isArray(day?.weights) && day.weights.length > 0 ||
+             Array.isArray(day?.exercises) && day.exercises.length > 0 ||
+             Array.isArray(day?.prs) && day.prs.length > 0;
     });
   }
 
@@ -324,9 +326,11 @@
   }
 
   function getDay(date){
-    if(!state.days[date]) state.days[date] = {foods:[],weights:[],note:'',mood:0,hunger:0};
+    if(!state.days[date]) state.days[date] = {foods:[],weights:[],exercises:[],prs:[],note:'',mood:0,hunger:0};
     if(!Array.isArray(state.days[date].foods)) state.days[date].foods = [];
     if(!Array.isArray(state.days[date].weights)) state.days[date].weights = [];
+    if(!Array.isArray(state.days[date].exercises)) state.days[date].exercises = [];
+    if(!Array.isArray(state.days[date].prs)) state.days[date].prs = [];
     if(typeof state.days[date].note !== 'string') state.days[date].note = '';
     state.days[date].mood = num(state.days[date].mood);
     state.days[date].hunger = num(state.days[date].hunger);
@@ -339,6 +343,25 @@
     const a=[]; Object.entries(state.days||{}).forEach(([date,d])=>(d?.weights||[]).forEach(w=>a.push({...w,date})));
     return a.sort((x,y)=>(num(x.createdAt)||parseLocalDate(x.date).getTime())-(num(y.createdAt)||parseLocalDate(y.date).getTime()));
   }
+
+  function allExercises(){
+    const a=[];Object.entries(state.days||{}).forEach(([date,d])=>(d?.exercises||[]).forEach(x=>a.push({...x,date})));
+    return a.sort((x,y)=>(num(x.createdAt)||parseLocalDate(x.date).getTime())-(num(y.createdAt)||parseLocalDate(y.date).getTime()));
+  }
+  function allPRs(){
+    const a=[];Object.entries(state.days||{}).forEach(([date,d])=>(d?.prs||[]).forEach(x=>a.push({...x,date})));
+    return a.sort((x,y)=>(num(x.createdAt)||parseLocalDate(x.date).getTime())-(num(y.createdAt)||parseLocalDate(y.date).getTime()));
+  }
+  function bestPRsByExercise(){
+    const map=new Map();
+    allPRs().forEach(p=>{
+      const name=String(p.exercise||'').trim()||'Lift';
+      const prev=map.get(name);
+      if(!prev || num(p.weight)>num(prev.weight) || (num(p.weight)===num(prev.weight)&&num(p.reps)>num(prev.reps))) map.set(name,p);
+    });
+    return [...map.values()].sort((a,b)=>num(b.createdAt)-num(a.createdAt));
+  }
+
   function longestStreak(){
     const d=[...new Set(state.engagement?.usedDates||[])].sort(); if(!d.length)return 0;
     let best=1,run=1; for(let i=1;i<d.length;i++){run=dateDiffDays(d[i-1],d[i])===1?run+1:1;best=Math.max(best,run)} return best;
@@ -346,7 +369,7 @@
   function weekDates(offset=0){let m=mondayOfWeek(todayLocal());m=addDays(m,offset*7);return Array.from({length:7},(_,i)=>addDays(m,i))}
   function weekStats(ds){
     const used=new Set(state.engagement?.usedDates||[]), today=todayLocal();
-    const tracked=ds.filter(x=>x<=today&&(used.has(x)||(state.days?.[x]?.foods?.length||0)||(state.days?.[x]?.weights?.length||0)));
+    const tracked=ds.filter(x=>x<=today&&(used.has(x)||(state.days?.[x]?.foods?.length||0)||(state.days?.[x]?.weights?.length||0)||(state.days?.[x]?.exercises?.length||0)||(state.days?.[x]?.prs?.length||0)));
     let cal=0,pro=0;tracked.forEach(x=>(state.days?.[x]?.foods||[]).forEach(f=>{cal+=num(f.calories);pro+=num(f.protein)}));
     const ww=allWeights().filter(w=>ds.includes(w.date));
     return {days:tracked.length,cal:tracked.length?cal/tracked.length:0,pro:tracked.length?pro/tracked.length:0,w:ww.length>1?num(ww.at(-1).value)-num(ww[0].value):null};
@@ -364,6 +387,20 @@
     const w=allWeights(),start=w.length?num(w[0].value):0,current=w.length?num(w.at(-1).value):0,goal=num(state.settings.endGoalWeight),st=currentStreakInfo().count,best=longestStreak();
     $('dashStart').textContent=start?format1(start)+' lb':'—';$('dashCurrent').textContent=current?format1(current)+' lb':'—';$('dashGoal').textContent=goal?format1(goal)+' lb':'—';$('dashStreak').textContent=st;$('dashBest').textContent=best;
     $('dashChange').textContent=start&&current?((current-start>0?'+':'')+format1(current-start)+' lb'):'—';
+
+    const dashboardDay=getDay(selectedDate());
+    const todayExercises=dashboardDay.exercises||[];
+    const todayBurned=todayExercises.reduce((sum,x)=>sum+num(x.caloriesBurned),0);
+    const prs=allPRs(), latestPR=prs.length?prs.at(-1):null, bestPRs=bestPRsByExercise();
+
+    $('dashBurned').textContent=Math.round(todayBurned);
+    $('dashExerciseCount').textContent=todayExercises.length;
+    $('dashPRCount').textContent=prs.length;
+    $('dashLatestPR').textContent=latestPR?`${latestPR.exercise}: ${format1(latestPR.weight)} lb × ${Math.max(1,num(latestPR.reps)||1)}`:'No PRs logged yet';
+    $('dashPRHighlights').innerHTML=bestPRs.length
+      ? bestPRs.slice(0,6).map(p=>`<span class="pr-highlight">${escapeHtml(p.exercise)} • ${format1(p.weight)} lb × ${Math.max(1,num(p.reps)||1)}</span>`).join('')
+      : '<span class="tiny">Your best lift records will appear here.</span>';
+
     let rem=null,p=0;if(start&&current&&goal){rem=Math.abs(current-goal);const total=Math.abs(start-goal);p=total?Math.max(0,Math.min(100,(1-rem/total)*100)):100}
     $('ringRemaining').textContent=rem===null?'—':format1(rem)+' lb';$('goalRing').style.setProperty('--p',p+'%');$('dashMessage').textContent=current&&goal?`${format1(rem)} lb to goal • ${st} day${st===1?'':'s'} streak`:'Log weight and a goal to fill your progress ring.';renderChart(w.slice(-30));
   }
@@ -395,7 +432,7 @@
     const prefix=`${y}-${String(m+1).padStart(2,'0')}-`;
     const used=new Set(state.engagement?.usedDates||[]);
     const dates=[...new Set([...Object.keys(state.days||{}),...(state.engagement?.usedDates||[])])].filter(d=>d.startsWith(prefix)).sort();
-    const tracked=dates.filter(d=>used.has(d)||(state.days[d]?.foods?.length||0)||(state.days[d]?.weights?.length||0));
+    const tracked=dates.filter(d=>used.has(d)||(state.days[d]?.foods?.length||0)||(state.days[d]?.weights?.length||0)||(state.days[d]?.exercises?.length||0)||(state.days[d]?.prs?.length||0));
     let cal=0,pro=0,foods=0;
     tracked.forEach(d=>(state.days[d]?.foods||[]).forEach(f=>{cal+=num(f.calories);pro+=num(f.protein);foods++}));
     const ww=allWeights().filter(w=>w.date.startsWith(prefix));
@@ -448,7 +485,8 @@
     const usage = state.engagement?.usedDates || [];
     const dataDates = Object.keys(state.days || {}).filter(date => {
       const day = state.days[date];
-      return (day?.foods?.length || 0) > 0 || (day?.weights?.length || 0) > 0;
+      return (day?.foods?.length || 0) > 0 || (day?.weights?.length || 0) > 0 ||
+             (day?.exercises?.length || 0) > 0 || (day?.prs?.length || 0) > 0;
     });
     return [...new Set([...usage,...dataDates])].sort().reverse();
   }
@@ -467,7 +505,10 @@
       const day = state.days?.[date] || {foods:[],weights:[]};
       const foods = Array.isArray(day.foods) ? day.foods : [];
       const weights = Array.isArray(day.weights) ? day.weights : [];
+      const exercises = Array.isArray(day.exercises) ? day.exercises : [];
+      const prs = Array.isArray(day.prs) ? day.prs : [];
       const calories = foods.reduce((sum,f) => sum + num(f.calories),0);
+      const burned = exercises.reduce((sum,x)=>sum + num(x.caloriesBurned),0);
       const latestWeight = weights.slice().sort((a,b)=>num(b.createdAt)-num(a.createdAt))[0];
       const label = date === todayLocal() ? 'Today' : friendlyDate(date);
 
@@ -480,6 +521,7 @@
           <div class="history-day-meta">
             ${Math.round(calories)} cal • ${foods.length} food entr${foods.length === 1 ? 'y' : 'ies'} •
             ${latestWeight ? format1(latestWeight.value) + ' lb' : 'no weight'}
+            ${burned ? ' • '+Math.round(burned)+' burned' : ''}${prs.length ? ' • '+prs.length+' PR'+(prs.length===1?'':'s') : ''}
             ${day.note ? ' • note saved' : ''}${num(day.mood) ? ' • mood '+num(day.mood)+'/5' : ''}${num(day.hunger) ? ' • hunger '+num(day.hunger)+'/5' : ''}
           </div>
         </button>
@@ -663,6 +705,35 @@
       </div>
     `).join('') : '<div class="empty">No food logged for this day.</div>';
 
+    const exercises=(day.exercises||[]).slice().sort((a,b)=>num(b.createdAt)-num(a.createdAt));
+    $('exerciseLog').innerHTML=exercises.length?exercises.map(x=>`
+      <div class="exercise-entry">
+        <div>
+          <strong>${escapeHtml(x.name)}</strong>
+          <div class="exercise-meta">
+            <span class="exercise-pill">${escapeHtml(x.type)}</span>
+            ${Math.round(num(x.caloriesBurned))} calories burned${num(x.minutes)>0?' • '+Math.round(num(x.minutes))+' min':''}
+          </div>
+        </div>
+        <button class="danger" style="width:auto;padding:8px 10px" data-exercise-delete="${x.id}">Delete</button>
+      </div>
+    `).join(''):'<div class="empty">No exercise logged for this day.</div>';
+
+    const prs=(day.prs||[]).slice().sort((a,b)=>num(b.createdAt)-num(a.createdAt));
+    $('prLog').innerHTML=prs.length?prs.map(p=>`
+      <div class="pr-entry">
+        <div>
+          <strong>${escapeHtml(p.exercise)}</strong>
+          <div class="pr-meta">
+            <span class="pr-pill">PR</span>
+            ${format1(p.weight)} lb × ${Math.max(1,num(p.reps)||1)} rep${Math.max(1,num(p.reps)||1)===1?'':'s'}
+            ${p.note?' • '+escapeHtml(p.note):''}
+          </div>
+        </div>
+        <button class="danger" style="width:auto;padding:8px 10px" data-pr-delete="${p.id}">Delete</button>
+      </div>
+    `).join(''):'<div class="empty">No lifting PRs logged for this day.</div>';
+
     const weights = day.weights.slice().sort((a,b)=>num(b.createdAt)-num(a.createdAt));
     $('weightLog').innerHTML = weights.length ? weights.map(w => {
       const savedGoal = num(w.goalWeight);
@@ -735,6 +806,22 @@
     $('foodName').focus();
   }
 
+
+  function clearExerciseForm(){
+    $('exerciseName').value='';
+    $('exerciseType').value='Cardio';
+    $('exerciseMinutes').value='';
+    $('exerciseCalories').value='';
+  }
+  function clearPRForm(){
+    $('prExercise').value='Deadlift';
+    $('prCustomExercise').value='';
+    $('customPRWrap').style.display='none';
+    $('prWeight').value='';
+    $('prReps').value='1';
+    $('prNote').value='';
+  }
+
   $('addFoodBtn').addEventListener('click', () => {
     const name = $('foodName').value.trim();
     const caloriesRaw = $('foodCalories').value.trim();
@@ -756,6 +843,49 @@
   });
 
   $('clearFoodBtn').addEventListener('click', clearFoodForm);
+
+
+  $('addExerciseBtn').addEventListener('click',()=>{
+    const name=$('exerciseName').value.trim();
+    const calories=$('exerciseCalories').value.trim();
+    if(!name){alert('Enter the exercise name.');$('exerciseName').focus();return}
+    if(calories==='' || num(calories)<0){alert('Enter valid calories burned.');$('exerciseCalories').focus();return}
+    getDay(selectedDate()).exercises.push({
+      id:crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random(),
+      name,
+      type:$('exerciseType').value,
+      minutes:Math.max(0,num($('exerciseMinutes').value)),
+      caloriesBurned:Math.max(0,num(calories)),
+      createdAt:Date.now()
+    });
+    clearExerciseForm();
+    render();
+  });
+  $('clearExerciseBtn').addEventListener('click',clearExerciseForm);
+
+  $('prExercise').addEventListener('change',()=>{
+    $('customPRWrap').style.display=$('prExercise').value==='Other / Custom'?'block':'none';
+    if($('prExercise').value!=='Other / Custom')$('prCustomExercise').value='';
+  });
+  $('addPRBtn').addEventListener('click',()=>{
+    const selected=$('prExercise').value;
+    const exercise=selected==='Other / Custom' ? $('prCustomExercise').value.trim() : selected;
+    const weight=num($('prWeight').value);
+    const reps=Math.max(1,Math.round(num($('prReps').value)||1));
+    if(!exercise){alert('Enter the lift or exercise name.');$('prCustomExercise').focus();return}
+    if(weight<=0){alert('Enter a valid PR weight.');$('prWeight').focus();return}
+    getDay(selectedDate()).prs.push({
+      id:crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random(),
+      exercise,
+      weight,
+      reps,
+      note:$('prNote').value.trim(),
+      createdAt:Date.now()
+    });
+    clearPRForm();
+    render();
+  });
+  $('clearPRBtn').addEventListener('click',clearPRForm);
 
   $('addWeightBtn').addEventListener('click', () => {
     const current = num($('weightValue').value);
@@ -904,6 +1034,8 @@
   document.addEventListener('click', e => {
     const foodId = e.target?.dataset?.foodDelete;
     const weightId = e.target?.dataset?.weightDelete;
+    const exerciseId = e.target?.dataset?.exerciseDelete;
+    const prId = e.target?.dataset?.prDelete;
 
     if(foodId){
       const day = getDay(selectedDate());
@@ -915,11 +1047,21 @@
       const idx=day.weights.findIndex(w=>w.id===weightId);
       if(idx>=0){const removed=day.weights.splice(idx,1)[0];render();showUndo('Weight deleted.',()=>{getDay(selectedDate()).weights.splice(idx,0,removed);render()})}
     }
+    if(exerciseId){
+      const day=getDay(selectedDate());
+      const idx=day.exercises.findIndex(x=>x.id===exerciseId);
+      if(idx>=0){const removed=day.exercises.splice(idx,1)[0];render();showUndo('Exercise deleted.',()=>{getDay(selectedDate()).exercises.splice(idx,0,removed);render()})}
+    }
+    if(prId){
+      const day=getDay(selectedDate());
+      const idx=day.prs.findIndex(x=>x.id===prId);
+      if(idx>=0){const removed=day.prs.splice(idx,1)[0];render();showUndo('PR deleted.',()=>{getDay(selectedDate()).prs.splice(idx,0,removed);render()})}
+    }
   });
 
   $('resetDayBtn').addEventListener('click', () => {
-    if(confirm('Clear all food and weight entries for the selected day?')){
-      state.days[selectedDate()] = {foods:[],weights:[],note:'',mood:0,hunger:0};
+    if(confirm('Clear all food, exercise, PR, and weight entries for the selected day?')){
+      state.days[selectedDate()] = {foods:[],weights:[],exercises:[],prs:[],note:'',mood:0,hunger:0};
       render();
     }
   });

@@ -935,6 +935,52 @@
     .marshall-badge{box-shadow:0 0 18px rgba(168,85,247,.08)}
     @media(prefers-reduced-motion:reduce){.card,button,#calorieProgress{transition:none!important}}
 
+
+    /* ===== V19 Exercise + Personal Records ===== */
+    .exercise-card,.pr-card{
+      background:linear-gradient(145deg,rgba(8,20,28,.86),rgba(13,16,31,.8))!important;
+    }
+    .exercise-card::before{background:linear-gradient(90deg,transparent,#22c55e,#22d3ee,transparent)!important}
+    .pr-card::before{background:linear-gradient(90deg,transparent,#f59e0b,#a855f7,transparent)!important}
+    .exercise-grid{display:grid;grid-template-columns:1.35fr 1fr .7fr .8fr;gap:10px}
+    .pr-form-grid{display:grid;grid-template-columns:1.35fr 1.15fr .8fr .65fr;gap:10px}
+    .exercise-log,.pr-log{margin-top:14px}
+    .exercise-entry,.pr-entry{
+      display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;
+      padding:12px 0;border-top:1px solid rgba(148,163,184,.12)
+    }
+    .exercise-entry:first-child,.pr-entry:first-child{border-top:0}
+    .exercise-entry strong,.pr-entry strong{font-size:15px}
+    .exercise-meta,.pr-meta{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.45}
+    .exercise-pill,.pr-pill{
+      display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;margin-right:5px;
+      font-size:11px;font-weight:800
+    }
+    .exercise-pill{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.24);color:#86efac}
+    .pr-pill{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25);color:#fcd34d}
+    .exercise-stat strong{color:#67e8f9;text-shadow:0 0 18px rgba(34,211,238,.24)!important}
+    .pr-stat strong{color:#fbbf24;text-shadow:0 0 18px rgba(245,158,11,.23)!important}
+    .pr-dashboard-strip{
+      margin-top:14px;padding:14px;border-radius:15px;
+      background:linear-gradient(145deg,rgba(245,158,11,.07),rgba(168,85,247,.07));
+      border:1px solid rgba(245,158,11,.16)
+    }
+    .pr-dashboard-strip>div:first-child{display:flex;justify-content:space-between;gap:12px;align-items:center}
+    #dashLatestPR{font-size:14px;color:#fde68a;text-align:right}
+    .pr-highlight-list{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+    .pr-highlight{
+      padding:6px 9px;border-radius:999px;background:rgba(15,23,42,.75);
+      border:1px solid rgba(167,139,250,.2);font-size:11px;color:#ddd6fe
+    }
+    @media(max-width:700px){
+      .exercise-grid,.pr-form-grid{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:480px){
+      .exercise-grid,.pr-form-grid{grid-template-columns:1fr}
+      .pr-dashboard-strip>div:first-child{display:block}
+      #dashLatestPR{display:block;text-align:left;margin-top:5px}
+    }
+
 </style>
 </head>
 <body>
@@ -960,9 +1006,14 @@
       <div class="v16-stats">
         <div class="v16-stat"><strong id="dashStart">—</strong><span>Starting weight</span></div><div class="v16-stat"><strong id="dashCurrent">—</strong><span>Current weight</span></div><div class="v16-stat"><strong id="dashGoal">—</strong><span>Goal weight</span></div>
         <div class="v16-stat"><strong id="dashChange">—</strong><span>Total change</span></div><div class="v16-stat"><strong id="dashStreak">0</strong><span>Current streak</span></div><div class="v16-stat"><strong id="dashBest">0</strong><span>Longest streak</span></div>
+        <div class="v16-stat exercise-stat"><strong id="dashBurned">0</strong><span>Calories burned</span></div><div class="v16-stat exercise-stat"><strong id="dashExerciseCount">0</strong><span>Exercise sessions</span></div><div class="v16-stat pr-stat"><strong id="dashPRCount">0</strong><span>PRs logged</span></div>
       </div>
     </div>
     <div class="chart-box"><div class="tiny" id="chartRange">Weight trend</div><svg id="weightChart" viewBox="0 0 640 185" aria-label="Weight trend chart"></svg></div>
+    <div class="pr-dashboard-strip">
+      <div><span class="tiny">Latest lifting PR</span><strong id="dashLatestPR">No PRs logged yet</strong></div>
+      <div id="dashPRHighlights" class="pr-highlight-list"></div>
+    </div>
   </div>
   <div class="card week-card">
     <div class="v16-head"><div><div class="v16-kicker">This Week</div><h2 style="margin:3px 0 0">Your Week in CalorieTrack</h2></div><div class="tiny" id="weekRange"></div></div>
@@ -1102,6 +1153,107 @@
       <button id="addFoodBtn">Add Food</button>
       <button id="clearFoodBtn" class="secondary">Clear</button>
     </div>
+  </div>
+
+  <div class="card exercise-card">
+    <div class="v16-head"><div><div class="v16-kicker">Activity</div><h2 style="margin:3px 0 0">Exercise + Calories Burned</h2></div><div class="tiny">Log the calories you burned during exercise.</div></div>
+    <div class="exercise-grid">
+      <div>
+        <label for="exerciseName">Exercise</label>
+        <input id="exerciseName" placeholder="e.g. Treadmill walk" />
+      </div>
+      <div>
+        <label for="exerciseType">Exercise type</label>
+        <select id="exerciseType">
+          <option>Cardio</option>
+          <option>Weight Lifting</option>
+          <option>Walking</option>
+          <option>Running</option>
+          <option>Cycling</option>
+          <option>Swimming</option>
+          <option>HIIT</option>
+          <option>Yoga</option>
+          <option>Pilates</option>
+          <option>Sports</option>
+          <option>Dance</option>
+          <option>Stair Climbing</option>
+          <option>Rowing</option>
+          <option>Elliptical</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div>
+        <label for="exerciseMinutes">Minutes</label>
+        <input id="exerciseMinutes" type="number" min="0" step="1" placeholder="30" />
+      </div>
+      <div>
+        <label for="exerciseCalories">Calories burned</label>
+        <input id="exerciseCalories" type="number" min="0" step="1" placeholder="200" />
+      </div>
+    </div>
+    <div class="actions">
+      <button id="addExerciseBtn" type="button">Log Exercise</button>
+      <button id="clearExerciseBtn" class="secondary" type="button">Clear</button>
+    </div>
+    <div id="exerciseLog" class="exercise-log"></div>
+  </div>
+
+  <div class="card pr-card">
+    <div class="v16-head"><div><div class="v16-kicker">Strength</div><h2 style="margin:3px 0 0">Weight Lifting PR Log</h2></div><div class="tiny">PR = personal record.</div></div>
+    <div class="pr-form-grid">
+      <div>
+        <label for="prExercise">Lift / exercise</label>
+        <select id="prExercise">
+          <option>Deadlift</option>
+          <option>Back Squat</option>
+          <option>Front Squat</option>
+          <option>Bench Press</option>
+          <option>Incline Bench Press</option>
+          <option>Overhead Press</option>
+          <option>Barbell Row</option>
+          <option>Romanian Deadlift</option>
+          <option>Hip Thrust</option>
+          <option>Leg Press</option>
+          <option>Lat Pulldown</option>
+          <option>Seated Cable Row</option>
+          <option>Pull-Up</option>
+          <option>Weighted Pull-Up</option>
+          <option>Dumbbell Bench Press</option>
+          <option>Dumbbell Shoulder Press</option>
+          <option>Dumbbell Row</option>
+          <option>Dumbbell Curl</option>
+          <option>Hammer Curl</option>
+          <option>Goblet Squat</option>
+          <option>Bulgarian Split Squat</option>
+          <option>Triceps Pressdown</option>
+          <option>Leg Extension</option>
+          <option>Leg Curl</option>
+          <option>Calf Raise</option>
+          <option>Other / Custom</option>
+        </select>
+      </div>
+      <div id="customPRWrap" style="display:none">
+        <label for="prCustomExercise">Custom lift</label>
+        <input id="prCustomExercise" placeholder="Type your lift" />
+      </div>
+      <div>
+        <label for="prWeight">PR weight (lb)</label>
+        <input id="prWeight" type="number" min="0" step="0.5" placeholder="225" />
+      </div>
+      <div>
+        <label for="prReps">Reps</label>
+        <input id="prReps" type="number" min="1" step="1" value="1" />
+      </div>
+    </div>
+    <div style="margin-top:10px">
+      <label for="prNote">Note (optional)</label>
+      <input id="prNote" placeholder="e.g. first 225 deadlift, felt strong" />
+    </div>
+    <div class="actions">
+      <button id="addPRBtn" type="button">Save Personal Record</button>
+      <button id="clearPRBtn" class="secondary" type="button">Clear</button>
+    </div>
+    <div id="prLog" class="pr-log"></div>
   </div>
 
   <div class="card foodlog-card">
