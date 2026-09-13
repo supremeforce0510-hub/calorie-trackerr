@@ -1047,6 +1047,33 @@
       .app.section-view .topbar-right{display:flex}
     }
 
+
+    /* ===== V23 HOME GOALS + PR BOARD + EXERCISE PROGRESS ===== */
+    .app.section-view .home-dashboard{display:none}
+    .home-dashboard{margin-top:14px}
+    .home-dashboard-card{
+      background:linear-gradient(180deg,rgba(255,255,255,.052),rgba(255,255,255,.022));
+      border:1px solid rgba(255,255,255,.105);border-radius:24px;padding:18px;margin-bottom:14px;
+      box-shadow:0 18px 48px rgba(0,0,0,.22);position:relative;overflow:hidden
+    }
+    .home-dashboard-card:before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,#a855f7,#3b82f6,#22d3ee);opacity:.9}
+    .home-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+    .home-card-head h2{margin:2px 0 0;font-size:1.18rem}.home-card-kicker{font-size:.7rem;text-transform:uppercase;letter-spacing:.15em;color:#a78bfa;font-weight:900}
+    .goal-life-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:14px}
+    .home-subpanel{background:rgba(3,7,18,.45);border:1px solid rgba(255,255,255,.075);border-radius:18px;padding:14px}
+    .home-subpanel h3{margin:0 0 11px;font-size:.95rem;color:#e2e8f0}
+    .home-goal-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.home-goal-grid label{font-size:11px}.home-goal-grid input{padding:9px 10px;font-size:14px}
+    .home-goal-wide{grid-column:1/-1}.home-goal-pr{display:grid;grid-template-columns:1.25fr .75fr;gap:9px}
+    .home-save-goals{margin-top:10px;background:linear-gradient(90deg,#7c3aed,#2563eb);color:#fff}
+    .goal-snapshot{margin-top:11px;display:grid;gap:7px}.goal-snapshot-row{display:grid;grid-template-columns:94px 1fr auto;gap:8px;align-items:center;font-size:11px;color:#cbd5e1}.goal-mini-track{height:7px;border-radius:999px;background:#172033;overflow:hidden}.goal-mini-fill{height:100%;border-radius:inherit;background:linear-gradient(90deg,#a855f7,#38bdf8);width:0}.goal-snapshot-row strong{font-size:11px;color:#f8fafc;white-space:nowrap}
+    .lifetime-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.life-stat{background:#0b1220;border:1px solid rgba(255,255,255,.07);border-radius:13px;padding:10px;text-align:center}.life-stat strong{display:block;font-size:1.05rem}.life-stat span{font-size:10px;color:#94a3b8}
+    .pr-home-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:12px}.pr-summary-stat{background:#0b1220;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:11px}.pr-summary-stat span{display:block;font-size:10px;color:#94a3b8;margin-bottom:4px}.pr-summary-stat strong{font-size:13px;line-height:1.35}
+    .home-pr-board{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.home-pr-item{padding:12px;border-radius:15px;background:linear-gradient(145deg,rgba(168,85,247,.09),rgba(56,189,248,.055));border:1px solid rgba(125,211,252,.14)}.home-pr-item .pr-name{font-weight:900;font-size:13px}.home-pr-item .pr-best{font-size:1.15rem;font-weight:900;margin:5px 0 3px}.home-pr-item .pr-improve{font-size:10px;color:#7dd3fc}.home-pr-empty{grid-column:1/-1;color:#94a3b8;text-align:center;padding:14px}
+    .exercise-progress-controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}.progress-chart-card{background:#0b1220;border:1px solid var(--line);border-radius:16px;padding:12px;margin-top:10px}.progress-chart-card h3{font-size:14px;margin:0 0 4px}.progress-chart-card p{font-size:11px;margin:0 0 8px}.progress-svg{display:block;width:100%;height:190px}.progress-empty{fill:#94a3b8;font-size:14px}
+    .achievement-pop{position:fixed;left:50%;top:18px;transform:translate(-50%,-100px);z-index:170;width:min(440px,calc(100% - 28px));padding:14px 16px;border-radius:16px;background:linear-gradient(135deg,#312e81,#7c2d12);border:1px solid #fbbf24;opacity:0;transition:.28s ease;color:#fff;box-shadow:0 18px 50px rgba(0,0,0,.45);pointer-events:none}.achievement-pop.show{transform:translate(-50%,0);opacity:1}.achievement-pop strong{display:block;font-size:14px;margin-bottom:3px}.achievement-pop span{font-size:12px;color:#fde68a}
+    .badge{position:relative;filter:grayscale(1);opacity:.42;background:#080d18!important;border-color:#263244!important}.badge.unlocked{filter:none;opacity:1}.badge.unlocked.tier-bronze{border-color:#b45309!important;background:linear-gradient(145deg,rgba(180,83,9,.22),rgba(120,53,15,.08))!important;box-shadow:0 0 18px rgba(180,83,9,.09)}.badge.unlocked.tier-silver{border-color:#94a3b8!important;background:linear-gradient(145deg,rgba(148,163,184,.18),rgba(71,85,105,.08))!important;box-shadow:0 0 18px rgba(148,163,184,.08)}.badge.unlocked.tier-gold{border-color:#f59e0b!important;background:linear-gradient(145deg,rgba(245,158,11,.22),rgba(126,34,206,.08))!important;box-shadow:0 0 20px rgba(245,158,11,.11)}.badge.unlocked.tier-diamond{border-color:#22d3ee!important;background:linear-gradient(145deg,rgba(34,211,238,.18),rgba(168,85,247,.13))!important;box-shadow:0 0 22px rgba(34,211,238,.12)}.badge-tier{display:inline-block!important;margin-top:6px!important;font-size:8px!important;text-transform:uppercase;letter-spacing:.12em;color:#64748b!important}.badge.unlocked .badge-tier{color:#e2e8f0!important}.achievements-note{font-size:11px;color:#94a3b8;margin:0 0 10px}
+    @media(max-width:640px){.home-dashboard{padding-bottom:76px}.goal-life-grid{grid-template-columns:1fr}.home-pr-board{grid-template-columns:1fr}.pr-home-summary{grid-template-columns:1fr}.exercise-progress-controls{grid-template-columns:1fr}.home-goal-pr{grid-template-columns:1fr}.home-hero{min-height:auto;padding-bottom:26px}.home-dashboard-card{padding:15px}}
+
 </style>
 </head>
 <body>
@@ -1076,6 +1103,49 @@
   <p class="home-hint">Use <strong>Menu</strong> below to open any part of the app.</p>
 </section>
 
+<section id="homeDashboard" class="home-dashboard" aria-label="IRONLOG home dashboard">
+  <div class="home-dashboard-card">
+    <div class="home-card-head"><div><div class="home-card-kicker">Goals + Lifetime</div><h2>Goals Hub & Lifetime Stats</h2></div><div class="tiny">Your targets and all-time IRONLOG totals.</div></div>
+    <div class="goal-life-grid">
+      <div class="home-subpanel">
+        <h3>Goals Hub</h3>
+        <div class="home-goal-grid">
+          <div><label for="homeCalorieGoal">Daily calories</label><input id="homeCalorieGoal" type="number" min="1" step="1"></div>
+          <div><label for="homeProteinGoal">Daily protein (g)</label><input id="homeProteinGoal" type="number" min="0" step="1"></div>
+          <div><label for="homeWeightGoal">Goal weight (lb)</label><input id="homeWeightGoal" type="number" min="1" step="0.1" placeholder="Goal"></div>
+          <div><label for="homeWorkoutGoal">Workouts / week</label><input id="homeWorkoutGoal" type="number" min="1" max="14" step="1" placeholder="3"></div>
+          <div class="home-goal-wide"><label>PR goal</label><div class="home-goal-pr"><input id="homePRGoalExercise" placeholder="e.g. Deadlift"><input id="homePRGoalWeight" type="number" min="1" step="0.5" placeholder="lb"></div></div>
+        </div>
+        <button id="saveHomeGoalsBtn" class="home-save-goals" type="button">Save Goals</button>
+        <div id="goalSnapshot" class="goal-snapshot"></div>
+      </div>
+      <div class="home-subpanel">
+        <h3>Lifetime Stats</h3>
+        <div class="lifetime-grid">
+          <div class="life-stat"><strong id="lifeDays">0</strong><span>Days tracked</span></div>
+          <div class="life-stat"><strong id="lifeFoods">0</strong><span>Foods logged</span></div>
+          <div class="life-stat"><strong id="lifeWorkouts">0</strong><span>Workouts</span></div>
+          <div class="life-stat"><strong id="lifeMinutes">0</strong><span>Workout minutes</span></div>
+          <div class="life-stat"><strong id="lifeBurned">0</strong><span>Calories burned</span></div>
+          <div class="life-stat"><strong id="lifePRs">0</strong><span>PRs logged</span></div>
+          <div class="life-stat"><strong id="lifeStreak">0</strong><span>Longest streak</span></div>
+          <div class="life-stat"><strong id="lifeWeightChange">—</strong><span>Weight change</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="home-dashboard-card">
+    <div class="home-card-head"><div><div class="home-card-kicker">Personal Records</div><h2>PR Board</h2></div><div class="tiny">Best lifts + improvement from your first logged PR.</div></div>
+    <div class="pr-home-summary">
+      <div class="pr-summary-stat"><span>Latest PR</span><strong id="homeLatestPR">No PRs yet</strong></div>
+      <div class="pr-summary-stat"><span>Best improvement</span><strong id="homeBestImprovement">—</strong></div>
+      <div class="pr-summary-stat"><span>Different lifts</span><strong id="homeLiftCount">0</strong></div>
+    </div>
+    <div id="homePRBoard" class="home-pr-board"></div>
+  </div>
+</section>
+
 <div id="sectionProgress" class="card progress-dashboard feature-section">
     <div class="v16-head"><div><div class="v16-kicker">Your Progress</div><h2 style="margin:3px 0 0">Progress Dashboard</h2></div><div class="tiny" id="dashMessage"></div></div>
     <div class="goal-ring-layout">
@@ -1091,6 +1161,15 @@
       <div><span class="tiny">Latest lifting PR</span><strong id="dashLatestPR">No PRs logged yet</strong></div>
       <div id="dashPRHighlights" class="pr-highlight-list"></div>
     </div>
+  </div>
+  <div id="sectionExerciseProgress" class="card progress-dashboard feature-section">
+    <div class="v16-head"><div><div class="v16-kicker">Training Trends</div><h2 style="margin:3px 0 0">Exercise Progress</h2></div><div class="tiny">See how your logged sessions and lifts change over time.</div></div>
+    <div class="exercise-progress-controls">
+      <div><label for="liftProgressSelect">Lift / PR progress</label><select id="liftProgressSelect"></select></div>
+      <div><label for="exerciseProgressSelect">Exercise session progress</label><select id="exerciseProgressSelect"></select></div>
+    </div>
+    <div class="progress-chart-card"><h3 id="liftProgressTitle">Lifting PR Progress</h3><p>Best logged weight over time for the selected lift.</p><svg id="liftProgressChart" class="progress-svg" viewBox="0 0 640 190" aria-label="Lifting PR progress chart"></svg></div>
+    <div class="progress-chart-card"><h3 id="exerciseProgressTitle">Exercise Session Progress</h3><p>Calories burned across logged sessions for the selected exercise.</p><svg id="exerciseProgressChart" class="progress-svg" viewBox="0 0 640 190" aria-label="Exercise session progress chart"></svg></div>
   </div>
   <div id="sectionWeek" class="card week-card feature-section">
     <div class="v16-head"><div><div class="v16-kicker">This Week</div><h2 style="margin:3px 0 0">Your Week in IRONLOG</h2></div><div class="tiny" id="weekRange"></div></div>
@@ -1117,6 +1196,7 @@
 
   <div id="sectionAchievements" class="card achievements-card feature-section">
     <div class="v16-head"><div><div class="v16-kicker">Collection</div><h2 style="margin:3px 0 0">Achievements</h2></div><div class="tiny" id="badgeCount"></div></div>
+    <p class="achievements-note">Every IRONLOG achievement is shown here from day one. Locked badges stay muted until you earn them.</p>
     <div id="badgeGrid" class="badge-grid"></div>
   </div>
 
@@ -1396,6 +1476,8 @@
 
   <div class="menu-group"><div class="menu-group-title">Progress</div>
     <button class="menu-item" type="button" data-menu-section="sectionProgress">↗ <span>Progress Dashboard</span></button>
+    <button class="menu-item" type="button" data-menu-section="sectionPR">◆ <span>Weight Lifting PR Log</span></button>
+    <button class="menu-item" type="button" data-menu-section="sectionExerciseProgress">⌁ <span>Exercise Progress</span></button>
     <button class="menu-item" type="button" data-menu-section="sectionWeek">▦ <span>Weekly Report</span></button>
     <button class="menu-item" type="button" data-menu-section="sectionMonth">◫ <span>Monthly Summary</span></button>
     <button class="menu-item" type="button" data-menu-section="sectionAchievements">★ <span>Achievements</span></button>
@@ -1410,7 +1492,6 @@
 
   <div class="menu-group"><div class="menu-group-title">Training</div>
     <button class="menu-item" type="button" data-menu-section="sectionExercise">⚡ <span>Exercise + Calories Burned</span></button>
-    <button class="menu-item" type="button" data-menu-section="sectionPR">◆ <span>Weight Lifting PR Log</span></button>
   </div>
 
   <div class="menu-group"><div class="menu-group-title">Weight</div>
@@ -1472,6 +1553,7 @@
   </div>
 </div>
 
+<div id="achievementPop" class="achievement-pop" aria-live="polite"></div>
 <div id="milestonePop" class="milestone-pop" aria-live="polite"></div>
 <div id="undoToast" class="toast" aria-live="polite"><span id="undoText">Deleted.</span><button id="undoBtn" type="button">Undo</button></div>
 <script src="./app.js" defer></script>
