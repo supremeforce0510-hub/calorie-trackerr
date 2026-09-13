@@ -1466,11 +1466,29 @@
 
   // Restore an exported IRONLOG JSON backup. The imported JSON replaces the
   // current tracking state only after validation + explicit confirmation.
+  // V27: mobile-safe file picker handling for Android/Chrome.
   const importBackupInput=$('importBackupInput');
-  $('importBackupBtn').addEventListener('click',()=>{
+  const importBackupBtn=$('importBackupBtn');
+  let lastImportPickerOpen=0;
+  function openImportBackupPicker(e){
+    if(e && e.type==='touchend') e.preventDefault();
+    const now=Date.now();
+    if(now-lastImportPickerOpen<700)return; // prevent touchend + click double-open
+    lastImportPickerOpen=now;
     importBackupInput.value='';
-    importBackupInput.click();
-  });
+    try{
+      if(typeof importBackupInput.showPicker==='function'){
+        importBackupInput.showPicker();
+      }else{
+        importBackupInput.click();
+      }
+    }catch(_){
+      // Fallback for browsers that reject showPicker on this element.
+      importBackupInput.click();
+    }
+  }
+  importBackupBtn.addEventListener('click',openImportBackupPicker);
+  importBackupBtn.addEventListener('touchend',openImportBackupPicker,{passive:false});
   importBackupInput.addEventListener('change',async()=>{
     const file=importBackupInput.files && importBackupInput.files[0];
     if(!file)return;
