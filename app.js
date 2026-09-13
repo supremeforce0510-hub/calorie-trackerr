@@ -15,7 +15,7 @@
       settings:{calorieGoal:1800, proteinGoal:100, endGoalWeight:'', weeklyWorkoutGoal:3, prGoalExercise:'', prGoalWeight:'', theme:'purple', reminderEnabled:false, reminderTime:'19:00'},
       profile:{age:'', sex:'', height:'', weight:'', activity:'sedentary'},
       days:{},
-      engagement:{usedDates:[], celebratedMilestones:[], unlockedAchievements:[], achievementSystemReady:false},
+      engagement:{usedDates:[], celebratedMilestones:[], unlockedAchievements:[], achievementSystemReady:false, achievementV25Ready:false},
       favorites:[]
     };
   }
@@ -50,7 +50,8 @@
           usedDates:Array.isArray(parsed?.engagement?.usedDates) ? parsed.engagement.usedDates.filter(v => /^\d{4}-\d{2}-\d{2}$/.test(String(v))) : [],
           celebratedMilestones:Array.isArray(parsed?.engagement?.celebratedMilestones) ? parsed.engagement.celebratedMilestones : [],
           unlockedAchievements:Array.isArray(parsed?.engagement?.unlockedAchievements) ? parsed.engagement.unlockedAchievements : [],
-          achievementSystemReady:Boolean(parsed?.engagement?.achievementSystemReady)
+          achievementSystemReady:Boolean(parsed?.engagement?.achievementSystemReady),
+          achievementV25Ready:Boolean(parsed?.engagement?.achievementV25Ready)
         },
         favorites:Array.isArray(parsed?.favorites) ? parsed.favorites : []
       };
@@ -349,6 +350,12 @@
     return a.sort((x,y)=>(num(x.createdAt)||parseLocalDate(x.date).getTime())-(num(y.createdAt)||parseLocalDate(y.date).getTime()));
   }
 
+  function allFoodHistory(){
+    const a=[];
+    Object.entries(state.days||{}).forEach(([date,d])=>(d?.foods||[]).forEach(f=>a.push({...f,date})));
+    return a.sort((x,y)=>(num(x.createdAt)||parseLocalDate(x.date).getTime())-(num(y.createdAt)||parseLocalDate(y.date).getTime()));
+  }
+
   function allExercises(){
     const a=[];Object.entries(state.days||{}).forEach(([date,d])=>(d?.exercises||[]).forEach(x=>a.push({...x,date})));
     return a.sort((x,y)=>(num(x.createdAt)||parseLocalDate(x.date).getTime())-(num(y.createdAt)||parseLocalDate(y.date).getTime()));
@@ -372,12 +379,30 @@
     let best=1,run=1; for(let i=1;i<d.length;i++){run=dateDiffDays(d[i-1],d[i])===1?run+1:1;best=Math.max(best,run)} return best;
   }
   function weekDates(offset=0){let m=mondayOfWeek(todayLocal());m=addDays(m,offset*7);return Array.from({length:7},(_,i)=>addDays(m,i))}
+  function dayHasRealData(date){
+    const d=state.days?.[date];
+    return Boolean((d?.foods?.length||0)||(d?.weights?.length||0)||(d?.exercises?.length||0)||(d?.prs?.length||0));
+  }
   function weekStats(ds){
-    const used=new Set(state.engagement?.usedDates||[]), today=todayLocal();
-    const tracked=ds.filter(x=>x<=today&&(used.has(x)||(state.days?.[x]?.foods?.length||0)||(state.days?.[x]?.weights?.length||0)||(state.days?.[x]?.exercises?.length||0)||(state.days?.[x]?.prs?.length||0)));
-    let cal=0,pro=0;tracked.forEach(x=>(state.days?.[x]?.foods||[]).forEach(f=>{cal+=num(f.calories);pro+=num(f.protein)}));
+    const today=todayLocal();
+    const tracked=ds.filter(x=>x<=today&&dayHasRealData(x));
+    let cal=0,pro=0,foodDays=0,foods=0,workouts=0,burned=0,prs=0;
+    tracked.forEach(x=>{
+      const d=state.days?.[x]||{};
+      const fs=d.foods||[], ex=d.exercises||[], pp=d.prs||[];
+      if(fs.length){
+        foodDays++;foods+=fs.length;
+        fs.forEach(f=>{cal+=num(f.calories);pro+=num(f.protein)});
+      }
+      workouts+=ex.length;burned+=ex.reduce((sum,e)=>sum+num(e.caloriesBurned),0);prs+=pp.length;
+    });
     const ww=allWeights().filter(w=>ds.includes(w.date));
-    return {days:tracked.length,cal:tracked.length?cal/tracked.length:0,pro:tracked.length?pro/tracked.length:0,w:ww.length>1?num(ww.at(-1).value)-num(ww[0].value):null};
+    return {
+      days:tracked.length, foods, foodDays,
+      cal:foodDays?cal/foodDays:0, pro:foodDays?pro/foodDays:0,
+      workouts,burned,prs,weighins:ww.length,
+      w:ww.length>1?num(ww.at(-1).value)-num(ww[0].value):null
+    };
   }
   function renderChart(a){
     const svg=$('weightChart'); if(!a.length){svg.innerHTML='<text x="320" y="95" text-anchor="middle" fill="#94a3b8">Log weight to build your trend</text>';$('chartRange').textContent='No weigh-ins yet';return}
@@ -518,8 +543,21 @@
     $('ringRemaining').textContent=rem===null?'—':format1(rem)+' lb';$('goalRing').style.setProperty('--p',p+'%');$('dashMessage').textContent=current&&goal?`${format1(rem)} lb to goal • ${st} day${st===1?'':'s'} streak`:'Log weight and a goal to fill your progress ring.';renderChart(w.slice(-30));
   }
   function renderWeek(){
-    const a=weekDates(0),b=weekDates(-1),x=weekStats(a),y=weekStats(b);$('weekRange').textContent=`${friendlyDate(a[0])} – ${friendlyDate(a[6])}`;$('weekDays').textContent=x.days;$('weekCalories').textContent=Math.round(x.cal);$('weekProtein').textContent=format1(x.pro)+'g';$('weekWeight').textContent=x.w===null?'—':(x.w>0?'+':'')+format1(x.w)+' lb';$('weekStreak').textContent=currentStreakInfo().count;
-    $('weekCompare').textContent=y.days?`Last week comparison: ${Math.abs(Math.round(x.cal-y.cal))} ${x.cal>=y.cal?'more':'fewer'} avg calories • ${Math.abs(format1(x.pro-y.pro))}g ${x.pro>=y.pro?'more':'less'} avg protein.`:'Your comparison will build as you log more weeks.';
+    const a=weekDates(0),b=weekDates(-1),x=weekStats(a),y=weekStats(b);
+    $('weekRange').textContent=`${friendlyDate(a[0])} – ${friendlyDate(a[6])}`;
+    $('weekDays').textContent=x.days;
+    $('weekFoods').textContent=x.foods;
+    $('weekCalories').textContent=Math.round(x.cal);
+    $('weekProtein').textContent=format1(x.pro)+'g';
+    $('weekWorkouts').textContent=x.workouts;
+    $('weekBurned').textContent=Math.round(x.burned);
+    $('weekPRs').textContent=x.prs;
+    $('weekWeight').textContent=x.w===null?'—':(x.w>0?'+':'')+format1(x.w)+' lb';
+    $('weekStreak').textContent=currentStreakInfo().count;
+    if(y.days){
+      const workoutDiff=x.workouts-y.workouts, burnedDiff=Math.round(x.burned-y.burned);
+      $('weekCompare').textContent=`Compared with last week: ${workoutDiff>=0?'+':''}${workoutDiff} workouts • ${burnedDiff>=0?'+':''}${burnedDiff} exercise calories • ${x.foods-y.foods>=0?'+':''}${x.foods-y.foods} food entries.`;
+    }else $('weekCompare').textContent='This report updates automatically from the food, weight, exercise, and PR data you log.';
   }
   function renderFavs(){
     const f=(state.favorites||[]).slice().sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0) || String(a.name).localeCompare(String(b.name)));
@@ -529,31 +567,34 @@
   function celebrate(title,msg,key){state.engagement.celebratedMilestones=state.engagement.celebratedMilestones||[];if(state.engagement.celebratedMilestones.includes(key))return;state.engagement.celebratedMilestones.push(key);saveState();const p=$('milestonePop');p.innerHTML=`<strong>🏆 ${escapeHtml(title)}</strong>${escapeHtml(msg)}`;p.classList.add('show');clearTimeout(mileTimer);mileTimer=setTimeout(()=>p.classList.remove('show'),4200)}
   function checkMilestones(){const w=allWeights();if(w.length>1){const lost=num(w[0].value)-num(w.at(-1).value);[5,10,15,25,50].forEach(m=>{if(lost>=m)celebrate(`${m} lb milestone!`,`You've moved ${m} pounds from your starting weight.`,'loss-'+m)});const g=num(state.settings.endGoalWeight);if(g&&Math.abs(num(w.at(-1).value)-g)<.05)celebrate('Goal reached!','You reached your saved goal weight.','goal-'+g)}const st=currentStreakInfo().count;[7,15,30,60,100].forEach(m=>{if(st>=m)celebrate(`${m}-day streak!`,'You kept showing up.','streak-'+m)})}
 
-
-
-
-
   function renderMonthlySummary(){
     const today=parseLocalDate(todayLocal()), y=today.getFullYear(), m=today.getMonth();
     const prefix=`${y}-${String(m+1).padStart(2,'0')}-`;
-    const used=new Set(state.engagement?.usedDates||[]);
-    const dates=[...new Set([...Object.keys(state.days||{}),...(state.engagement?.usedDates||[])])].filter(d=>d.startsWith(prefix)).sort();
-    const tracked=dates.filter(d=>used.has(d)||(state.days[d]?.foods?.length||0)||(state.days[d]?.weights?.length||0)||(state.days[d]?.exercises?.length||0)||(state.days[d]?.prs?.length||0));
-    let cal=0,pro=0,foods=0;
-    tracked.forEach(d=>(state.days[d]?.foods||[]).forEach(f=>{cal+=num(f.calories);pro+=num(f.protein);foods++}));
+    const todayKey=todayLocal();
+    const dates=Object.keys(state.days||{}).filter(d=>d.startsWith(prefix)&&d<=todayKey&&dayHasRealData(d)).sort();
+    let cal=0,pro=0,foodDays=0,foods=0,workouts=0,burned=0,prs=0,weighins=0;
+    dates.forEach(date=>{
+      const d=state.days[date]||{},fs=d.foods||[],ex=d.exercises||[],pp=d.prs||[],ww=d.weights||[];
+      if(fs.length){foodDays++;foods+=fs.length;fs.forEach(f=>{cal+=num(f.calories);pro+=num(f.protein)})}
+      workouts+=ex.length;burned+=ex.reduce((sum,e)=>sum+num(e.caloriesBurned),0);prs+=pp.length;weighins+=ww.length;
+    });
     const ww=allWeights().filter(w=>w.date.startsWith(prefix));
     const wc=ww.length>1?num(ww.at(-1).value)-num(ww[0].value):null;
     $('monthLabel').textContent=today.toLocaleDateString([],{month:'long',year:'numeric'});
-    $('monthDays').textContent=tracked.length;
-    $('monthCalories').textContent=tracked.length?Math.round(cal/tracked.length):0;
-    $('monthProtein').textContent=(tracked.length?format1(pro/tracked.length):0)+'g';
+    $('monthDays').textContent=dates.length;
+    $('monthCalories').textContent=foodDays?Math.round(cal/foodDays):0;
+    $('monthProtein').textContent=(foodDays?format1(pro/foodDays):0)+'g';
     $('monthWeight').textContent=wc===null?'—':(wc>0?'+':'')+format1(wc)+' lb';
     $('monthFoods').textContent=foods;
+    $('monthWorkouts').textContent=workouts;
+    $('monthBurned').textContent=Math.round(burned);
+    $('monthPRs').textContent=prs;
+    $('monthWeighIns').textContent=weighins;
   }
 
   function achievementDefinitions(){
     const foods=allFoodHistory(), weights=allWeights(), exercises=allExercises(), prs=allPRs();
-    const best=longestStreak(), used=trackedDayCount(), favorites=(state.favorites||[]).length;
+    const best=longestStreak(), favorites=(state.favorites||[]).length;
     const totalBurned=exercises.reduce((s,x)=>s+num(x.caloriesBurned),0);
     const totalMinutes=exercises.reduce((s,x)=>s+num(x.minutes),0);
     const uniqueLifts=new Set(prs.map(p=>String(p.exercise||'').trim()).filter(Boolean)).size;
@@ -562,90 +603,108 @@
     const goal=num(state.settings.endGoalWeight);
     const proteinGoal=Math.max(0,num(state.settings.proteinGoal));
     const calorieGoal=Math.max(1,num(state.settings.calorieGoal)||1800);
-    let proteinDays=0, calorieDays=0;
-    Object.values(state.days||{}).forEach(d=>{
-      const fs=d?.foods||[]; if(!fs.length)return;
+    const dataDates=Object.keys(state.days||{}).filter(dayHasRealData);
+    let proteinDays=0, calorieDays=0, bothGoalDays=0, foodDays=0;
+    const mealTypes=new Set();
+    let earlyBird=false,nightOwl=false,doubleDuty=false,fullHouse=false,ironDiscipline=false;
+    dataDates.forEach(date=>{
+      const d=state.days[date]||{},fs=d.foods||[],ex=d.exercises||[],pp=d.prs||[],ww=d.weights||[];
+      if(fs.length)foodDays++;
+      fs.forEach(f=>mealTypes.add(String(f.meal||'').toLowerCase()));
       const c=fs.reduce((s,f)=>s+num(f.calories),0),p=fs.reduce((s,f)=>s+num(f.protein),0);
-      if(proteinGoal>0&&p>=proteinGoal)proteinDays++;
-      if(c<=calorieGoal)calorieDays++;
+      const proteinHit=proteinGoal>0&&p>=proteinGoal, calorieHit=fs.length>0&&c<=calorieGoal;
+      if(proteinHit)proteinDays++;if(calorieHit)calorieDays++;if(proteinHit&&calorieHit)bothGoalDays++;
+      if(ex.length&&pp.length)doubleDuty=true;
+      if(fs.length&&ww.length&&ex.length&&pp.length)fullHouse=true;
+      if(ex.length&&proteinHit&&calorieHit)ironDiscipline=true;
+      [...fs,...ex,...pp,...ww].forEach(item=>{
+        const t=num(item.createdAt);if(!t)return;const h=new Date(t).getHours();if(h<7)earlyBird=true;if(h>=22)nightOwl=true;
+      });
     });
-    let bestPct=0;
-    bestPRsByExercise().forEach(p=>{const imp=prImprovementFor(p.exercise);if(imp)bestPct=Math.max(bestPct,imp.pct)});
-    const A=(id,icon,name,desc,on,tier='bronze')=>({id,icon,name,desc,on:Boolean(on),tier});
+    const mealExplorer=['breakfast','lunch','dinner','snack','drink'].every(x=>mealTypes.has(x));
+    const A=(id,icon,name,desc,on,tier='bronze',category='special')=>({id,icon,iconId:'icon-'+id,name,desc,on:Boolean(on),tier,category});
     return [
-      A('streak-1','🔥','First Check-In','Open IRONLOG and start your streak',best>=1),
-      A('streak-3','🔥','3 Day Streak','Use IRONLOG 3 days straight',best>=3),
-      A('streak-7','🔥','7 Day Streak','Use IRONLOG 7 days straight',best>=7,'silver'),
-      A('streak-15','🔥','15 Day Streak','Use IRONLOG 15 days straight',best>=15,'silver'),
-      A('streak-30','⚡','30 Day Streak','Use IRONLOG 30 days straight',best>=30,'gold'),
-      A('streak-60','⚡','60 Day Streak','Use IRONLOG 60 days straight',best>=60,'gold'),
-      A('streak-100','👑','100 Day Streak','Use IRONLOG 100 days straight',best>=100,'diamond'),
-      A('streak-365','💎','365 Day Streak','Use IRONLOG 365 days straight',best>=365,'diamond'),
+      A('streak-1','🔥','1 Day','Start a 1-day IRONLOG streak',best>=1,'bronze','streak'),
+      A('streak-3','🔥','3 Days','Reach a 3-day streak',best>=3,'bronze','streak'),
+      A('streak-5','🔥','5 Days','Reach a 5-day streak',best>=5,'silver','streak'),
+      A('streak-10','⚡','10 Days','Reach a 10-day streak',best>=10,'silver','streak'),
+      A('streak-20','⚡','20 Days','Reach a 20-day streak',best>=20,'gold','streak'),
+      A('streak-30','👑','30 Days','Reach a 30-day streak',best>=30,'gold','streak'),
+      A('streak-35','💎','35 Days','Reach a 35-day streak',best>=35,'diamond','streak'),
 
-      A('food-1','🍽️','First Food','Log your first food entry',foods.length>=1),
-      A('food-10','🍽️','10 Foods','Log 10 food entries',foods.length>=10),
-      A('food-50','🍽️','50 Foods','Log 50 food entries',foods.length>=50,'silver'),
-      A('food-100','🥗','100 Foods','Log 100 food entries',foods.length>=100,'silver'),
-      A('food-250','🥗','250 Foods','Log 250 food entries',foods.length>=250,'gold'),
-      A('food-500','🥇','500 Foods','Log 500 food entries',foods.length>=500,'gold'),
-      A('food-1000','💎','1,000 Foods','Log 1,000 food entries',foods.length>=1000,'diamond'),
-      A('protein-1','💪','Protein Goal Day','Reach your protein goal on 1 logged day',proteinDays>=1),
-      A('protein-7','💪','7 Protein Goal Days','Reach your protein goal on 7 logged days',proteinDays>=7,'silver'),
-      A('protein-30','💪','30 Protein Goal Days','Reach your protein goal on 30 logged days',proteinDays>=30,'gold'),
-      A('calorie-1','🎯','Calorie Goal Day','Finish a logged day at or under your calorie goal',calorieDays>=1),
-      A('calorie-7','🎯','7 Calorie Goal Days','Finish 7 logged days at or under your calorie goal',calorieDays>=7,'silver'),
-      A('calorie-30','🎯','30 Calorie Goal Days','Finish 30 logged days at or under your calorie goal',calorieDays>=30,'gold'),
+      A('food-1','🍎','First Bite','Log your first food entry',foods.length>=1,'bronze','food'),
+      A('food-10','🥪','10 Foods','Log 10 food entries',foods.length>=10,'bronze','food'),
+      A('food-25','🥗','25 Foods','Log 25 food entries',foods.length>=25,'silver','food'),
+      A('food-50','🍲','50 Foods','Log 50 food entries',foods.length>=50,'silver','food'),
+      A('food-100','🍽️','100 Foods','Log 100 food entries',foods.length>=100,'gold','food'),
+      A('food-250','👩‍🍳','250 Foods','Log 250 food entries',foods.length>=250,'gold','food'),
+      A('food-500','🏅','500 Foods','Log 500 food entries',foods.length>=500,'diamond','food'),
+      A('food-1000','💎','1,000 Foods','Log 1,000 food entries',foods.length>=1000,'diamond','food'),
 
-      A('weight-1','⚖️','First Weigh-In','Save your first weight',weights.length>=1),
-      A('weight-5','⚖️','5 Weigh-Ins','Save 5 weights',weights.length>=5),
-      A('weight-25','⚖️','25 Weigh-Ins','Save 25 weights',weights.length>=25,'silver'),
-      A('weight-50','⚖️','50 Weigh-Ins','Save 50 weights',weights.length>=50,'gold'),
-      A('weight-100','💎','100 Weigh-Ins','Save 100 weights',weights.length>=100,'diamond'),
-      A('weightmove-5','📉','5 lb Progress','Move 5 lb from your starting weight',weightMove>=5),
-      A('weightmove-10','📉','10 lb Progress','Move 10 lb from your starting weight',weightMove>=10,'silver'),
-      A('weightmove-15','📉','15 lb Progress','Move 15 lb from your starting weight',weightMove>=15,'silver'),
-      A('weightmove-25','🏅','25 lb Progress','Move 25 lb from your starting weight',weightMove>=25,'gold'),
-      A('weightmove-50','💎','50 lb Progress','Move 50 lb from your starting weight',weightMove>=50,'diamond'),
-      A('goal-reached','🏆','Goal Reached','Reach your saved goal weight',weights.length&&goal&&Math.abs(wNow-goal)<.05,'diamond'),
+      A('weight-1','⚖️','First Weigh-In','Save your first weight',weights.length>=1,'bronze','weight'),
+      A('weight-5','📟','5 Weigh-Ins','Save 5 weight entries',weights.length>=5,'bronze','weight'),
+      A('weight-10','📊','10 Weigh-Ins','Save 10 weight entries',weights.length>=10,'silver','weight'),
+      A('weight-25','📉','25 Weigh-Ins','Save 25 weight entries',weights.length>=25,'silver','weight'),
+      A('weight-50','🏅','50 Weigh-Ins','Save 50 weight entries',weights.length>=50,'gold','weight'),
+      A('weightmove-5','⬇️','5 lb Progress','Move 5 lb from your starting weight',weightMove>=5,'gold','weight'),
+      A('weightmove-10','🏆','10 lb Progress','Move 10 lb from your starting weight',weightMove>=10,'diamond','weight'),
+      A('goal-reached','🎯','Goal Weight','Reach your saved goal weight',weights.length&&goal&&Math.abs(wNow-goal)<.05,'diamond','weight'),
 
-      A('workout-1','🏃','First Workout','Log your first exercise session',exercises.length>=1),
-      A('workout-5','🏃','5 Workouts','Log 5 exercise sessions',exercises.length>=5),
-      A('workout-10','🏃','10 Workouts','Log 10 exercise sessions',exercises.length>=10,'silver'),
-      A('workout-25','🏋️','25 Workouts','Log 25 exercise sessions',exercises.length>=25,'silver'),
-      A('workout-50','🏋️','50 Workouts','Log 50 exercise sessions',exercises.length>=50,'gold'),
-      A('workout-100','🥇','100 Workouts','Log 100 exercise sessions',exercises.length>=100,'gold'),
-      A('workout-250','💎','250 Workouts','Log 250 exercise sessions',exercises.length>=250,'diamond'),
-      A('minutes-60','⏱️','60 Training Minutes','Log 60 total workout minutes',totalMinutes>=60),
-      A('minutes-500','⏱️','500 Training Minutes','Log 500 total workout minutes',totalMinutes>=500,'silver'),
-      A('minutes-1000','⏱️','1,000 Training Minutes','Log 1,000 total workout minutes',totalMinutes>=1000,'gold'),
-      A('minutes-5000','💎','5,000 Training Minutes','Log 5,000 total workout minutes',totalMinutes>=5000,'diamond'),
-      A('burn-500','⚡','500 Calories Burned','Log 500 total exercise calories burned',totalBurned>=500),
-      A('burn-1000','⚡','1,000 Calories Burned','Log 1,000 total exercise calories burned',totalBurned>=1000,'silver'),
-      A('burn-5000','🔥','5,000 Calories Burned','Log 5,000 total exercise calories burned',totalBurned>=5000,'gold'),
-      A('burn-10000','💎','10,000 Calories Burned','Log 10,000 total exercise calories burned',totalBurned>=10000,'diamond'),
+      A('workout-1','🏋️','1 Workout','Log your first exercise session',exercises.length>=1,'bronze','workout'),
+      A('workout-5','👟','5 Workouts','Log 5 exercise sessions',exercises.length>=5,'bronze','workout'),
+      A('workout-10','💪','10 Workouts','Log 10 exercise sessions',exercises.length>=10,'silver','workout'),
+      A('workout-25','🏋️','25 Workouts','Log 25 exercise sessions',exercises.length>=25,'silver','workout'),
+      A('workout-50','🚴','50 Workouts','Log 50 exercise sessions',exercises.length>=50,'gold','workout'),
+      A('workout-100','🥇','100 Workouts','Log 100 exercise sessions',exercises.length>=100,'gold','workout'),
+      A('workout-250','⛰️','250 Workouts','Log 250 exercise sessions',exercises.length>=250,'diamond','workout'),
+      A('minutes-60','⏱️','60 Minutes','Log 60 total workout minutes',totalMinutes>=60,'silver','workout'),
+      A('minutes-1000','⌛','1,000 Minutes','Log 1,000 total workout minutes',totalMinutes>=1000,'diamond','workout'),
 
-      A('pr-1','◆','First PR','Log your first lifting personal record',prs.length>=1),
-      A('pr-5','◆','5 PRs','Log 5 lifting personal records',prs.length>=5),
-      A('pr-10','◆','10 PRs','Log 10 lifting personal records',prs.length>=10,'silver'),
-      A('pr-25','🏆','25 PRs','Log 25 lifting personal records',prs.length>=25,'silver'),
-      A('pr-50','🏆','50 PRs','Log 50 lifting personal records',prs.length>=50,'gold'),
-      A('pr-100','💎','100 PRs','Log 100 lifting personal records',prs.length>=100,'diamond'),
-      A('lifts-3','🏋️','3 Lift Board','Log PRs for 3 different lifts',uniqueLifts>=3),
-      A('lifts-5','🏋️','5 Lift Board','Log PRs for 5 different lifts',uniqueLifts>=5,'silver'),
-      A('lifts-10','💎','10 Lift Board','Log PRs for 10 different lifts',uniqueLifts>=10,'diamond'),
-      A('primp-10','📈','10% Stronger','Improve any lift by 10% from its first logged PR',bestPct>=10),
-      A('primp-25','📈','25% Stronger','Improve any lift by 25% from its first logged PR',bestPct>=25,'silver'),
-      A('primp-50','📈','50% Stronger','Improve any lift by 50% from its first logged PR',bestPct>=50,'gold'),
-      A('primp-100','💎','100% Stronger','Double any lift from its first logged PR',bestPct>=100,'diamond'),
+      A('pr-1','👑','First PR','Log your first lifting personal record',prs.length>=1,'bronze','pr'),
+      A('pr-5','🏋️','5 PRs','Log 5 lifting personal records',prs.length>=5,'bronze','pr'),
+      A('pr-10','⭐','10 PRs','Log 10 lifting personal records',prs.length>=10,'silver','pr'),
+      A('pr-25','🏅','25 PRs','Log 25 lifting personal records',prs.length>=25,'silver','pr'),
+      A('pr-50','📈','50 PRs','Log 50 lifting personal records',prs.length>=50,'gold','pr'),
+      A('pr-100','🏆','100 PRs','Log 100 lifting personal records',prs.length>=100,'diamond','pr'),
+      A('lifts-3','3️⃣','3 Lift Board','Log PRs for 3 different lifts',uniqueLifts>=3,'silver','pr'),
+      A('lifts-5','5️⃣','5 Lift Board','Log PRs for 5 different lifts',uniqueLifts>=5,'gold','pr'),
+      A('lifts-10','🔟','10 Lift Board','Log PRs for 10 different lifts',uniqueLifts>=10,'diamond','pr'),
 
-      A('days-7','📅','7 Days Tracked','Track activity on 7 different days',used>=7),
-      A('days-30','📅','30 Days Tracked','Track activity on 30 different days',used>=30,'silver'),
-      A('days-100','🗓️','100 Days Tracked','Track activity on 100 different days',used>=100,'gold'),
-      A('days-365','💎','365 Days Tracked','Track activity on 365 different days',used>=365,'diamond'),
-      A('favorite-1','⭐','First Favorite','Save your first favorite food',favorites>=1),
-      A('favorite-10','⭐','10 Favorites','Save 10 favorite foods',favorites>=10,'silver'),
-      A('favorite-25','🌟','25 Favorites','Save 25 favorite foods',favorites>=25,'gold')
+      A('protein-1','💪','Protein Goal Day','Reach your protein goal on 1 logged day',proteinDays>=1,'bronze','nutrition'),
+      A('protein-7','🥩','7 Protein Days','Reach your protein goal on 7 days',proteinDays>=7,'silver','nutrition'),
+      A('protein-30','🥇','30 Protein Days','Reach your protein goal on 30 days',proteinDays>=30,'gold','nutrition'),
+      A('calorie-1','🎯','Calorie Goal Day','Finish 1 logged food day at or under your calorie goal',calorieDays>=1,'bronze','nutrition'),
+      A('calorie-7','✅','7 Calorie Days','Finish 7 food-log days at or under your calorie goal',calorieDays>=7,'silver','nutrition'),
+      A('calorie-30','🏹','30 Calorie Days','Finish 30 food-log days at or under your calorie goal',calorieDays>=30,'gold','nutrition'),
+      A('bothgoal-7','🥗','7 Balanced Days','Hit both calorie and protein goals on 7 days',bothGoalDays>=7,'gold','nutrition'),
+      A('bothgoal-30','🌈','30 Balanced Days','Hit both calorie and protein goals on 30 days',bothGoalDays>=30,'diamond','nutrition'),
+
+      A('days-7','📅','7 Days Tracked','Log real data on 7 different days',dataDates.length>=7,'bronze','progress'),
+      A('days-30','🗓️','30 Days Tracked','Log real data on 30 different days',dataDates.length>=30,'silver','progress'),
+      A('days-90','📆','90 Days Tracked','Log real data on 90 different days',dataDates.length>=90,'silver','progress'),
+      A('days-180','📈','180 Days Tracked','Log real data on 180 different days',dataDates.length>=180,'gold','progress'),
+      A('days-365','💎','1 Year Tracked','Log real data on 365 different days',dataDates.length>=365,'diamond','progress'),
+      A('weightmove-25','⬇️','25 lb Progress','Move 25 lb from your starting weight',weightMove>=25,'gold','progress'),
+      A('weightmove-50','🏆','50 lb Progress','Move 50 lb from your starting weight',weightMove>=50,'diamond','progress'),
+
+      A('favorite-1','⭐','First Favorite','Save your first favorite food',favorites>=1,'bronze','lifestyle'),
+      A('favorite-10','🌟','10 Favorites','Save 10 favorite foods',favorites>=10,'silver','lifestyle'),
+      A('favorite-25','✨','25 Favorites','Save 25 favorite foods',favorites>=25,'gold','lifestyle'),
+      A('meal-explorer','🍴','Meal Explorer','Log Breakfast, Lunch, Dinner, Snack, and Drink at least once',mealExplorer,'silver','lifestyle'),
+      A('fooddays-7','🍏','7 Food-Log Days','Log food on 7 different days',foodDays>=7,'gold','lifestyle'),
+      A('fooddays-30','🌿','30 Food-Log Days','Log food on 30 different days',foodDays>=30,'diamond','lifestyle'),
+
+      A('special-early','🌅','Early Bird','Log something before 7:00 AM',earlyBird,'silver','special'),
+      A('special-night','🌙','Night Owl','Log something at or after 10:00 PM',nightOwl,'silver','special'),
+      A('special-double','⚔️','Double Duty','Log a workout and a PR on the same day',doubleDuty,'gold','special'),
+      A('special-full','🧰','Full House','Log food, weight, exercise, and a PR on the same day',fullHouse,'gold','special'),
+      A('special-discipline','⚡','Iron Discipline','Hit calorie + protein goals and log a workout on the same day',ironDiscipline,'diamond','special')
     ];
+  }
+
+  function masterAchievementDefinition(){
+    const defs=achievementDefinitions(), unlocked=new Set(state.engagement?.unlockedAchievements||[]);
+    return {id:'master-of-all',icon:'👑',iconId:'icon-master-of-all',name:'MASTER OF ALL',desc:'Unlock all 67 IRONLOG achievements.',tier:'diamond',category:'master',on:defs.every(a=>unlocked.has(a.id))};
   }
 
   let achievementTimer=null, achievementQueue=[], achievementShowing=false;
@@ -664,39 +723,51 @@
     state.engagement.unlockedAchievements=Array.isArray(state.engagement.unlockedAchievements)?state.engagement.unlockedAchievements:[];
     const defs=achievementDefinitions(), unlocked=new Set(state.engagement.unlockedAchievements);
     const newly=defs.filter(a=>a.on&&!unlocked.has(a.id));
-    if(!state.engagement.achievementSystemReady){
+    if(!state.engagement.achievementV25Ready){
       newly.forEach(a=>unlocked.add(a.id));
-      state.engagement.achievementSystemReady=true;
+      state.engagement.achievementV25Ready=true;
+    }else newly.forEach(a=>{unlocked.add(a.id);queueAchievement(a)});
+    state.engagement.unlockedAchievements=[...unlocked];
+    const master=masterAchievementDefinition();
+    if(master.on&&!unlocked.has(master.id)){
+      unlocked.add(master.id);
       state.engagement.unlockedAchievements=[...unlocked];
-      saveState();
-      return;
+      if(state.engagement.achievementV25Ready)queueAchievement(master);
     }
-    if(newly.length){
-      newly.forEach(a=>{unlocked.add(a.id);queueAchievement(a)});
-      state.engagement.unlockedAchievements=[...unlocked];
-      saveState();
-    }
+    saveState();
   }
 
-  function achievementCategoryFor(id){
-    if(id.startsWith('streak-'))return {key:'streak',icon:'🔥',name:'Streak Achievements',desc:'Build consistency. Show up for yourself.'};
-    if(id.startsWith('food-')||id.startsWith('protein-')||id.startsWith('calorie-'))return {key:'food',icon:'🍽️',name:'Food + Nutrition Achievements',desc:'Fuel your body. Stay on track.'};
-    if(id.startsWith('weight-')||id.startsWith('weightmove-')||id==='goal-reached')return {key:'weight',icon:'⚖️',name:'Weight Achievements',desc:'Track progress. Celebrate change.'};
-    if(id.startsWith('workout-')||id.startsWith('minutes-')||id.startsWith('burn-'))return {key:'workout',icon:'🏋️',name:'Workout Achievements',desc:'Put in the work. Get stronger.'};
-    if(id.startsWith('pr-')||id.startsWith('lifts-')||id.startsWith('primp-'))return {key:'pr',icon:'👑',name:'PR Achievements',desc:'Set records. Raise the bar.'};
-    return {key:'lifestyle',icon:'⭐',name:'Tracking + Lifestyle Achievements',desc:'Small habits. Big results.'};
+  const ACHIEVEMENT_CATEGORIES={
+    streak:{key:'streak',icon:'🔥',name:'Streak Achievements',desc:'Build consistency. Show up for yourself.'},
+    food:{key:'food',icon:'🍎',name:'Food Tracking Achievements',desc:'Log your meals. Build awareness.'},
+    weight:{key:'weight',icon:'⚖️',name:'Weight Achievements',desc:'Track progress. Celebrate change.'},
+    workout:{key:'workout',icon:'🏋️',name:'Workout Achievements',desc:'Put in the work. Get stronger.'},
+    pr:{key:'pr',icon:'👑',name:'Strength / PR Achievements',desc:'Set records. Raise the bar.'},
+    nutrition:{key:'nutrition',icon:'🥗',name:'Nutrition Achievements',desc:'Hit your goals. Fuel your potential.'},
+    progress:{key:'progress',icon:'📈',name:'Progress Achievements',desc:'Look back. Be proud. Keep going.'},
+    lifestyle:{key:'lifestyle',icon:'🧠',name:'Lifestyle Achievements',desc:'Small habits. Big results.'},
+    special:{key:'special',icon:'⭐',name:'Special Achievements',desc:'Unique milestones. Extra rewards.'},
+    master:{key:'master',icon:'👑',name:'Secret Achievement',desc:'The ultimate IRONLOG completion badge.'}
+  };
+  function achievementCategoryFor(aOrId){
+    const a=typeof aOrId==='string'?achievementDefinitions().find(x=>x.id===aOrId):aOrId;
+    if(a?.id==='master-of-all')return ACHIEVEMENT_CATEGORIES.master;
+    return ACHIEVEMENT_CATEGORIES[a?.category]||ACHIEVEMENT_CATEGORIES.special;
   }
-
+  function achievementIconMarkup(a,cls='achievement-tile-icon'){
+    return `<svg class="${cls}" viewBox="0 0 64 64" aria-hidden="true"><use href="./achievement-icons.svg#${escapeHtml(a.iconId)}"></use></svg>`;
+  }
   function openAchievementDetail(id){
-    const a=achievementDefinitions().find(x=>x.id===id);if(!a)return;
-    const unlockedSet=new Set(state.engagement?.unlockedAchievements||[]),on=unlockedSet.has(a.id),cat=achievementCategoryFor(a.id);
-    $('achievementDetailIcon').textContent=a.icon;
+    const core=achievementDefinitions(), master=masterAchievementDefinition();
+    const a=id===master.id?master:core.find(x=>x.id===id);if(!a)return;
+    const unlockedSet=new Set(state.engagement?.unlockedAchievements||[]),on=unlockedSet.has(a.id),cat=achievementCategoryFor(a);
+    $('achievementDetailIcon').innerHTML=achievementIconMarkup(a,'achievement-detail-svg');
     $('achievementDetailName').textContent=a.name;
     $('achievementDetailDesc').textContent=a.desc;
     $('achievementDetailStatus').textContent=on?'Unlocked':'Locked';
     $('achievementDetailTier').textContent=a.tier;
     $('achievementDetailCategory').textContent=cat.name.replace(' Achievements','');
-    $('achievementDetailHint').textContent=on?'You unlocked this achievement.':'Unlock requirement: '+a.desc+'.';
+    $('achievementDetailHint').textContent=on?'You unlocked this achievement.':'Unlock requirement: '+a.desc;
     $('achievementDetail').classList.toggle('unlocked',on);
     $('achievementDetailBackdrop').classList.add('open');
     $('achievementDetailBackdrop').setAttribute('aria-hidden','false');
@@ -709,24 +780,24 @@
   function renderAchievements(){
     const b=achievementDefinitions(), unlockedSet=new Set(state.engagement?.unlockedAchievements||[]);
     const unlocked=b.filter(x=>unlockedSet.has(x.id)).length;
-    $('badgeCount').textContent=`${unlocked}/${b.length} unlocked`;
-    if($('achievementUnlockedCount'))$('achievementUnlockedCount').textContent=`${unlocked} / ${b.length}`;
-    const order=['streak','food','weight','workout','pr','lifestyle'];
+    $('badgeCount').textContent=`${unlocked}/67 unlocked`;
+    if($('achievementUnlockedCount'))$('achievementUnlockedCount').textContent=`${unlocked} / 67`;
+    const order=['streak','food','weight','workout','pr','nutrition','progress','lifestyle','special'];
     const groups=new Map();
-    b.forEach(a=>{const c=achievementCategoryFor(a.id);if(!groups.has(c.key))groups.set(c.key,{...c,items:[]});groups.get(c.key).items.push(a)});
-    $('badgeGrid').innerHTML=order.map(key=>{
+    b.forEach(a=>{const c=achievementCategoryFor(a);if(!groups.has(c.key))groups.set(c.key,{...c,items:[]});groups.get(c.key).items.push(a)});
+    let html=order.map(key=>{
       const g=groups.get(key);if(!g)return '';
       const got=g.items.filter(a=>unlockedSet.has(a.id)).length;
-      return `<section class="achievement-group"><div class="achievement-group-head"><div class="achievement-group-title"><span class="cat-icon">${g.icon}</span><div><strong>${escapeHtml(g.name)}</strong><span>${escapeHtml(g.desc)}</span></div></div><div class="achievement-group-count">${got} / ${g.items.length}</div></div><div class="achievement-strip">${g.items.map(a=>{const on=unlockedSet.has(a.id);return `<button type="button" class="achievement-tile tier-${a.tier} ${on?'unlocked':''}" data-achievement-id="${escapeHtml(a.id)}" aria-label="${escapeHtml(a.name)} — ${on?'unlocked':'locked'}"><span class="achievement-tile-icon">${a.icon}</span><span class="lock-mark">${on?'✓':'🔒'}</span></button>`}).join('')}</div></section>`;
+      return `<section class="achievement-group"><div class="achievement-group-head"><div class="achievement-group-title"><span class="cat-icon">${g.icon}</span><div><strong>${escapeHtml(g.name)}</strong><span>${escapeHtml(g.desc)}</span></div></div><div class="achievement-group-count">${got} / ${g.items.length}</div></div><div class="achievement-strip">${g.items.map(a=>{const on=unlockedSet.has(a.id);return `<button type="button" class="achievement-tile tier-${a.tier} ${on?'unlocked':''}" data-achievement-id="${escapeHtml(a.id)}" aria-label="${escapeHtml(a.name)} — ${on?'unlocked':'locked'}">${achievementIconMarkup(a)}<span class="achievement-name">${escapeHtml(a.name)}</span><span class="lock-mark">${on?'✓':'🔒'}</span></button>`}).join('')}</div></section>`;
     }).join('');
+    const master=masterAchievementDefinition(), masterUnlocked=unlockedSet.has(master.id);
+    if(masterUnlocked){
+      html+=`<button type="button" class="master-achievement unlocked" data-achievement-id="master-of-all"><div class="master-icon">${achievementIconMarkup(master,'master-svg')}</div><div><span>SECRET ACHIEVEMENT</span><strong>MASTER OF ALL</strong><p>All 67 achievements unlocked. You completed the entire IRONLOG collection.</p></div></button>`;
+    }else{
+      html+=`<section class="master-achievement locked"><div class="master-lock">🔒</div><div><span>SECRET ACHIEVEMENT</span><strong>????</strong><p>Unlock all 67 achievements to reveal the final secret badge.</p></div></section>`;
+    }
+    $('badgeGrid').innerHTML=html;
   }
-
-
-
-
-
-
-
 
   let undoState=null, undoTimer=null;
   function showUndo(message,fn){

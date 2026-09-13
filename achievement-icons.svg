@@ -1,0 +1,546 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<symbol id="icon-streak-1" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-streak-1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c2d12"/><stop offset="1" stop-color="#f97316"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-streak-1)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🔥</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">1 DAY</text>
+    </symbol>
+<symbol id="icon-streak-3" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-streak-3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c2d12"/><stop offset="1" stop-color="#f97316"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-streak-3)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🔥</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">3 DAY</text>
+    </symbol>
+<symbol id="icon-streak-5" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-streak-5" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c2d12"/><stop offset="1" stop-color="#f97316"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-streak-5)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🔥</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">5 DAY</text>
+    </symbol>
+<symbol id="icon-streak-10" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-streak-10" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c2d12"/><stop offset="1" stop-color="#f97316"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-streak-10)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">⚡</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">10 DA</text>
+    </symbol>
+<symbol id="icon-streak-20" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-streak-20" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c2d12"/><stop offset="1" stop-color="#f97316"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-streak-20)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">⚡</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">20 DA</text>
+    </symbol>
+<symbol id="icon-streak-30" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-streak-30" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c2d12"/><stop offset="1" stop-color="#f97316"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-streak-30)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">👑</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">30 DA</text>
+    </symbol>
+<symbol id="icon-streak-35" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-streak-35" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c2d12"/><stop offset="1" stop-color="#f97316"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-streak-35)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">💎</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">35 DA</text>
+    </symbol>
+<symbol id="icon-food-1" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-food-1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#14532d"/><stop offset="1" stop-color="#22c55e"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-food-1)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🍎</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">FIRST</text>
+    </symbol>
+<symbol id="icon-food-10" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-food-10" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#14532d"/><stop offset="1" stop-color="#22c55e"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-food-10)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🥪</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">10 FO</text>
+    </symbol>
+<symbol id="icon-food-25" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-food-25" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#14532d"/><stop offset="1" stop-color="#22c55e"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-food-25)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🥗</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">25 FO</text>
+    </symbol>
+<symbol id="icon-food-50" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-food-50" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#14532d"/><stop offset="1" stop-color="#22c55e"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-food-50)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🍲</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">50 FO</text>
+    </symbol>
+<symbol id="icon-food-100" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-food-100" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#14532d"/><stop offset="1" stop-color="#22c55e"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-food-100)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🍽️</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">100 F</text>
+    </symbol>
+<symbol id="icon-food-250" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-food-250" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#14532d"/><stop offset="1" stop-color="#22c55e"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-food-250)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">👩‍🍳</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">250 F</text>
+    </symbol>
+<symbol id="icon-food-500" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-food-500" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#14532d"/><stop offset="1" stop-color="#22c55e"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-food-500)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🏅</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">500 F</text>
+    </symbol>
+<symbol id="icon-food-1000" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-food-1000" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#14532d"/><stop offset="1" stop-color="#22c55e"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-food-1000)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">💎</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">1,000</text>
+    </symbol>
+<symbol id="icon-weight-1" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-weight-1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1e3a8a"/><stop offset="1" stop-color="#60a5fa"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-weight-1)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">⚖️</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">FIRST</text>
+    </symbol>
+<symbol id="icon-weight-5" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-weight-5" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1e3a8a"/><stop offset="1" stop-color="#60a5fa"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-weight-5)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">📟</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">5 WEI</text>
+    </symbol>
+<symbol id="icon-weight-10" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-weight-10" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1e3a8a"/><stop offset="1" stop-color="#60a5fa"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-weight-10)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">📊</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">10 WE</text>
+    </symbol>
+<symbol id="icon-weight-25" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-weight-25" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1e3a8a"/><stop offset="1" stop-color="#60a5fa"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-weight-25)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">📉</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">25 WE</text>
+    </symbol>
+<symbol id="icon-weight-50" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-weight-50" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1e3a8a"/><stop offset="1" stop-color="#60a5fa"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-weight-50)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🏅</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">50 WE</text>
+    </symbol>
+<symbol id="icon-weightmove-5" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-weightmove-5" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1e3a8a"/><stop offset="1" stop-color="#60a5fa"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-weightmove-5)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">⬇️</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">5 LB </text>
+    </symbol>
+<symbol id="icon-weightmove-10" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-weightmove-10" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1e3a8a"/><stop offset="1" stop-color="#60a5fa"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-weightmove-10)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🏆</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">10 LB</text>
+    </symbol>
+<symbol id="icon-goal-reached" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-goal-reached" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1e3a8a"/><stop offset="1" stop-color="#60a5fa"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-goal-reached)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🎯</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">GOAL </text>
+    </symbol>
+<symbol id="icon-workout-1" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-workout-1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3f3f46"/><stop offset="1" stop-color="#a3e635"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-workout-1)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🏋️</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">1 WOR</text>
+    </symbol>
+<symbol id="icon-workout-5" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-workout-5" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3f3f46"/><stop offset="1" stop-color="#a3e635"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-workout-5)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">👟</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">5 WOR</text>
+    </symbol>
+<symbol id="icon-workout-10" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-workout-10" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3f3f46"/><stop offset="1" stop-color="#a3e635"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-workout-10)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">💪</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">10 WO</text>
+    </symbol>
+<symbol id="icon-workout-25" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-workout-25" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3f3f46"/><stop offset="1" stop-color="#a3e635"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-workout-25)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🏋️</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">25 WO</text>
+    </symbol>
+<symbol id="icon-workout-50" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-workout-50" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3f3f46"/><stop offset="1" stop-color="#a3e635"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-workout-50)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🚴</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">50 WO</text>
+    </symbol>
+<symbol id="icon-workout-100" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-workout-100" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3f3f46"/><stop offset="1" stop-color="#a3e635"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-workout-100)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🥇</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">100 W</text>
+    </symbol>
+<symbol id="icon-workout-250" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-workout-250" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3f3f46"/><stop offset="1" stop-color="#a3e635"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-workout-250)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">⛰️</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">250 W</text>
+    </symbol>
+<symbol id="icon-minutes-60" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-minutes-60" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3f3f46"/><stop offset="1" stop-color="#a3e635"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-minutes-60)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">⏱️</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">60 MI</text>
+    </symbol>
+<symbol id="icon-minutes-1000" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-minutes-1000" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3f3f46"/><stop offset="1" stop-color="#a3e635"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-minutes-1000)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">⌛</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">1,000</text>
+    </symbol>
+<symbol id="icon-pr-1" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-pr-1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#713f12"/><stop offset="1" stop-color="#fbbf24"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-pr-1)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">👑</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">FIRST</text>
+    </symbol>
+<symbol id="icon-pr-5" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-pr-5" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#713f12"/><stop offset="1" stop-color="#fbbf24"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-pr-5)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🏋️</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">5 PRS</text>
+    </symbol>
+<symbol id="icon-pr-10" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-pr-10" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#713f12"/><stop offset="1" stop-color="#fbbf24"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-pr-10)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">⭐</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">10 PR</text>
+    </symbol>
+<symbol id="icon-pr-25" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-pr-25" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#713f12"/><stop offset="1" stop-color="#fbbf24"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-pr-25)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🏅</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">25 PR</text>
+    </symbol>
+<symbol id="icon-pr-50" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-pr-50" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#713f12"/><stop offset="1" stop-color="#fbbf24"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-pr-50)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">📈</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">50 PR</text>
+    </symbol>
+<symbol id="icon-pr-100" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-pr-100" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#713f12"/><stop offset="1" stop-color="#fbbf24"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-pr-100)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🏆</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">100 P</text>
+    </symbol>
+<symbol id="icon-lifts-3" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-lifts-3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#713f12"/><stop offset="1" stop-color="#fbbf24"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-lifts-3)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">3️⃣</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">3 LIF</text>
+    </symbol>
+<symbol id="icon-lifts-5" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-lifts-5" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#713f12"/><stop offset="1" stop-color="#fbbf24"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-lifts-5)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">5️⃣</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">5 LIF</text>
+    </symbol>
+<symbol id="icon-lifts-10" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-lifts-10" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#713f12"/><stop offset="1" stop-color="#fbbf24"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-lifts-10)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🔟</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">10 LI</text>
+    </symbol>
+<symbol id="icon-protein-1" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-protein-1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#134e4a"/><stop offset="1" stop-color="#2dd4bf"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-protein-1)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">💪</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">PROTE</text>
+    </symbol>
+<symbol id="icon-protein-7" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-protein-7" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#134e4a"/><stop offset="1" stop-color="#2dd4bf"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-protein-7)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🥩</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">7 PRO</text>
+    </symbol>
+<symbol id="icon-protein-30" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-protein-30" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#134e4a"/><stop offset="1" stop-color="#2dd4bf"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-protein-30)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🥇</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">30 PR</text>
+    </symbol>
+<symbol id="icon-calorie-1" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-calorie-1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#134e4a"/><stop offset="1" stop-color="#2dd4bf"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-calorie-1)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🎯</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">CALOR</text>
+    </symbol>
+<symbol id="icon-calorie-7" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-calorie-7" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#134e4a"/><stop offset="1" stop-color="#2dd4bf"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-calorie-7)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">✅</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">7 CAL</text>
+    </symbol>
+<symbol id="icon-calorie-30" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-calorie-30" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#134e4a"/><stop offset="1" stop-color="#2dd4bf"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-calorie-30)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🏹</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">30 CA</text>
+    </symbol>
+<symbol id="icon-bothgoal-7" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-bothgoal-7" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#134e4a"/><stop offset="1" stop-color="#2dd4bf"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-bothgoal-7)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🥗</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">7 BAL</text>
+    </symbol>
+<symbol id="icon-bothgoal-30" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-bothgoal-30" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#134e4a"/><stop offset="1" stop-color="#2dd4bf"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-bothgoal-30)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🌈</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">30 BA</text>
+    </symbol>
+<symbol id="icon-days-7" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-days-7" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#312e81"/><stop offset="1" stop-color="#818cf8"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-days-7)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">📅</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">7 DAY</text>
+    </symbol>
+<symbol id="icon-days-30" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-days-30" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#312e81"/><stop offset="1" stop-color="#818cf8"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-days-30)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🗓️</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">30 DA</text>
+    </symbol>
+<symbol id="icon-days-90" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-days-90" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#312e81"/><stop offset="1" stop-color="#818cf8"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-days-90)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">📆</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">90 DA</text>
+    </symbol>
+<symbol id="icon-days-180" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-days-180" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#312e81"/><stop offset="1" stop-color="#818cf8"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-days-180)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">📈</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">180 D</text>
+    </symbol>
+<symbol id="icon-days-365" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-days-365" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#312e81"/><stop offset="1" stop-color="#818cf8"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-days-365)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">💎</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">1 YEA</text>
+    </symbol>
+<symbol id="icon-weightmove-25" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-weightmove-25" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#312e81"/><stop offset="1" stop-color="#818cf8"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-weightmove-25)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">⬇️</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">25 LB</text>
+    </symbol>
+<symbol id="icon-weightmove-50" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-weightmove-50" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#312e81"/><stop offset="1" stop-color="#818cf8"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-weightmove-50)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🏆</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">50 LB</text>
+    </symbol>
+<symbol id="icon-favorite-1" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-favorite-1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#581c87"/><stop offset="1" stop-color="#d946ef"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-favorite-1)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">⭐</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">FIRST</text>
+    </symbol>
+<symbol id="icon-favorite-10" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-favorite-10" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#581c87"/><stop offset="1" stop-color="#d946ef"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-favorite-10)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🌟</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">10 FA</text>
+    </symbol>
+<symbol id="icon-favorite-25" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-favorite-25" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#581c87"/><stop offset="1" stop-color="#d946ef"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-favorite-25)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">✨</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">25 FA</text>
+    </symbol>
+<symbol id="icon-meal-explorer" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-meal-explorer" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#581c87"/><stop offset="1" stop-color="#d946ef"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-meal-explorer)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🍴</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">MEAL </text>
+    </symbol>
+<symbol id="icon-fooddays-7" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-fooddays-7" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#581c87"/><stop offset="1" stop-color="#d946ef"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-fooddays-7)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🍏</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">7 FOO</text>
+    </symbol>
+<symbol id="icon-fooddays-30" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-fooddays-30" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#581c87"/><stop offset="1" stop-color="#d946ef"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-fooddays-30)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🌿</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">30 FO</text>
+    </symbol>
+<symbol id="icon-special-early" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-special-early" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4c1d95"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-special-early)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🌅</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">EARLY</text>
+    </symbol>
+<symbol id="icon-special-night" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-special-night" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4c1d95"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-special-night)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🌙</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">NIGHT</text>
+    </symbol>
+<symbol id="icon-special-double" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-special-double" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4c1d95"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-special-double)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">⚔️</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">DOUBL</text>
+    </symbol>
+<symbol id="icon-special-full" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-special-full" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4c1d95"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-special-full)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🧰</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">FULL </text>
+    </symbol>
+<symbol id="icon-special-discipline" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-special-discipline" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4c1d95"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-special-discipline)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">⚡</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">IRON </text>
+    </symbol>
+<symbol id="icon-master-of-all" viewBox="0 0 64 64">
+      <defs><linearGradient id="g-master-of-all" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4c1d95"/><stop offset="1" stop-color="#facc15"/></linearGradient></defs>
+      <rect x="2" y="2" width="60" height="60" rx="9" fill="url(#g-master-of-all)" stroke="#f8fafc" stroke-opacity=".45" stroke-width="2"/>
+      <path d="M7 7h9M7 7v9M57 7h-9M57 7v9M7 57h9M7 57v-9M57 57h-9M57 57v-9" stroke="#fef3c7" stroke-width="2" stroke-linecap="round" opacity=".75"/>
+      <text x="32" y="38" text-anchor="middle" font-size="26" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">👑</text>
+      <rect x="13" y="45" width="38" height="10" rx="5" fill="#020617" fill-opacity=".55"/>
+      <text x="32" y="52.5" text-anchor="middle" font-size="5.8" font-weight="700" fill="#fff" font-family="Arial,sans-serif">MASTE</text>
+    </symbol>
+</svg>

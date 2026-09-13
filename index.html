@@ -1101,6 +1101,19 @@
     .achievement-detail h3{margin:0 36px 6px;font-size:20px}.achievement-detail p{margin:0;color:#cbd5e1;font-size:13px;line-height:1.5}.achievement-detail-meta{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:14px}.achievement-pill{padding:6px 9px;border-radius:999px;border:1px solid #334155;background:#101827;color:#94a3b8;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}.achievement-detail.unlocked .achievement-status{border-color:#b7791f;color:#fde68a;background:#2b1d0a}
     .achievement-detail-hint{margin-top:14px!important;color:#94a3b8!important;font-size:11px!important}
     @media(max-width:640px){.achievement-strip{grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}.achievement-tile{min-height:58px;padding:4px!important}.achievement-tile .achievement-tile-icon{font-size:23px}.achievement-group{padding:10px}.achievement-group-head{align-items:flex-start}}
+
+    .report-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+    .achievement-strip{grid-template-columns:repeat(auto-fit,minmax(92px,1fr))!important}
+    .achievement-tile{min-height:96px!important;padding:8px 6px 22px!important;align-content:center;gap:5px}
+    .achievement-tile-icon{width:48px;height:48px;display:block;filter:grayscale(1);opacity:.72}
+    .achievement-tile.unlocked .achievement-tile-icon{filter:none;opacity:1;filter:drop-shadow(0 0 8px rgba(245,158,11,.24))}
+    .achievement-name{font-size:9px!important;font-weight:800;color:#cbd5e1!important;line-height:1.1;text-align:center;display:block!important;min-height:20px}
+    .achievement-tile.unlocked .achievement-name{color:#fff!important}
+    .achievement-detail-svg{width:58px;height:58px;display:block}
+    .master-achievement{margin-top:14px;padding:14px;border-radius:14px;border:1px solid #334155;background:linear-gradient(145deg,#0d1420,#090e17);display:flex;align-items:center;gap:14px}
+    .master-achievement.locked{filter:grayscale(1);opacity:.64}.master-achievement.unlocked{border-color:#a855f7;background:linear-gradient(145deg,rgba(88,28,135,.42),rgba(124,58,237,.18));box-shadow:0 0 24px rgba(168,85,247,.12)}
+    .master-achievement span{font-size:9px;font-weight:900;letter-spacing:.12em;color:#94a3b8}.master-achievement strong{display:block;font-size:18px;margin-top:2px}.master-achievement p{margin:4px 0 0;color:#94a3b8;font-size:11px}.master-lock{width:62px;height:62px;border-radius:12px;display:grid;place-items:center;font-size:28px;background:#111827;border:1px solid #334155}.master-svg{width:62px;height:62px;display:block}
+    @media(max-width:640px){.report-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.achievement-strip{grid-template-columns:repeat(3,minmax(0,1fr))!important}.achievement-tile{min-height:92px!important}.achievement-tile-icon{width:44px;height:44px}.achievement-name{font-size:8px!important}}
 </style>
 </head>
 <body>
@@ -1200,7 +1213,17 @@
   </div>
   <div id="sectionWeek" class="card week-card feature-section">
     <div class="v16-head"><div><div class="v16-kicker">This Week</div><h2 style="margin:3px 0 0">Your Week in IRONLOG</h2></div><div class="tiny" id="weekRange"></div></div>
-    <div class="week-grid"><div class="v16-stat"><strong id="weekDays">0</strong><span>Days tracked</span></div><div class="v16-stat"><strong id="weekCalories">0</strong><span>Avg calories</span></div><div class="v16-stat"><strong id="weekProtein">0g</strong><span>Avg protein</span></div><div class="v16-stat"><strong id="weekWeight">—</strong><span>Weight change</span></div><div class="v16-stat"><strong id="weekStreak">0</strong><span>Current streak</span></div></div>
+    <div class="week-grid report-grid">
+      <div class="v16-stat"><strong id="weekDays">0</strong><span>Days with data</span></div>
+      <div class="v16-stat"><strong id="weekFoods">0</strong><span>Foods logged</span></div>
+      <div class="v16-stat"><strong id="weekCalories">0</strong><span>Avg calories</span></div>
+      <div class="v16-stat"><strong id="weekProtein">0g</strong><span>Avg protein</span></div>
+      <div class="v16-stat"><strong id="weekWorkouts">0</strong><span>Workouts</span></div>
+      <div class="v16-stat"><strong id="weekBurned">0</strong><span>Calories burned</span></div>
+      <div class="v16-stat"><strong id="weekPRs">0</strong><span>PRs logged</span></div>
+      <div class="v16-stat"><strong id="weekWeight">—</strong><span>Weight change</span></div>
+      <div class="v16-stat"><strong id="weekStreak">0</strong><span>Current streak</span></div>
+    </div>
     <div class="week-compare" id="weekCompare">Your comparison will build as you log more weeks.</div>
   </div>
   <div id="sectionFavorites" class="card fav-card feature-section">
@@ -1212,12 +1235,16 @@
 
   <div id="sectionMonth" class="card month-card feature-section">
     <div class="v16-head"><div><div class="v16-kicker">This Month</div><h2 style="margin:3px 0 0">Monthly Summary</h2></div><div class="tiny" id="monthLabel"></div></div>
-    <div class="month-grid">
-      <div class="v16-stat"><strong id="monthDays">0</strong><span>Days tracked</span></div>
+    <div class="month-grid report-grid">
+      <div class="v16-stat"><strong id="monthDays">0</strong><span>Days with data</span></div>
+      <div class="v16-stat"><strong id="monthFoods">0</strong><span>Foods logged</span></div>
       <div class="v16-stat"><strong id="monthCalories">0</strong><span>Avg calories</span></div>
       <div class="v16-stat"><strong id="monthProtein">0g</strong><span>Avg protein</span></div>
+      <div class="v16-stat"><strong id="monthWorkouts">0</strong><span>Workouts</span></div>
+      <div class="v16-stat"><strong id="monthBurned">0</strong><span>Calories burned</span></div>
+      <div class="v16-stat"><strong id="monthPRs">0</strong><span>PRs logged</span></div>
+      <div class="v16-stat"><strong id="monthWeighIns">0</strong><span>Weigh-ins</span></div>
       <div class="v16-stat"><strong id="monthWeight">—</strong><span>Weight change</span></div>
-      <div class="v16-stat"><strong id="monthFoods">0</strong><span>Foods logged</span></div>
     </div>
   </div>
 

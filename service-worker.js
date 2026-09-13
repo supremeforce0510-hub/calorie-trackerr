@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ironlog-v24';
+const CACHE_NAME = 'ironlog-v25';
 const APP_SHELL = [
   './',
   './index.html',
@@ -6,7 +6,8 @@ const APP_SHELL = [
   './manifest.webmanifest',
   './icons/icon-192.png',
   './icons/icon-512.png',
-  './ironlog-logo.png'
+  './ironlog-logo.png',
+  './achievement-icons.svg'
 ];
 
 self.addEventListener('install', event => {
