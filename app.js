@@ -533,6 +533,31 @@
     installMessage.style.display = 'none';
   });
 
+
+  // ----- Live Eastern Time clock -----
+  function updateLiveClock(){
+    const now = new Date();
+
+    const timeText = new Intl.DateTimeFormat('en-US', {
+      timeZone:'America/New_York',
+      hour:'numeric',
+      minute:'2-digit',
+      second:'2-digit',
+      hour12:true
+    }).format(now);
+
+    const zonePart = new Intl.DateTimeFormat('en-US', {
+      timeZone:'America/New_York',
+      timeZoneName:'short'
+    }).formatToParts(now).find(part => part.type === 'timeZoneName');
+
+    $('liveClockTime').textContent = timeText;
+    $('liveClockZone').textContent = zonePart ? zonePart.value : 'ET';
+  }
+
+  updateLiveClock();
+  setInterval(updateLiveClock, 1000);
+
   // ----- Service worker -----
   if('serviceWorker' in navigator){
     window.addEventListener('load', async () => {

@@ -369,6 +369,49 @@
       .weight-history-grid{grid-template-columns:repeat(2,1fr)}
     }
 
+  
+    .topbar-right{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-end;
+      gap:8px;
+      min-width:170px;
+    }
+    .live-clock{
+      min-width:170px;
+      padding:10px 13px;
+      border-radius:14px;
+      border:1px solid #5b4bb7;
+      background:linear-gradient(145deg,rgba(126,34,206,.24),rgba(2,132,199,.18));
+      box-shadow:0 8px 20px rgba(0,0,0,.16);
+      text-align:right;
+    }
+    .live-clock-time{
+      font-size:19px;
+      font-weight:900;
+      letter-spacing:.4px;
+      color:#f8fafc;
+      line-height:1.1;
+    }
+    .live-clock-zone{
+      margin-top:4px;
+      font-size:11px;
+      font-weight:700;
+      color:#c4b5fd;
+      letter-spacing:.5px;
+      text-transform:uppercase;
+    }
+    @media (max-width:640px){
+      .topbar-right{
+        width:100%;
+        align-items:stretch;
+      }
+      .live-clock{
+        width:100%;
+        text-align:left;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -379,7 +422,13 @@
       <p style="margin:4px 0 0">Simple daily food + weight tracking</p>
       <div class="marshall-badge"><span class="marshall-dot"></span>Marshall Certified</div>
     </div>
-    <input id="selectedDate" class="datebox" type="date" />
+    <div class="topbar-right">
+      <div class="live-clock" aria-live="polite" aria-label="Eastern Time clock">
+        <div class="live-clock-time" id="liveClockTime">--:--:--</div>
+        <div class="live-clock-zone" id="liveClockZone">Eastern Time</div>
+      </div>
+      <input id="selectedDate" class="datebox" type="date" />
+    </div>
   </div>
 
   <div class="card install-card">
