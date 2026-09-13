@@ -629,6 +629,23 @@
     overlay.classList.remove('hidden','closing');
   }
 
+
+  let streakLaunchTimer=null;
+  function launchStreakPopup(){
+    try{
+      showStreakPopup();
+    }catch(err){
+      console.error('Streak popup failed to open:',err);
+    }
+  }
+  function scheduleStreakPopup(){
+    clearTimeout(streakLaunchTimer);
+    requestAnimationFrame(()=>{
+      launchStreakPopup();
+      streakLaunchTimer=setTimeout(launchStreakPopup,180);
+    });
+  }
+
   function closeStreakPopup(){
     const overlay = $('streakOverlay');
     if(overlay.classList.contains('hidden') || overlay.classList.contains('closing')) return;
@@ -954,6 +971,15 @@
     window.scrollTo({top:0, behavior:'smooth'});
   });
 
+  const streakTabButton=$('streakTab');
+  streakTabButton.addEventListener('click', launchStreakPopup);
+  streakTabButton.addEventListener('pointerup',e=>{
+    if(e.pointerType==='touch' || e.pointerType==='pen'){
+      e.preventDefault();
+      launchStreakPopup();
+    }
+  });
+
   $('streakClose').addEventListener('click', closeStreakPopup);
   $('streakContinue').addEventListener('click', closeStreakPopup);
   $('streakOverlay').addEventListener('click', e => {
@@ -1203,8 +1229,18 @@
 
   recordAppOpen();
   $('selectedDate').value = todayLocal();
-  render();
 
-  // Show the daily streak card immediately on each app launch.
-  requestAnimationFrame(showStreakPopup);
+  // V21: open the streak first so another card can never prevent it from appearing.
+  scheduleStreakPopup();
+
+  try{
+    render();
+  }catch(err){
+    console.error('IRONLOG render error:',err);
+  }
+
+  // Installed PWAs can resume differently than a normal browser tab, so retry on load.
+  window.addEventListener('load',()=>{
+    if($('streakOverlay')?.classList.contains('hidden')) scheduleStreakPopup();
+  },{once:true});
 })();
