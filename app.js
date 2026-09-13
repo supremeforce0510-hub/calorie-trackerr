@@ -12,7 +12,7 @@
 
   function defaultState(){
     return {
-      settings:{calorieGoal:1800, proteinGoal:100, endGoalWeight:'', weeklyWorkoutGoal:3, prGoalExercise:'', prGoalWeight:'', theme:'purple', reminderEnabled:false, reminderTime:'19:00'},
+      settings:{calorieGoal:1800, proteinGoal:100, endGoalWeight:'', weeklyWorkoutGoal:3, prGoalExercise:'', prGoalWeight:'', lastBackupAt:'', backupReminderStartedAt:'', theme:'purple', reminderEnabled:false, reminderTime:'19:00'},
       profile:{age:'', sex:'', height:'', weight:'', activity:'sedentary'},
       days:{},
       engagement:{usedDates:[], celebratedMilestones:[], unlockedAchievements:[], achievementSystemReady:false, achievementV25Ready:false},
@@ -34,6 +34,8 @@
           weeklyWorkoutGoal:Math.max(1, Number(parsed?.settings?.weeklyWorkoutGoal) || 3),
           prGoalExercise:parsed?.settings?.prGoalExercise ?? '',
           prGoalWeight:parsed?.settings?.prGoalWeight ?? '',
+          lastBackupAt:parsed?.settings?.lastBackupAt ?? '',
+          backupReminderStartedAt:parsed?.settings?.backupReminderStartedAt ?? '',
           theme:['purple','green','red','gold'].includes(parsed?.settings?.theme) ? parsed.settings.theme : 'purple',
           reminderEnabled:Boolean(parsed?.settings?.reminderEnabled),
           reminderTime:/^\d{2}:\d{2}$/.test(parsed?.settings?.reminderTime || '') ? parsed.settings.reminderTime : '19:00'
@@ -1460,15 +1462,106 @@
     }
   });
 
-  $('exportBtn').addEventListener('click', () => {
-    const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'ironlog-data.json';
-    a.click();
-    setTimeout(()=>URL.revokeObjectURL(url),1000);
+  $('exportBtn').addEventListener('click', exportIronlogData);
+
+  // Restore an exported IRONLOG JSON backup. The imported JSON replaces the
+  // current tracking state only after validation + explicit confirmation.
+  const importBackupInput=$('importBackupInput');
+  $('importBackupBtn').addEventListener('click',()=>{
+    importBackupInput.value='';
+    importBackupInput.click();
   });
+  importBackupInput.addEventListener('change',async()=>{
+    const file=importBackupInput.files && importBackupInput.files[0];
+    if(!file)return;
+    try{
+      const text=await file.text();
+      const imported=JSON.parse(text);
+      const valid=imported && typeof imported==='object' && !Array.isArray(imported)
+        && imported.settings && typeof imported.settings==='object' && !Array.isArray(imported.settings)
+        && imported.days && typeof imported.days==='object' && !Array.isArray(imported.days)
+        && imported.engagement && typeof imported.engagement==='object' && !Array.isArray(imported.engagement)
+        && Array.isArray(imported.favorites);
+      if(!valid){
+        alert('That file does not look like a valid IRONLOG backup. Nothing was changed.');
+        return;
+      }
+      const ok=confirm('Restore this IRONLOG backup?\n\nYour current tracking data on this device will be replaced by the data in the backup. Progress Photos are stored separately and will not be changed.');
+      if(!ok)return;
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(imported));
+      alert('Backup restored. IRONLOG will reload now.');
+      location.reload();
+    }catch(_){
+      alert('IRONLOG could not read that backup file. Nothing was changed.');
+    }finally{
+      importBackupInput.value='';
+    }
+  });
+  // ----- V26 progress photos (stored separately in IndexedDB) -----
+  const PHOTO_DB='ironlogProgressPhotos_v1';
+  function openPhotoDB(){
+    return new Promise((resolve,reject)=>{
+      const req=indexedDB.open(PHOTO_DB,1);
+      req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains('photos'))req.result.createObjectStore('photos',{keyPath:'id'})};
+      req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);
+    });
+  }
+  async function photoStore(mode='readonly'){
+    const db=await openPhotoDB();return db.transaction('photos',mode).objectStore('photos');
+  }
+  function storeRequest(req){return new Promise((resolve,reject)=>{req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
+  async function getProgressPhotos(){const store=await photoStore();return (await storeRequest(store.getAll())).sort((a,b)=>(b.date||'').localeCompare(a.date||'')||b.createdAt-a.createdAt)}
+  async function putProgressPhoto(photo){const store=await photoStore('readwrite');return storeRequest(store.put(photo))}
+  async function deleteProgressPhoto(id){const store=await photoStore('readwrite');return storeRequest(store.delete(id))}
+  function escapeHtml(text){return String(text??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+  async function renderProgressPhotos(){
+    const gallery=$('progressPhotoGallery');if(!gallery)return;
+    try{
+      const photos=await getProgressPhotos();
+      if(!photos.length){gallery.innerHTML='<div class="tiny" style="grid-column:1/-1">No progress photos yet.</div>';return}
+      gallery.innerHTML=photos.map(p=>`<article class="progress-photo"><img src="${p.dataUrl}" alt="Progress photo from ${escapeHtml(p.date)}"><div class="progress-photo-info"><strong>${escapeHtml(friendlyDate(p.date))}</strong>${p.note?`<p>${escapeHtml(p.note)}</p>`:''}<button type="button" data-delete-photo="${p.id}">Delete</button></div></article>`).join('');
+    }catch(_){gallery.innerHTML='<div class="tiny" style="grid-column:1/-1">Progress photos are not available in this browser.</div>'}
+  }
+  function resizePhoto(file){
+    return new Promise((resolve,reject)=>{
+      const reader=new FileReader();reader.onerror=()=>reject(reader.error);reader.onload=()=>{
+        const img=new Image();img.onerror=()=>reject(new Error('Could not read image'));img.onload=()=>{
+          const max=1400,scale=Math.min(1,max/Math.max(img.width,img.height));
+          const canvas=document.createElement('canvas');canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);
+          canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);resolve(canvas.toDataURL('image/jpeg',.82));
+        };img.src=reader.result;
+      };reader.readAsDataURL(file);
+    });
+  }
+  let pendingPhotoData='';
+  $('progressPhotoDate').value=todayLocal();
+  $('progressPhotoFile').addEventListener('change',async e=>{
+    const file=e.target.files?.[0];pendingPhotoData='';$('progressPhotoPreview').style.display='none';if(!file)return;
+    try{pendingPhotoData=await resizePhoto(file);$('progressPhotoPreview').src=pendingPhotoData;$('progressPhotoPreview').style.display='block';$('progressPhotoMessage').textContent='Photo ready to save.'}catch(_){$('progressPhotoMessage').textContent='That photo could not be loaded.'}
+  });
+  $('saveProgressPhotoBtn').addEventListener('click',async()=>{
+    const date=$('progressPhotoDate').value||todayLocal();if(!pendingPhotoData){$('progressPhotoMessage').textContent='Choose a photo first.';return}
+    try{await putProgressPhoto({id:`photo_${Date.now()}_${Math.random().toString(36).slice(2,8)}`,date,note:$('progressPhotoNote').value.trim(),dataUrl:pendingPhotoData,createdAt:Date.now()});pendingPhotoData='';$('progressPhotoFile').value='';$('progressPhotoNote').value='';$('progressPhotoPreview').style.display='none';$('progressPhotoMessage').textContent='Progress photo saved.';await renderProgressPhotos()}catch(_){$('progressPhotoMessage').textContent='Could not save this photo. Your device storage may be full.'}
+  });
+  $('progressPhotoGallery').addEventListener('click',async e=>{const btn=e.target.closest('[data-delete-photo]');if(!btn)return;if(confirm('Delete this progress photo?')){await deleteProgressPhoto(btn.dataset.deletePhoto);renderProgressPhotos()}});
+  renderProgressPhotos();
+
+  // ----- V26 backup reminder -----
+  const BACKUP_INTERVAL=2*86400000;
+  function backupReferenceTime(){return Date.parse(state.settings.lastBackupAt||state.settings.backupReminderStartedAt||'')||0}
+  function renderBackupReminder(){
+    const el=$('backupReminder');if(!el)return;
+    if(!state.settings.backupReminderStartedAt){state.settings.backupReminderStartedAt=new Date().toISOString();saveState()}
+    el.classList.toggle('show',Date.now()-backupReferenceTime()>=BACKUP_INTERVAL);
+  }
+  function exportIronlogData(){
+    const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='ironlog-data.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    state.settings.lastBackupAt=new Date().toISOString();saveState();renderBackupReminder();
+  }
+  $('backupNowBtn').addEventListener('click',exportIronlogData);
+  $('backupLaterBtn').addEventListener('click',()=>{state.settings.backupReminderStartedAt=new Date().toISOString();state.settings.lastBackupAt='';saveState();renderBackupReminder()});
+  renderBackupReminder();
+
   // ----- PWA installation -----
   let deferredInstallPrompt = null;
   const installBtn = $('installBtn');

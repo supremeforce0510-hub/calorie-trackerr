@@ -1072,7 +1072,12 @@
     .exercise-progress-controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}.progress-chart-card{background:#0b1220;border:1px solid var(--line);border-radius:16px;padding:12px;margin-top:10px}.progress-chart-card h3{font-size:14px;margin:0 0 4px}.progress-chart-card p{font-size:11px;margin:0 0 8px}.progress-svg{display:block;width:100%;height:190px}.progress-empty{fill:#94a3b8;font-size:14px}
     .achievement-pop{position:fixed;left:50%;top:18px;transform:translate(-50%,-100px);z-index:170;width:min(440px,calc(100% - 28px));padding:14px 16px;border-radius:16px;background:linear-gradient(135deg,#312e81,#7c2d12);border:1px solid #fbbf24;opacity:0;transition:.28s ease;color:#fff;box-shadow:0 18px 50px rgba(0,0,0,.45);pointer-events:none}.achievement-pop.show{transform:translate(-50%,0);opacity:1}.achievement-pop strong{display:block;font-size:14px;margin-bottom:3px}.achievement-pop span{font-size:12px;color:#fde68a}
     .badge{position:relative;filter:grayscale(1);opacity:.42;background:#080d18!important;border-color:#263244!important}.badge.unlocked{filter:none;opacity:1}.badge.unlocked.tier-bronze{border-color:#b45309!important;background:linear-gradient(145deg,rgba(180,83,9,.22),rgba(120,53,15,.08))!important;box-shadow:0 0 18px rgba(180,83,9,.09)}.badge.unlocked.tier-silver{border-color:#94a3b8!important;background:linear-gradient(145deg,rgba(148,163,184,.18),rgba(71,85,105,.08))!important;box-shadow:0 0 18px rgba(148,163,184,.08)}.badge.unlocked.tier-gold{border-color:#f59e0b!important;background:linear-gradient(145deg,rgba(245,158,11,.22),rgba(126,34,206,.08))!important;box-shadow:0 0 20px rgba(245,158,11,.11)}.badge.unlocked.tier-diamond{border-color:#22d3ee!important;background:linear-gradient(145deg,rgba(34,211,238,.18),rgba(168,85,247,.13))!important;box-shadow:0 0 22px rgba(34,211,238,.12)}.badge-tier{display:inline-block!important;margin-top:6px!important;font-size:8px!important;text-transform:uppercase;letter-spacing:.12em;color:#64748b!important}.badge.unlocked .badge-tier{color:#e2e8f0!important}.achievements-note{font-size:11px;color:#94a3b8;margin:0 0 10px}
-    @media(max-width:640px){.home-dashboard{padding-bottom:76px}.goal-life-grid{grid-template-columns:1fr}.home-pr-board{grid-template-columns:1fr}.pr-home-summary{grid-template-columns:1fr}.exercise-progress-controls{grid-template-columns:1fr}.home-goal-pr{grid-template-columns:1fr}.home-hero{min-height:auto;padding-bottom:26px}.home-dashboard-card{padding:15px}}
+    .backup-reminder{display:none;margin:0 0 14px;padding:14px 16px;border:1px solid rgba(56,189,248,.28);border-radius:16px;background:linear-gradient(135deg,rgba(14,116,144,.18),rgba(30,64,175,.14));box-shadow:0 12px 35px rgba(0,0,0,.18)}
+    .backup-reminder.show{display:flex;align-items:center;justify-content:space-between;gap:14px}
+    .backup-reminder strong{display:block;margin-bottom:3px}.backup-reminder .actions{margin:0;flex-wrap:nowrap}.backup-reminder button{white-space:nowrap}
+    .photo-card .photo-intro{color:#94a3b8;line-height:1.55}.photo-upload-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.photo-upload-grid .wide{grid-column:1/-1}.photo-preview{display:none;margin-top:12px;max-width:220px;border-radius:16px;border:1px solid rgba(255,255,255,.1)}
+    .photo-gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}.progress-photo{overflow:hidden;border:1px solid rgba(255,255,255,.09);border-radius:16px;background:rgba(255,255,255,.035)}.progress-photo img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;background:#020617}.progress-photo-info{padding:10px}.progress-photo-info strong{display:block}.progress-photo-info p{margin:5px 0 8px;color:#94a3b8;font-size:.82rem;white-space:pre-wrap}.progress-photo-info button{width:100%;padding:8px;background:rgba(239,68,68,.13);border:1px solid rgba(239,68,68,.25);color:#fca5a5}
+    @media(max-width:640px){.home-dashboard{padding-bottom:76px}.backup-reminder.show{align-items:stretch;flex-direction:column}.photo-upload-grid{grid-template-columns:1fr}.photo-gallery{grid-template-columns:repeat(2,1fr)}.goal-life-grid{grid-template-columns:1fr}.home-pr-board{grid-template-columns:1fr}.pr-home-summary{grid-template-columns:1fr}.exercise-progress-controls{grid-template-columns:1fr}.home-goal-pr{grid-template-columns:1fr}.home-hero{min-height:auto;padding-bottom:26px}.home-dashboard-card{padding:15px}}
 
 
 
@@ -1144,6 +1149,10 @@
 </section>
 
 <section id="homeDashboard" class="home-dashboard" aria-label="IRONLOG home dashboard">
+  <div id="backupReminder" class="backup-reminder" role="status">
+    <div><strong>💾 Time to back up IRONLOG</strong><div class="tiny">Export a copy of your tracking data so you have a backup.</div></div>
+    <div class="actions"><button id="backupNowBtn" type="button">Back Up Now</button><button id="backupLaterBtn" class="secondary" type="button">Later</button></div>
+  </div>
   <div class="home-dashboard-card">
     <div class="home-card-head"><div><div class="home-card-kicker">Goals + Lifetime</div><h2>Goals Hub & Lifetime Stats</h2></div><div class="tiny">Your targets and all-time IRONLOG totals.</div></div>
     <div class="goal-life-grid">
@@ -1501,13 +1510,31 @@
     <div id="weightLog" style="margin-top:14px"></div>
   </div>
 
+
+  <div id="sectionPhotos" class="card photo-card feature-section">
+    <div class="v16-head"><div><div class="v16-kicker">Visual Progress</div><h2 style="margin:3px 0 0">📸 Progress Photos</h2></div><div class="tiny">Private to this device.</div></div>
+    <p class="photo-intro">Add dated progress photos and an optional note. Photos stay in IRONLOG on this device and are not included in the JSON data export.</p>
+    <div class="photo-upload-grid">
+      <div><label for="progressPhotoDate">Photo date</label><input id="progressPhotoDate" type="date"></div>
+      <div><label for="progressPhotoFile">Choose photo</label><input id="progressPhotoFile" type="file" accept="image/*"></div>
+      <div class="wide"><label for="progressPhotoNote">Optional note</label><input id="progressPhotoNote" maxlength="120" placeholder="Front, side, week 4, etc."></div>
+    </div>
+    <img id="progressPhotoPreview" class="photo-preview" alt="Selected progress photo preview">
+    <div class="actions"><button id="saveProgressPhotoBtn" type="button">Save Progress Photo</button></div>
+    <div id="progressPhotoMessage" class="tiny"></div>
+    <div id="progressPhotoGallery" class="photo-gallery"></div>
+  </div>
+
   <div id="sectionData" class="card data-card feature-section">
     <h2>Data</h2>
-    <p class="tiny">Everything is stored only in this browser on this device.</p>
+    <p class="tiny">Everything is stored only in this browser on this device. Export a backup regularly so you can restore your IRONLOG tracking data later.</p>
     <div class="actions">
-      <button id="exportBtn" class="secondary">Export JSON</button>
+      <button id="exportBtn" class="secondary">Export Backup</button>
+      <button id="importBackupBtn" class="secondary" type="button">Import Backup</button>
+      <input id="importBackupInput" type="file" accept="application/json,.json" hidden>
       <button id="resetDayBtn" class="danger">Clear Selected Day</button>
     </div>
+    <p class="tiny">Progress Photos stay private on this device and are not included in the JSON backup.</p>
   </div>
 </div>
 
@@ -1554,6 +1581,7 @@
   </div>
 
   <div class="menu-group"><div class="menu-group-title">App</div>
+    <button class="menu-item" type="button" data-menu-section="sectionPhotos">▣ <span>Progress Photos</span></button>
     <button class="menu-item" type="button" data-menu-history>◷ <span>Day History</span></button>
     <button class="menu-item" type="button" data-menu-streak>🔥 <span>Streak</span></button>
     <button class="menu-item" type="button" data-menu-section="sectionData">⇩ <span>Data + Export</span></button>
