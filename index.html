@@ -788,6 +788,48 @@
 .milestone-pop{position:fixed;left:50%;bottom:20px;transform:translate(-50%,100px);z-index:150;width:min(420px,calc(100% - 30px));padding:14px;border-radius:16px;background:linear-gradient(135deg,#4c1d95,#075985);border:1px solid #a78bfa;opacity:0;transition:.35s;color:#fff;box-shadow:0 18px 45px rgba(0,0,0,.4)}.milestone-pop.show{transform:translate(-50%,0);opacity:1}.milestone-pop strong{display:block;margin-bottom:3px}
 @media(max-width:640px){.goal-ring-layout{grid-template-columns:1fr;justify-items:center}.v16-stats{grid-template-columns:repeat(2,1fr);width:100%}.week-grid{grid-template-columns:repeat(2,1fr)}.fav-grid{grid-template-columns:1fr}}
 
+
+    /* ----- V17 extras ----- */
+    body.theme-green{--accent:#22c55e;--accent2:#14b8a6}
+    body.theme-red{--accent:#ef4444;--accent2:#f97316}
+    body.theme-gold{--accent:#f59e0b;--accent2:#eab308}
+    body.theme-purple{--accent:#a855f7;--accent2:#38bdf8}
+    .tools-card{background:linear-gradient(145deg,rgba(14,165,233,.08),rgba(168,85,247,.08));border-color:#3b4f78}
+    .settings-card{background:linear-gradient(145deg,rgba(245,158,11,.08),rgba(126,34,206,.08));border-color:#5c4a62}
+    .month-card{background:linear-gradient(145deg,rgba(59,130,246,.09),rgba(34,197,94,.07));border-color:#34566e}
+    .achievements-card{background:linear-gradient(145deg,rgba(245,158,11,.09),rgba(236,72,153,.07));border-color:#6b4f3c}
+    .tool-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .tool-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .checkin-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .scale-buttons{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+    .scale-buttons button{padding:10px 4px;background:#1e293b;color:#cbd5e1}
+    .scale-buttons button.selected{background:linear-gradient(90deg,#7e22ce,#0284c7);color:#fff}
+    textarea{width:100%;min-height:90px;resize:vertical;padding:11px 12px;border-radius:12px;border:1px solid var(--line);background:var(--input);color:var(--text);font-size:15px}
+    textarea:focus{outline:2px solid rgba(56,189,248,.25);border-color:var(--accent2)}
+    .search-results{margin-top:10px}.search-item{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}.search-item button{width:auto;padding:8px 10px}
+    .month-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px}
+    .badge-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+    .badge{border-radius:13px;padding:12px 8px;text-align:center;background:#0b1220;border:1px solid var(--line);opacity:.45}
+    .badge.unlocked{opacity:1;border-color:#a78bfa;background:linear-gradient(145deg,rgba(126,34,206,.18),rgba(245,158,11,.08))}
+    .badge-icon{font-size:24px;display:block;margin-bottom:5px}.badge strong{display:block;font-size:12px}.badge span{font-size:10px;color:var(--muted)}
+    .pin-btn.pinned{background:#d97706;color:#fff7ed}
+    .reminder-row{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:end}.reminder-row input[type="checkbox"]{width:22px;height:22px}
+    .toast{position:fixed;left:50%;bottom:18px;transform:translate(-50%,90px);z-index:160;width:min(420px,calc(100% - 30px));padding:12px 14px;border-radius:14px;background:#111827;border:1px solid #475569;color:#fff;opacity:0;transition:.28s ease;display:flex;justify-content:space-between;gap:12px;align-items:center;box-shadow:0 15px 35px rgba(0,0,0,.35)}
+    .toast.show{transform:translate(-50%,0);opacity:1}.toast button{width:auto;padding:7px 10px;background:#7e22ce;color:#fff}
+    .reminder-banner{display:none;margin:0 0 14px;padding:12px 14px;border-radius:14px;background:linear-gradient(90deg,rgba(245,158,11,.18),rgba(126,34,206,.15));border:1px solid #8a5d26}
+    .reminder-banner.show{display:flex;justify-content:space-between;gap:10px;align-items:center}
+    .share-card-preview{margin-top:10px;padding:16px;border-radius:16px;background:linear-gradient(145deg,#17122b,#10243a);border:1px solid #5b4bb7}
+    @media(max-width:640px){.tool-grid,.tool-grid-3,.checkin-row,.reminder-row{grid-template-columns:1fr}.month-grid{grid-template-columns:repeat(2,1fr)}.badge-grid{grid-template-columns:repeat(2,1fr)}}
+
+
+    body.theme-green .history-tab,body.theme-green .streak-action{background:linear-gradient(90deg,#16a34a,#0f766e)}
+    body.theme-red .history-tab,body.theme-red .streak-action{background:linear-gradient(90deg,#dc2626,#ea580c)}
+    body.theme-gold .history-tab,body.theme-gold .streak-action{background:linear-gradient(90deg,#b45309,#ca8a04)}
+    body.theme-purple .history-tab,body.theme-purple .streak-action{background:linear-gradient(90deg,#7e22ce,#0284c7)}
+    body.theme-green .live-clock{border-color:#23866d;background:linear-gradient(145deg,rgba(34,197,94,.24),rgba(20,184,166,.18))}
+    body.theme-red .live-clock{border-color:#9f3c27;background:linear-gradient(145deg,rgba(239,68,68,.24),rgba(249,115,22,.18))}
+    body.theme-gold .live-clock{border-color:#927022;background:linear-gradient(145deg,rgba(245,158,11,.24),rgba(234,179,8,.18))}
+
 </style>
 </head>
 <body>
@@ -807,6 +849,7 @@
     </div>
   </div>
 
+  <div id="reminderBanner" class="reminder-banner"><span>⏰ Remember to log today.</span><button id="dismissReminderBtn" type="button" style="width:auto">Got it</button></div>
 
   <div class="card progress-dashboard">
     <div class="v16-head"><div><div class="v16-kicker">Your Progress</div><h2 style="margin:3px 0 0">Progress Dashboard</h2></div><div class="tiny" id="dashMessage"></div></div>
@@ -830,6 +873,76 @@
     <div class="fav-grid" style="grid-template-columns:repeat(3,1fr)"><div><label>Protein (g)</label><input id="favProtein" type="number" min="0" step=".1"></div><div><label>Carbs (g)</label><input id="favCarbs" type="number" min="0" step=".1"></div><div><label>Fat (g)</label><input id="favFat" type="number" min="0" step=".1"></div></div>
     <div class="actions"><button id="saveFavBtn" type="button">Save Favorite</button></div><div id="favList" class="fav-list"></div>
   </div>
+
+  <div class="card tools-card">
+    <div class="v16-head"><div><div class="v16-kicker">Daily Details</div><h2 style="margin:3px 0 0">Notes + Check-In</h2></div><div class="tiny">Saved separately for the selected day.</div></div>
+    <label for="dayNote">Daily note</label>
+    <textarea id="dayNote" placeholder="Worked a double, ate out, low appetite, great energy..."></textarea>
+    <div class="checkin-row" style="margin-top:12px">
+      <div><label>Mood (1–5)</label><div id="moodButtons" class="scale-buttons"></div></div>
+      <div><label>Hunger (1–5)</label><div id="hungerButtons" class="scale-buttons"></div></div>
+    </div>
+    <div class="actions"><button id="saveCheckinBtn" type="button">Save Day Details</button></div>
+  </div>
+
+  <div class="card tools-card">
+    <div class="v16-head"><div><div class="v16-kicker">Find + Reuse</div><h2 style="margin:3px 0 0">Food History</h2></div><div class="tiny">Search anything you've logged before.</div></div>
+    <input id="foodSearchInput" placeholder="Search food history..." />
+    <div id="foodSearchResults" class="search-results"></div>
+    <hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
+    <h3 style="margin:0 0 10px">Copy a previous meal</h3>
+    <div class="tool-grid-3">
+      <div><label for="copyMealDate">From date</label><input id="copyMealDate" type="date"></div>
+      <div><label for="copyMealType">Meal</label><select id="copyMealType"><option>Breakfast</option><option>Lunch</option><option>Dinner</option><option>Snack</option><option>Drink</option></select></div>
+      <div style="align-self:end"><button id="copyMealBtn" type="button">Copy Meal</button></div>
+    </div>
+  </div>
+
+  <div class="card month-card">
+    <div class="v16-head"><div><div class="v16-kicker">This Month</div><h2 style="margin:3px 0 0">Monthly Summary</h2></div><div class="tiny" id="monthLabel"></div></div>
+    <div class="month-grid">
+      <div class="v16-stat"><strong id="monthDays">0</strong><span>Days tracked</span></div>
+      <div class="v16-stat"><strong id="monthCalories">0</strong><span>Avg calories</span></div>
+      <div class="v16-stat"><strong id="monthProtein">0g</strong><span>Avg protein</span></div>
+      <div class="v16-stat"><strong id="monthWeight">—</strong><span>Weight change</span></div>
+      <div class="v16-stat"><strong id="monthFoods">0</strong><span>Foods logged</span></div>
+    </div>
+  </div>
+
+  <div class="card achievements-card">
+    <div class="v16-head"><div><div class="v16-kicker">Collection</div><h2 style="margin:3px 0 0">Achievements</h2></div><div class="tiny" id="badgeCount"></div></div>
+    <div id="badgeGrid" class="badge-grid"></div>
+  </div>
+
+  <div class="card settings-card">
+    <div class="v16-head"><div><div class="v16-kicker">Personalize</div><h2 style="margin:3px 0 0">App Settings</h2></div></div>
+    <div class="tool-grid">
+      <div><label for="themeSelect">Theme</label><select id="themeSelect"><option value="purple">Purple + Blue</option><option value="green">Green + Teal</option><option value="red">Red + Orange</option><option value="gold">Black + Gold</option></select></div>
+      <div><label for="reminderTime">Daily reminder time</label><input id="reminderTime" type="time" value="19:00"></div>
+    </div>
+    <div class="reminder-row" style="margin-top:12px">
+      <div><input id="reminderEnabled" type="checkbox" aria-label="Enable daily reminder"></div>
+      <div><label style="margin:0">Daily reminder</label><div class="tiny">Shows an in-app reminder when you open CalorieTrack after your chosen time. Browser notifications are used when your device allows them.</div></div>
+      <button id="saveSettingsBtn" type="button">Save Settings</button>
+    </div>
+  </div>
+
+  <div class="card tools-card">
+    <div class="v16-head"><div><div class="v16-kicker">Backup + Share</div><h2 style="margin:3px 0 0">Data & Progress Card</h2></div></div>
+    <div class="tool-grid">
+      <div>
+        <label for="importFile">Import CalorieTrack JSON backup</label>
+        <input id="importFile" type="file" accept=".json,application/json">
+        <button id="importBtn" type="button" style="margin-top:8px">Import Backup</button>
+      </div>
+      <div>
+        <label>Shareable progress card</label>
+        <div id="sharePreview" class="share-card-preview">Your progress card will use your current saved stats.</div>
+        <button id="shareProgressBtn" type="button" style="margin-top:8px">Share Progress Card</button>
+      </div>
+    </div>
+  </div>
+
   <div class="card install-card">
     <div class="install-row">
       <div>
@@ -1032,6 +1145,7 @@
 </div>
 
 <div id="milestonePop" class="milestone-pop" aria-live="polite"></div>
+<div id="undoToast" class="toast" aria-live="polite"><span id="undoText">Deleted.</span><button id="undoBtn" type="button">Undo</button></div>
 <script src="./app.js" defer></script>
 </body>
 </html>
