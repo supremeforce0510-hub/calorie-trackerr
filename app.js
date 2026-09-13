@@ -15,7 +15,7 @@
       settings:{calorieGoal:1800, proteinGoal:100, endGoalWeight:'', weeklyWorkoutGoal:3, prGoalExercise:'', prGoalWeight:'', lastBackupAt:'', backupReminderStartedAt:'', theme:'purple', reminderEnabled:false, reminderTime:'19:00'},
       profile:{age:'', sex:'', height:'', weight:'', activity:'sedentary'},
       days:{},
-      engagement:{usedDates:[], celebratedMilestones:[], unlockedAchievements:[], achievementSystemReady:false, achievementV25Ready:false},
+      engagement:{usedDates:[], celebratedMilestones:[], unlockedAchievements:[], achievementUnlockedAt:{}, achievementSystemReady:false, achievementV25Ready:false},
       favorites:[]
     };
   }
@@ -52,6 +52,7 @@
           usedDates:Array.isArray(parsed?.engagement?.usedDates) ? parsed.engagement.usedDates.filter(v => /^\d{4}-\d{2}-\d{2}$/.test(String(v))) : [],
           celebratedMilestones:Array.isArray(parsed?.engagement?.celebratedMilestones) ? parsed.engagement.celebratedMilestones : [],
           unlockedAchievements:Array.isArray(parsed?.engagement?.unlockedAchievements) ? parsed.engagement.unlockedAchievements : [],
+          achievementUnlockedAt:parsed?.engagement?.achievementUnlockedAt && typeof parsed.engagement.achievementUnlockedAt === 'object' ? parsed.engagement.achievementUnlockedAt : {},
           achievementSystemReady:Boolean(parsed?.engagement?.achievementSystemReady),
           achievementV25Ready:Boolean(parsed?.engagement?.achievementV25Ready)
         },
@@ -491,7 +492,7 @@
     $('homePRBoard').innerHTML=best.length?best.map(p=>{
       const imp=prImprovementFor(p.exercise);
       const improve=imp&&imp.gain>0?`Started ${format1(imp.first)} lb → +${format1(imp.gain)} lb / +${format1(imp.pct)}%`:'First logged PR';
-      return `<div class="home-pr-item"><div class="pr-name">${escapeHtml(p.exercise)}</div><div class="pr-best">${format1(p.weight)} lb × ${Math.max(1,num(p.reps)||1)}</div><div class="pr-improve">${escapeHtml(improve)}</div></div>`;
+      return `<button type="button" class="home-pr-item" data-pr-timeline="${escapeHtml(p.exercise)}" aria-label="Open ${escapeHtml(p.exercise)} PR timeline"><div class="pr-name">${escapeHtml(p.exercise)}</div><div class="pr-best">${format1(p.weight)} lb × ${Math.max(1,num(p.reps)||1)}</div><div class="pr-improve">${escapeHtml(improve)} • Tap for timeline</div></button>`;
     }).join(''):'<div class="home-pr-empty">Log a lifting PR and your personal record board will build here.</div>';
   }
 
@@ -523,7 +524,32 @@
     lineChart('exerciseProgressChart',exData,x=>num(x.caloriesBurned),'Log exercise sessions to build a progress graph.');
   }
 
+  function weightClosestOnOrBefore(date){
+    const target=parseLocalDate(date).getTime();
+    const list=allWeights().filter(w=>(num(w.createdAt)||parseLocalDate(w.date).getTime())<=target).sort((a,b)=>(num(a.createdAt)||parseLocalDate(a.date).getTime())-(num(b.createdAt)||parseLocalDate(b.date).getTime()));
+    return list.length?list.at(-1):null;
+  }
+
+  function render15DaySnapshot(){
+    const end=todayLocal(), start=addDays(end,-14);
+    const inWindow=x=>String(x.date||'')>=start&&String(x.date||'')<=end;
+    const startW=weightClosestOnOrBefore(start), endW=weightClosestOnOrBefore(end);
+    const workouts=allExercises().filter(inWindow), prs=allPRs().filter(inWindow);
+    const burned=workouts.reduce((s,x)=>s+num(x.caloriesBurned),0);
+    const change=startW&&endW?num(endW.value)-num(startW.value):null;
+    const since=parseLocalDate(start).setHours(0,0,0,0), through=parseLocalDate(end).setHours(23,59,59,999);
+    const unlockedAt=state.engagement?.achievementUnlockedAt||{};
+    const achievements=Object.values(unlockedAt).filter(ts=>num(ts)>=since&&num(ts)<=through).length;
+    $('snapshotRange').textContent=`${friendlyDate(start)} – ${friendlyDate(end)}`;
+    $('snapshotWeight').textContent=change===null?'—':`${change>0?'+':''}${format1(change)} lb`;
+    $('snapshotWorkouts').textContent=workouts.length;
+    $('snapshotBurned').textContent=Math.round(burned).toLocaleString();
+    $('snapshotPRs').textContent=prs.length;
+    $('snapshotAchievements').textContent=achievements;
+  }
+
   function renderDashboard(){
+    render15DaySnapshot();
     const w=allWeights(),start=w.length?num(w[0].value):0,current=w.length?num(w.at(-1).value):0,goal=num(state.settings.endGoalWeight),st=currentStreakInfo().count,best=longestStreak();
     $('dashStart').textContent=start?format1(start)+' lb':'—';$('dashCurrent').textContent=current?format1(current)+' lb':'—';$('dashGoal').textContent=goal?format1(goal)+' lb':'—';$('dashStreak').textContent=st;$('dashBest').textContent=best;
     $('dashChange').textContent=start&&current?((current-start>0?'+':'')+format1(current-start)+' lb'):'—';
@@ -725,16 +751,17 @@
     state.engagement.unlockedAchievements=Array.isArray(state.engagement.unlockedAchievements)?state.engagement.unlockedAchievements:[];
     const defs=achievementDefinitions(), unlocked=new Set(state.engagement.unlockedAchievements);
     const newly=defs.filter(a=>a.on&&!unlocked.has(a.id));
+    state.engagement.achievementUnlockedAt=state.engagement.achievementUnlockedAt&&typeof state.engagement.achievementUnlockedAt==='object'?state.engagement.achievementUnlockedAt:{};
     if(!state.engagement.achievementV25Ready){
       newly.forEach(a=>unlocked.add(a.id));
       state.engagement.achievementV25Ready=true;
-    }else newly.forEach(a=>{unlocked.add(a.id);queueAchievement(a)});
+    }else newly.forEach(a=>{unlocked.add(a.id);state.engagement.achievementUnlockedAt[a.id]=Date.now();queueAchievement(a)});
     state.engagement.unlockedAchievements=[...unlocked];
     const master=masterAchievementDefinition();
     if(master.on&&!unlocked.has(master.id)){
       unlocked.add(master.id);
       state.engagement.unlockedAchievements=[...unlocked];
-      if(state.engagement.achievementV25Ready)queueAchievement(master);
+      if(state.engagement.achievementV25Ready){state.engagement.achievementUnlockedAt[master.id]=Date.now();queueAchievement(master)}
     }
     saveState();
   }
@@ -1289,6 +1316,32 @@
   $('achievementDetailBackdrop').addEventListener('click',e=>{if(e.target===$('achievementDetailBackdrop'))closeAchievementDetail()});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('achievementDetailBackdrop').classList.contains('open'))closeAchievementDetail()});
 
+  // ----- V28 PR timeline -----
+  function closePRTimeline(){
+    const b=$('prTimelineBackdrop');if(!b)return;b.classList.remove('open');b.setAttribute('aria-hidden','true');
+  }
+  function openPRTimeline(exercise){
+    const list=allPRs().filter(p=>String(p.exercise||'').trim().toLowerCase()===String(exercise||'').trim().toLowerCase())
+      .sort((a,b)=>(num(a.createdAt)||parseLocalDate(a.date).getTime())-(num(b.createdAt)||parseLocalDate(b.date).getTime()));
+    if(!list.length)return;
+    const best=Math.max(...list.map(p=>num(p.weight)));
+    $('prTimelineTitle').textContent=`${exercise} PR Timeline`;
+    $('prTimelineSummary').textContent=`${list.length} logged record${list.length===1?'':'s'} • chronological from earliest to latest`;
+    $('prTimelineList').innerHTML=list.map((p,i)=>`<div class="pr-timeline-entry ${num(p.weight)===best?'is-best':''}"><div class="date">${escapeHtml(friendlyDate(p.date))}</div><div class="lift">${escapeHtml(p.exercise)}<small>${p.note?escapeHtml(p.note):`Record ${i+1} of ${list.length}`}</small></div><div class="value">${format1(p.weight)} lb × ${Math.max(1,num(p.reps)||1)}</div></div>`).join('');
+    const b=$('prTimelineBackdrop');b.classList.add('open');b.setAttribute('aria-hidden','false');
+  }
+  let lastPRTimelineTouch=0;
+  function handlePRTimelineOpen(e){
+    const tile=e.target.closest('[data-pr-timeline]');if(!tile)return;
+    if(e.type==='touchend'){e.preventDefault();lastPRTimelineTouch=Date.now()}else if(Date.now()-lastPRTimelineTouch<700)return;
+    openPRTimeline(tile.dataset.prTimeline);
+  }
+  $('homePRBoard').addEventListener('click',handlePRTimelineOpen);
+  $('homePRBoard').addEventListener('touchend',handlePRTimelineOpen,{passive:false});
+  $('prTimelineClose').addEventListener('click',closePRTimeline);
+  $('prTimelineBackdrop').addEventListener('click',e=>{if(e.target===$('prTimelineBackdrop'))closePRTimeline()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('prTimelineBackdrop')?.classList.contains('open'))closePRTimeline()});
+
   // ----- V22 menu navigation -----
   function closeMenu(){
     const drawer=$('menuDrawer'),backdrop=$('menuBackdrop');
@@ -1532,12 +1585,25 @@
   async function putProgressPhoto(photo){const store=await photoStore('readwrite');return storeRequest(store.put(photo))}
   async function deleteProgressPhoto(id){const store=await photoStore('readwrite');return storeRequest(store.delete(id))}
   function escapeHtml(text){return String(text??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+  function closestWeightToDate(date){
+    const weights=allWeights();if(!weights.length)return null;
+    const target=parseLocalDate(date).getTime();
+    return weights.reduce((best,w)=>{
+      const wt=num(w.createdAt)||parseLocalDate(w.date).getTime(), diff=Math.abs(wt-target);
+      if(!best||diff<best.diff)return {item:w,diff};
+      return best;
+    },null)?.item||null;
+  }
   async function renderProgressPhotos(){
     const gallery=$('progressPhotoGallery');if(!gallery)return;
     try{
       const photos=await getProgressPhotos();
       if(!photos.length){gallery.innerHTML='<div class="tiny" style="grid-column:1/-1">No progress photos yet.</div>';return}
-      gallery.innerHTML=photos.map(p=>`<article class="progress-photo"><img src="${p.dataUrl}" alt="Progress photo from ${escapeHtml(p.date)}"><div class="progress-photo-info"><strong>${escapeHtml(friendlyDate(p.date))}</strong>${p.note?`<p>${escapeHtml(p.note)}</p>`:''}<button type="button" data-delete-photo="${p.id}">Delete</button></div></article>`).join('');
+      gallery.innerHTML=photos.map(p=>{
+        const weight=closestWeightToDate(p.date);
+        const weightLine=weight?`<div class="photo-weight">${format1(weight.value)} lb <span class="tiny">closest logged weight • ${escapeHtml(friendlyDate(weight.date))}</span></div>`:`<div class="photo-weight none">No logged weight near this photo yet</div>`;
+        return `<article class="progress-photo"><img src="${p.dataUrl}" alt="Progress photo from ${escapeHtml(p.date)}"><div class="progress-photo-info"><strong class="photo-date-line">${escapeHtml(friendlyDate(p.date))}</strong>${weightLine}${p.note?`<p>${escapeHtml(p.note)}</p>`:''}<button type="button" data-delete-photo="${p.id}">Delete</button></div></article>`;
+      }).join('');
     }catch(_){gallery.innerHTML='<div class="tiny" style="grid-column:1/-1">Progress photos are not available in this browser.</div>'}
   }
   function resizePhoto(file){
