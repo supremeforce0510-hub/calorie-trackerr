@@ -1389,6 +1389,14 @@
     .day-swipe-left{animation:v32SwipeLeft .24s ease}.day-swipe-right{animation:v32SwipeRight .24s ease}@keyframes v32SwipeLeft{0%{transform:translateX(0);opacity:1}45%{transform:translateX(-18px);opacity:.72}100%{transform:translateX(0);opacity:1}}@keyframes v32SwipeRight{0%{transform:translateX(0);opacity:1}45%{transform:translateX(18px);opacity:.72}100%{transform:translateX(0);opacity:1}}
     @media(max-width:640px){.custom-meal-row{align-items:stretch;flex-direction:column}.custom-meal-row button{width:100%}.exercise-fav-chip{min-width:135px}.photo-viewer-image{max-height:62vh}}
 
+    /* ===== V33 progress videos ===== */
+    .video-section-divider{height:1px;margin:24px 0 18px;background:linear-gradient(90deg,transparent,#475569 15%,#a855f7 50%,#475569 85%,transparent)}
+    .video-subhead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:6px}.video-subhead h3{margin:2px 0 0;font-size:19px}.video-intro{color:#94a3b8;line-height:1.5;margin:6px 0 14px}.video-upload-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.video-upload-grid .wide{grid-column:1/-1}
+    .video-preview-wrap{display:none;margin-top:12px}.video-preview{display:block;width:min(360px,100%);max-height:280px;border-radius:12px;border:1px solid #334155;background:#020617}
+    .video-gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:18px}.progress-video{overflow:hidden;border:1px solid rgba(255,255,255,.09);border-radius:6px;background:linear-gradient(145deg,#0c1118,#070a0f)}.video-open{display:block!important;width:100%!important;padding:0!important;border:0!important;border-radius:0!important;background:#020617!important}.video-open video{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;background:#020617;pointer-events:none}.progress-video-info{padding:10px}.progress-video-info strong{display:block}.progress-video-info p{margin:5px 0 8px;color:#94a3b8;font-size:.82rem;white-space:pre-wrap}.progress-video-info button{width:100%;padding:8px;background:rgba(239,68,68,.13);border:1px solid rgba(239,68,68,.25);color:#fca5a5;margin-top:7px}
+    .video-viewer-backdrop{position:fixed;inset:0;z-index:212;display:none;align-items:center;justify-content:center;padding:14px;background:rgba(0,0,0,.92);backdrop-filter:blur(7px)}.video-viewer-backdrop.open{display:flex}.video-viewer{width:min(820px,100%);position:relative;text-align:center;touch-action:pan-y}.video-viewer-player{display:block;width:100%;max-height:66vh;margin:auto;border-radius:14px;border:1px solid rgba(255,255,255,.13);background:#000}.video-viewer-close{position:absolute;right:5px;top:5px;z-index:2;width:38px!important;height:38px!important;padding:0!important;border-radius:50%!important;background:rgba(8,12,20,.9)!important}.video-viewer-meta{margin-top:10px}.video-viewer-meta strong{display:block}.video-viewer-note{margin:6px auto 0;max-width:560px;color:#cbd5e1;font-size:12px}.video-viewer-nav{display:flex;justify-content:center;align-items:center;gap:12px;margin-top:12px}.video-viewer-nav button{width:auto!important;min-width:74px}
+    @media(max-width:640px){.video-upload-grid{grid-template-columns:1fr}.video-gallery{grid-template-columns:1fr}.video-viewer-player{max-height:56vh}}
+
 </style>
 
 <style id="v31-gothic-sk8-side-art">
@@ -1448,7 +1456,7 @@
       <div class="live-clock" aria-live="polite" aria-label="Live device clock">
         <div class="live-clock-time" id="liveClockTime">--:--:--</div>
         <div class="live-clock-zone" id="liveClockZone">Local Time</div>
-        <div class="app-version" id="appVersion">IRONLOG V32</div>
+        <div class="app-version" id="appVersion">IRONLOG V33</div>
       </div>
       <input id="selectedDate" class="datebox" type="date" />
     </div>
@@ -1851,6 +1859,19 @@
     <div class="actions"><button id="saveProgressPhotoBtn" type="button">Save Progress Photo</button></div>
     <div id="progressPhotoMessage" class="tiny"></div>
     <div id="progressPhotoGallery" class="photo-gallery"></div>
+
+    <div class="video-section-divider" aria-hidden="true"></div>
+    <div class="video-subhead"><div><div class="v16-kicker">Motion Progress</div><h3>🎥 Progress Videos</h3></div><div class="tiny">Private to this device.</div></div>
+    <p class="video-intro">Add dated progress videos beneath your photos. Videos are saved only on this device, show the closest logged weight, and are not included in the JSON backup.</p>
+    <div class="video-upload-grid">
+      <div><label for="progressVideoDate">Video date</label><input id="progressVideoDate" type="date"></div>
+      <div><label for="progressVideoFile">Choose video</label><input id="progressVideoFile" type="file" accept="video/*"></div>
+      <div class="wide"><label for="progressVideoNote">Optional note</label><input id="progressVideoNote" maxlength="120" placeholder="Posing, lift check, week 6, etc."></div>
+    </div>
+    <div id="progressVideoPreviewWrap" class="video-preview-wrap"><video id="progressVideoPreview" class="video-preview" controls playsinline preload="metadata"></video></div>
+    <div class="actions"><button id="saveProgressVideoBtn" type="button">Save Progress Video</button></div>
+    <div id="progressVideoMessage" class="tiny"></div>
+    <div id="progressVideoGallery" class="video-gallery"></div>
   </div>
 
   <div id="sectionData" class="card data-card feature-section">
@@ -1862,7 +1883,7 @@
       <input id="importBackupInput" type="file" accept="application/json,.json" aria-label="Choose IRONLOG backup file" style="position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0;pointer-events:none">
       <button id="resetDayBtn" class="danger">Clear Selected Day</button>
     </div>
-    <p class="tiny">Progress Photos stay private on this device and are not included in the JSON backup.</p>
+    <p class="tiny">Progress Photos and Videos stay private on this device and are not included in the JSON backup.</p>
   </div>
 </div>
 
@@ -2001,6 +2022,14 @@
     <img id="photoViewerImage" class="photo-viewer-image" alt="Progress photo">
     <div class="photo-viewer-meta"><strong id="photoViewerDate"></strong><div id="photoViewerWeight" class="tiny"></div><div id="photoViewerNote" class="photo-viewer-note"></div></div>
     <div class="photo-viewer-nav"><button id="photoViewerPrev" type="button">← Previous</button><span id="photoViewerCounter" class="tiny"></span><button id="photoViewerNext" type="button">Next →</button></div>
+  </div>
+</div>
+<div id="videoViewerBackdrop" class="video-viewer-backdrop" aria-hidden="true">
+  <div id="videoViewer" class="video-viewer" role="dialog" aria-modal="true" aria-label="Progress video viewer">
+    <button id="videoViewerClose" class="video-viewer-close" type="button" aria-label="Close video viewer">×</button>
+    <video id="videoViewerPlayer" class="video-viewer-player" controls playsinline preload="metadata"></video>
+    <div class="video-viewer-meta"><strong id="videoViewerDate"></strong><div id="videoViewerWeight" class="tiny"></div><div id="videoViewerNote" class="video-viewer-note"></div></div>
+    <div class="video-viewer-nav"><button id="videoViewerPrev" type="button">← Previous</button><span id="videoViewerCounter" class="tiny"></span><button id="videoViewerNext" type="button">Next →</button></div>
   </div>
 </div>
 <div id="achievementPop" class="achievement-pop" aria-live="polite"></div>

@@ -2,7 +2,7 @@
   'use strict';
 
   const STORAGE_KEY = 'calorieTrackMVP_v1';
-  const APP_VERSION = 'V32';
+  const APP_VERSION = 'V33';
   const $ = id => document.getElementById(id);
 
   function todayLocal(){
@@ -1060,6 +1060,7 @@
     setTimeout(() => {
       overlay.classList.add('hidden');
       overlay.classList.remove('closing');
+      showDailyBackupReminder();
     }, 310);
   }
 
@@ -1498,6 +1499,7 @@
       closeHistory();
       closeStreakPopup();
       closePhotoViewer();
+      closeVideoViewer();
       closeReportAchievements();
     }
   });
@@ -1645,7 +1647,7 @@
         alert('That file does not look like a valid IRONLOG backup. Nothing was changed.');
         return;
       }
-      const ok=confirm('Restore this IRONLOG backup?\n\nYour current tracking data on this device will be replaced by the data in the backup. Progress Photos are stored separately and will not be changed.');
+      const ok=confirm('Restore this IRONLOG backup?\n\nYour current tracking data on this device will be replaced by the data in the backup. Progress Photos and Videos are stored separately and will not be changed.');
       if(!ok)return;
       localStorage.setItem(STORAGE_KEY,JSON.stringify(imported));
       alert('Backup restored. IRONLOG will reload now.');
@@ -1656,22 +1658,30 @@
       importBackupInput.value='';
     }
   });
-  // ----- V26 progress photos (stored separately in IndexedDB) -----
+  // ----- Progress photos + videos (stored separately in IndexedDB) -----
   const PHOTO_DB='ironlogProgressPhotos_v1';
   function openPhotoDB(){
     return new Promise((resolve,reject)=>{
-      const req=indexedDB.open(PHOTO_DB,1);
-      req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains('photos'))req.result.createObjectStore('photos',{keyPath:'id'})};
+      const req=indexedDB.open(PHOTO_DB,2);
+      req.onupgradeneeded=()=>{
+        if(!req.result.objectStoreNames.contains('photos'))req.result.createObjectStore('photos',{keyPath:'id'});
+        if(!req.result.objectStoreNames.contains('videos'))req.result.createObjectStore('videos',{keyPath:'id'});
+      };
       req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);
     });
   }
-  async function photoStore(mode='readonly'){
-    const db=await openPhotoDB();return db.transaction('photos',mode).objectStore('photos');
+  async function mediaStore(name,mode='readonly'){
+    const db=await openPhotoDB();return db.transaction(name,mode).objectStore(name);
   }
+  async function photoStore(mode='readonly'){return mediaStore('photos',mode)}
+  async function videoStore(mode='readonly'){return mediaStore('videos',mode)}
   function storeRequest(req){return new Promise((resolve,reject)=>{req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
   async function getProgressPhotos(){const store=await photoStore();return (await storeRequest(store.getAll())).sort((a,b)=>(b.date||'').localeCompare(a.date||'')||b.createdAt-a.createdAt)}
   async function putProgressPhoto(photo){const store=await photoStore('readwrite');return storeRequest(store.put(photo))}
   async function deleteProgressPhoto(id){const store=await photoStore('readwrite');return storeRequest(store.delete(id))}
+  async function getProgressVideos(){const store=await videoStore();return (await storeRequest(store.getAll())).sort((a,b)=>(b.date||'').localeCompare(a.date||'')||b.createdAt-a.createdAt)}
+  async function putProgressVideo(video){const store=await videoStore('readwrite');return storeRequest(store.put(video))}
+  async function deleteProgressVideo(id){const store=await videoStore('readwrite');return storeRequest(store.delete(id))}
   function escapeHtml(text){return String(text??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
   function closestWeightToDate(date){
     const weights=allWeights();if(!weights.length)return null;
@@ -1731,27 +1741,68 @@
   let photoTouchX=0;$('photoViewer').addEventListener('touchstart',e=>{photoTouchX=e.changedTouches[0].clientX},{passive:true});$('photoViewer').addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-photoTouchX;if(Math.abs(dx)>55)movePhotoViewer(dx<0?1:-1)},{passive:true});
   renderProgressPhotos();
 
-  // ----- V32 daily backup reminder -----
-  const BACKUP_REMINDER_DELAY=5*60*1000;
-  let backupReminderTimer=null;
+  // ----- V33 progress videos -----
+  let pendingVideoFile=null,pendingVideoPreviewUrl='',videoViewerItems=[],videoViewerIndex=0,videoGalleryUrls=[];
+  function revokeVideoGalleryUrls(){videoGalleryUrls.forEach(url=>URL.revokeObjectURL(url));videoGalleryUrls=[]}
+  async function renderProgressVideos(){
+    const gallery=$('progressVideoGallery');if(!gallery)return;
+    revokeVideoGalleryUrls();
+    try{
+      const videos=await getProgressVideos();videoViewerItems=videos.slice().reverse();
+      if(!videos.length){gallery.innerHTML='<div class="tiny" style="grid-column:1/-1">No progress videos yet.</div>';return}
+      gallery.innerHTML=videos.map(v=>{
+        const url=URL.createObjectURL(v.blob);videoGalleryUrls.push(url);
+        const weight=closestWeightToDate(v.date);
+        const weightLine=weight?`<div class="photo-weight">${format1(weight.value)} lb <span class="tiny">closest logged weight • ${escapeHtml(friendlyDate(weight.date))}</span></div>`:`<div class="photo-weight none">No logged weight near this video yet</div>`;
+        return `<article class="progress-video"><button type="button" class="video-open" data-open-video="${v.id}" aria-label="Open progress video from ${escapeHtml(v.date)}"><video src="${url}" muted playsinline preload="metadata"></video></button><div class="progress-video-info"><strong class="photo-date-line">${escapeHtml(friendlyDate(v.date))}</strong>${weightLine}${v.note?`<p>${escapeHtml(v.note)}</p>`:''}<button type="button" data-delete-video="${v.id}">Delete</button></div></article>`;
+      }).join('');
+    }catch(_){gallery.innerHTML='<div class="tiny" style="grid-column:1/-1">Progress videos are not available in this browser.</div>'}
+  }
+  function resetPendingVideo(){
+    pendingVideoFile=null;
+    if(pendingVideoPreviewUrl){URL.revokeObjectURL(pendingVideoPreviewUrl);pendingVideoPreviewUrl=''}
+    $('progressVideoFile').value='';$('progressVideoPreview').removeAttribute('src');$('progressVideoPreviewWrap').style.display='none';
+  }
+  $('progressVideoDate').value=todayLocal();
+  $('progressVideoFile').addEventListener('change',e=>{
+    const file=e.target.files?.[0];resetPendingVideo();
+    if(!file)return;
+    if(!String(file.type||'').startsWith('video/')){$('progressVideoMessage').textContent='Choose a video file.';return}
+    pendingVideoFile=file;pendingVideoPreviewUrl=URL.createObjectURL(file);$('progressVideoPreview').src=pendingVideoPreviewUrl;$('progressVideoPreviewWrap').style.display='block';$('progressVideoMessage').textContent=`Video ready to save • ${Math.max(.1,file.size/1048576).toFixed(1)} MB`;
+  });
+  $('saveProgressVideoBtn').addEventListener('click',async()=>{
+    const date=$('progressVideoDate').value||todayLocal();if(!pendingVideoFile){$('progressVideoMessage').textContent='Choose a video first.';return}
+    const file=pendingVideoFile;
+    try{
+      await putProgressVideo({id:`video_${Date.now()}_${Math.random().toString(36).slice(2,8)}`,date,note:$('progressVideoNote').value.trim(),blob:file,type:file.type||'video/mp4',name:file.name||'progress-video',createdAt:Date.now()});
+      resetPendingVideo();$('progressVideoNote').value='';$('progressVideoMessage').textContent='Progress video saved.';await renderProgressVideos();
+    }catch(_){$('progressVideoMessage').textContent='Could not save this video. Your device storage may be full or the file may be too large.'}
+  });
+  let activeViewerVideoUrl='';
+  function renderVideoViewer(){
+    const v=videoViewerItems[videoViewerIndex];if(!v)return;
+    const player=$('videoViewerPlayer');player.pause();if(activeViewerVideoUrl)URL.revokeObjectURL(activeViewerVideoUrl);activeViewerVideoUrl=URL.createObjectURL(v.blob);player.src=activeViewerVideoUrl;player.load();
+    $('videoViewerDate').textContent=friendlyDate(v.date);const weight=closestWeightToDate(v.date);$('videoViewerWeight').textContent=weight?`${format1(weight.value)} lb • closest logged weight ${friendlyDate(weight.date)}`:'No logged weight near this video yet';
+    $('videoViewerNote').textContent=v.note||'';$('videoViewerCounter').textContent=`${videoViewerIndex+1} / ${videoViewerItems.length}`;$('videoViewerPrev').disabled=videoViewerIndex<=0;$('videoViewerNext').disabled=videoViewerIndex>=videoViewerItems.length-1;
+  }
+  function openVideoViewer(id){const idx=videoViewerItems.findIndex(v=>v.id===id);if(idx<0)return;videoViewerIndex=idx;renderVideoViewer();$('videoViewerBackdrop').classList.add('open');$('videoViewerBackdrop').setAttribute('aria-hidden','false')}
+  function closeVideoViewer(){const player=$('videoViewerPlayer');player.pause();$('videoViewerBackdrop').classList.remove('open');$('videoViewerBackdrop').setAttribute('aria-hidden','true');if(activeViewerVideoUrl){URL.revokeObjectURL(activeViewerVideoUrl);activeViewerVideoUrl='';player.removeAttribute('src');player.load()}}
+  function moveVideoViewer(delta){const next=videoViewerIndex+delta;if(next<0||next>=videoViewerItems.length)return;videoViewerIndex=next;renderVideoViewer()}
+  $('progressVideoGallery').addEventListener('click',async e=>{const del=e.target.closest('[data-delete-video]');if(del){if(confirm('Delete this progress video?')){await deleteProgressVideo(del.dataset.deleteVideo);await renderProgressVideos()}return}const open=e.target.closest('[data-open-video]');if(open)openVideoViewer(open.dataset.openVideo)});
+  $('videoViewerClose').addEventListener('click',closeVideoViewer);$('videoViewerPrev').addEventListener('click',()=>moveVideoViewer(-1));$('videoViewerNext').addEventListener('click',()=>moveVideoViewer(1));$('videoViewerBackdrop').addEventListener('click',e=>{if(e.target===$('videoViewerBackdrop'))closeVideoViewer()});
+  let videoTouchX=0;$('videoViewer').addEventListener('touchstart',e=>{videoTouchX=e.changedTouches[0].clientX},{passive:true});$('videoViewer').addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-videoTouchX;if(Math.abs(dx)>55)moveVideoViewer(dx<0?1:-1)},{passive:true});
+  renderProgressVideos();
+
+  // ----- V33 daily backup reminder: after closing the first streak popup -----
   function showDailyBackupReminder(){
     const today=todayLocal();if(state.settings.dailyBackupReminderShownDate===today)return;
     state.settings.dailyBackupReminderShownDate=today;saveState();
     queueTopNotice('💾 BACK UP YOUR IRONLOG DATA','Export a backup so your tracking data stays safe.',2000);
   }
-  function scheduleDailyBackupReminder(){
-    const today=todayLocal();
-    if(state.settings.dailyBackupReminderDate!==today){state.settings.dailyBackupReminderDate=today;state.settings.dailyBackupReminderStartedAt=new Date().toISOString();saveState()}
-    if(state.settings.dailyBackupReminderShownDate===today)return;
-    const started=Date.parse(state.settings.dailyBackupReminderStartedAt)||Date.now();
-    const wait=Math.max(0,BACKUP_REMINDER_DELAY-(Date.now()-started));
-    clearTimeout(backupReminderTimer);backupReminderTimer=setTimeout(showDailyBackupReminder,wait);
-  }
   function exportIronlogData(){
     const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='ironlog-data.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
     state.settings.lastBackupAt=new Date().toISOString();saveState();
   }
-  scheduleDailyBackupReminder();
 
 
   // ----- PWA installation -----
@@ -1830,7 +1881,7 @@
   appShell.addEventListener('touchend',e=>{
     if(!daySwipeStartX)return;const t=e.changedTouches[0],dx=t.clientX-daySwipeStartX,dy=t.clientY-daySwipeStartY;daySwipeStartX=0;
     if(Math.abs(dx)<70||Math.abs(dx)<Math.abs(dy)*1.35)return;
-    if(e.target.closest('input,select,textarea,button,.achievement-strip,.photo-gallery,.menu-drawer,.history-drawer,.streak-modal,.photo-viewer,.pr-timeline-modal'))return;
+    if(e.target.closest('input,select,textarea,button,.achievement-strip,.photo-gallery,.video-gallery,.menu-drawer,.history-drawer,.streak-modal,.photo-viewer,.video-viewer,.pr-timeline-modal'))return;
     const next=addDays(selectedDate(),dx<0?1:-1);$('selectedDate').value=next;appShell.classList.remove('day-swipe-left','day-swipe-right');void appShell.offsetWidth;appShell.classList.add(dx<0?'day-swipe-left':'day-swipe-right');render();setTimeout(()=>appShell.classList.remove('day-swipe-left','day-swipe-right'),260);
   },{passive:true});
 
@@ -1885,7 +1936,7 @@
   // Refresh immediately when the app comes back into view so the clock
   // always catches up to the phone/computer's current time.
   document.addEventListener('visibilitychange', () => {
-    if(!document.hidden){updateLiveClock();scheduleDailyBackupReminder()}
+    if(!document.hidden){updateLiveClock()}
   });
 
   // ----- Service worker -----
