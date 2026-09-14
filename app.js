@@ -1487,8 +1487,11 @@
   streakTabButton.addEventListener('click',openStreakFromButton);
   streakTabButton.addEventListener('touchend',openStreakFromButton,{passive:false});
 
-  $('streakClose').addEventListener('click', closeStreakPopup);
-  $('streakContinue').addEventListener('click', closeStreakPopup);
+  ['streakClose','streakContinue'].forEach(id=>{
+    const btn=$(id);
+    btn.addEventListener('click', closeStreakPopup);
+    btn.addEventListener('touchend', e=>{e.preventDefault();closeStreakPopup();},{passive:false});
+  });
   $('streakOverlay').addEventListener('click', e => {
     if(e.target === $('streakOverlay')) closeStreakPopup();
   });
@@ -1793,10 +1796,8 @@
   let videoTouchX=0;$('videoViewer').addEventListener('touchstart',e=>{videoTouchX=e.changedTouches[0].clientX},{passive:true});$('videoViewer').addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-videoTouchX;if(Math.abs(dx)>55)moveVideoViewer(dx<0?1:-1)},{passive:true});
   renderProgressVideos();
 
-  // ----- V33 daily backup reminder: after closing the first streak popup -----
+  // ----- V33.1 backup reminder: every time the streak popup closes -----
   function showDailyBackupReminder(){
-    const today=todayLocal();if(state.settings.dailyBackupReminderShownDate===today)return;
-    state.settings.dailyBackupReminderShownDate=today;saveState();
     queueTopNotice('💾 BACK UP YOUR IRONLOG DATA','Export a backup so your tracking data stays safe.',2000);
   }
   function exportIronlogData(){
