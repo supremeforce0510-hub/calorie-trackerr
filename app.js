@@ -2,6 +2,7 @@
   'use strict';
 
   const STORAGE_KEY = 'calorieTrackMVP_v1';
+  const APP_VERSION = 'V32';
   const $ = id => document.getElementById(id);
 
   function todayLocal(){
@@ -12,11 +13,13 @@
 
   function defaultState(){
     return {
-      settings:{calorieGoal:1800, proteinGoal:100, endGoalWeight:'', weeklyWorkoutGoal:3, prGoalExercise:'', prGoalWeight:'', lastBackupAt:'', backupReminderStartedAt:'', theme:'purple', reminderEnabled:false, reminderTime:'19:00'},
+      settings:{calorieGoal:1800, proteinGoal:100, endGoalWeight:'', weeklyWorkoutGoal:3, prGoalExercise:'', prGoalWeight:'', lastBackupAt:'', backupReminderStartedAt:'', dailyBackupReminderDate:'', dailyBackupReminderStartedAt:'', dailyBackupReminderShownDate:'', theme:'purple', reminderEnabled:false, reminderTime:'19:00'},
       profile:{age:'', sex:'', height:'', weight:'', activity:'sedentary'},
       days:{},
-      engagement:{usedDates:[], celebratedMilestones:[], unlockedAchievements:[], achievementUnlockedAt:{}, achievementSystemReady:false, achievementV25Ready:false},
-      favorites:[]
+      engagement:{usedDates:[], celebratedMilestones:[], unlockedAchievements:[], achievementUnlockedAt:{}, completedAchievementCategories:[], categoryCompletionV32Ready:false, achievementSystemReady:false, achievementV25Ready:false},
+      favorites:[],
+      exerciseFavorites:[],
+      customMeals:[]
     };
   }
 
@@ -36,6 +39,9 @@
           prGoalWeight:parsed?.settings?.prGoalWeight ?? '',
           lastBackupAt:parsed?.settings?.lastBackupAt ?? '',
           backupReminderStartedAt:parsed?.settings?.backupReminderStartedAt ?? '',
+          dailyBackupReminderDate:parsed?.settings?.dailyBackupReminderDate ?? '',
+          dailyBackupReminderStartedAt:parsed?.settings?.dailyBackupReminderStartedAt ?? '',
+          dailyBackupReminderShownDate:parsed?.settings?.dailyBackupReminderShownDate ?? '',
           theme:['purple','green','red','gold'].includes(parsed?.settings?.theme) ? parsed.settings.theme : 'purple',
           reminderEnabled:Boolean(parsed?.settings?.reminderEnabled),
           reminderTime:/^\d{2}:\d{2}$/.test(parsed?.settings?.reminderTime || '') ? parsed.settings.reminderTime : '19:00'
@@ -53,10 +59,14 @@
           celebratedMilestones:Array.isArray(parsed?.engagement?.celebratedMilestones) ? parsed.engagement.celebratedMilestones : [],
           unlockedAchievements:Array.isArray(parsed?.engagement?.unlockedAchievements) ? parsed.engagement.unlockedAchievements : [],
           achievementUnlockedAt:parsed?.engagement?.achievementUnlockedAt && typeof parsed.engagement.achievementUnlockedAt === 'object' ? parsed.engagement.achievementUnlockedAt : {},
+          completedAchievementCategories:Array.isArray(parsed?.engagement?.completedAchievementCategories) ? parsed.engagement.completedAchievementCategories : [],
+          categoryCompletionV32Ready:Boolean(parsed?.engagement?.categoryCompletionV32Ready),
           achievementSystemReady:Boolean(parsed?.engagement?.achievementSystemReady),
           achievementV25Ready:Boolean(parsed?.engagement?.achievementV25Ready)
         },
-        favorites:Array.isArray(parsed?.favorites) ? parsed.favorites : []
+        favorites:Array.isArray(parsed?.favorites) ? parsed.favorites : [],
+        exerciseFavorites:Array.isArray(parsed?.exerciseFavorites) ? parsed.exerciseFavorites : [],
+        customMeals:Array.isArray(parsed?.customMeals) ? parsed.customMeals.filter(v=>String(v).trim()).map(v=>String(v).trim()) : []
       };
     }catch(_){
       return fallback;
@@ -570,6 +580,28 @@
     let rem=null,p=0;if(start&&current&&goal){rem=Math.abs(current-goal);const total=Math.abs(start-goal);p=total?Math.max(0,Math.min(100,(1-rem/total)*100)):100}
     $('ringRemaining').textContent=rem===null?'—':format1(rem)+' lb';$('goalRing').style.setProperty('--p',p+'%');$('dashMessage').textContent=current&&goal?`${format1(rem)} lb to goal • ${st} day${st===1?'':'s'} streak`:'Log weight and a goal to fill your progress ring.';renderChart(w.slice(-30));
   }
+  function achievementUnlocksBetween(startDate,endDate){
+    const defs=[...achievementDefinitions(), masterAchievementDefinition()];
+    const byId=new Map(defs.map(a=>[a.id,a]));
+    const start=parseLocalDate(startDate).getTime();
+    const end=parseLocalDate(endDate).getTime()+86399999;
+    return Object.entries(state.engagement?.achievementUnlockedAt||{})
+      .map(([id,ts])=>({id,ts:Number(ts)||0,a:byId.get(id)}))
+      .filter(x=>x.a&&x.ts>=start&&x.ts<=end)
+      .sort((a,b)=>a.ts-b.ts);
+  }
+  function openReportAchievements(title,startDate,endDate){
+    const items=achievementUnlocksBetween(startDate,endDate);
+    $('reportAchievementTitle').textContent=title;
+    $('reportAchievementList').innerHTML=items.length?items.map(x=>`<button type="button" class="report-achievement-item" data-report-achievement-id="${escapeHtml(x.id)}"><span>${achievementIconMarkup(x.a,'report-achievement-icon')}</span><span><strong>${escapeHtml(x.a.name)}</strong><small>${new Date(x.ts).toLocaleDateString()}</small></span></button>`).join(''):'<div class="empty">No dated achievement unlocks in this period yet.</div>';
+    $('reportAchievementBackdrop').classList.add('open');
+    $('reportAchievementBackdrop').setAttribute('aria-hidden','false');
+  }
+  function closeReportAchievements(){
+    $('reportAchievementBackdrop').classList.remove('open');
+    $('reportAchievementBackdrop').setAttribute('aria-hidden','true');
+  }
+
   function renderWeek(){
     const a=weekDates(0),b=weekDates(-1),x=weekStats(a),y=weekStats(b);
     $('weekRange').textContent=`${friendlyDate(a[0])} – ${friendlyDate(a[6])}`;
@@ -582,6 +614,9 @@
     $('weekPRs').textContent=x.prs;
     $('weekWeight').textContent=x.w===null?'—':(x.w>0?'+':'')+format1(x.w)+' lb';
     $('weekStreak').textContent=currentStreakInfo().count;
+    const weekAchievements=achievementUnlocksBetween(a[0],a[6]);
+    $('weekAchievements').textContent=weekAchievements.length;
+    $('weekAchievementsCard').dataset.rangeStart=a[0];$('weekAchievementsCard').dataset.rangeEnd=a[6];
     if(y.days){
       const workoutDiff=x.workouts-y.workouts, burnedDiff=Math.round(x.burned-y.burned);
       $('weekCompare').textContent=`Compared with last week: ${workoutDiff>=0?'+':''}${workoutDiff} workouts • ${burnedDiff>=0?'+':''}${burnedDiff} exercise calories • ${x.foods-y.foods>=0?'+':''}${x.foods-y.foods} food entries.`;
@@ -618,6 +653,10 @@
     $('monthBurned').textContent=Math.round(burned);
     $('monthPRs').textContent=prs;
     $('monthWeighIns').textContent=weighins;
+    const monthStart=`${prefix}01`, monthEnd=todayKey;
+    const monthAchievements=achievementUnlocksBetween(monthStart,monthEnd);
+    $('monthAchievements').textContent=monthAchievements.length;
+    $('monthAchievementsCard').dataset.rangeStart=monthStart;$('monthAchievementsCard').dataset.rangeEnd=monthEnd;
   }
 
   function achievementDefinitions(){
@@ -739,13 +778,14 @@
   function showNextAchievement(){
     if(achievementShowing||!achievementQueue.length)return;
     achievementShowing=true;
-    const a=achievementQueue.shift(), p=$('achievementPop');
-    p.innerHTML=`<strong>🏆 ACHIEVEMENT UNLOCKED — ${escapeHtml(a.name)}</strong><span>${escapeHtml(a.desc)}</span>`;
+    const item=achievementQueue.shift(), p=$('achievementPop');
+    p.innerHTML=`<strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.message)}</span>`;
     p.classList.add('show');
     clearTimeout(achievementTimer);
-    achievementTimer=setTimeout(()=>{p.classList.remove('show');achievementShowing=false;setTimeout(showNextAchievement,250)},3000);
+    achievementTimer=setTimeout(()=>{p.classList.remove('show');achievementShowing=false;setTimeout(showNextAchievement,250)},item.duration||3000);
   }
-  function queueAchievement(a){achievementQueue.push(a);showNextAchievement()}
+  function queueAchievement(a){achievementQueue.push({title:`🏆 ACHIEVEMENT UNLOCKED — ${a.name}`,message:a.desc,duration:3000});showNextAchievement()}
+  function queueTopNotice(title,message,duration=2000){achievementQueue.push({title,message,duration});showNextAchievement()}
 
   function checkAchievementUnlocks(){
     state.engagement.unlockedAchievements=Array.isArray(state.engagement.unlockedAchievements)?state.engagement.unlockedAchievements:[];
@@ -763,6 +803,18 @@
       state.engagement.unlockedAchievements=[...unlocked];
       if(state.engagement.achievementV25Ready){state.engagement.achievementUnlockedAt[master.id]=Date.now();queueAchievement(master)}
     }
+    state.engagement.completedAchievementCategories=Array.isArray(state.engagement.completedAchievementCategories)?state.engagement.completedAchievementCategories:[];
+    const completedSet=new Set(state.engagement.completedAchievementCategories);
+    const categoryReady=Boolean(state.engagement.categoryCompletionV32Ready);
+    ['streak','food','weight','workout','pr','nutrition','progress','lifestyle','special'].forEach(key=>{
+      const items=defs.filter(a=>a.category===key);
+      if(items.length&&items.every(a=>unlocked.has(a.id))&&!completedSet.has(key)){
+        completedSet.add(key);
+        if(categoryReady&&state.engagement.achievementV25Ready){const cat=ACHIEVEMENT_CATEGORIES[key];queueTopNotice(`🏆 ${cat.name.replace(' Achievements','')} COMPLETE`,`${items.length}/${items.length} achievements unlocked`,2000)}
+      }
+    });
+    state.engagement.completedAchievementCategories=[...completedSet];
+    state.engagement.categoryCompletionV32Ready=true;
     saveState();
   }
 
@@ -1011,6 +1063,22 @@
     }, 310);
   }
 
+  const DEFAULT_MEALS=['Breakfast','Lunch','Dinner','Snack','Drink'];
+  function mealNames(){return [...DEFAULT_MEALS,...(state.customMeals||[])].filter((v,i,a)=>a.findIndex(x=>x.toLowerCase()===String(v).toLowerCase())===i)}
+  function renderMealOptions(){
+    const names=mealNames();
+    ['mealType','favMeal'].forEach(id=>{const el=$(id);if(!el)return;const old=el.value;el.innerHTML=names.map(m=>`<option>${escapeHtml(m)}</option>`).join('');el.value=names.includes(old)?old:names[0]});
+    const list=$('customMealList');if(list)list.innerHTML=(state.customMeals||[]).length?(state.customMeals||[]).map(m=>`<button type="button" class="custom-meal-chip" data-remove-meal="${escapeHtml(m)}">${escapeHtml(m)} ×</button>`).join(''):'<span class="tiny">No custom meals yet.</span>';
+  }
+  function renderExerciseFavorites(){
+    const wrap=$('exerciseFavorites');if(!wrap)return;const favs=state.exerciseFavorites||[];
+    wrap.innerHTML=favs.length?favs.map(f=>`<button type="button" class="exercise-fav-chip" data-ex-fav-id="${escapeHtml(f.id)}"><span>★ ${escapeHtml(f.name)}</span><small>${escapeHtml(f.type)}</small></button>`).join(''):'<span class="tiny">No favorite exercises yet.</span>';
+  }
+  function renderExerciseFavoritesManage(){
+    const el=$('exerciseFavoritesManage');if(!el)return;const favs=state.exerciseFavorites||[];
+    el.innerHTML=favs.length?favs.map(f=>`<span class="exercise-fav-manage"><b>${escapeHtml(f.name)}</b><button type="button" data-remove-ex-fav="${escapeHtml(f.id)}" aria-label="Remove ${escapeHtml(f.name)} from favorites">×</button></span>`).join(''):'<span class="tiny">Favorite exercises will appear here.</span>';
+  }
+
   function render(){
     const day = getDay(selectedDate());
     const foods = day.foods;
@@ -1030,7 +1098,11 @@
 
     const latestWeightToday = day.weights.slice().sort((a,b)=>num(b.createdAt)-num(a.createdAt))[0];
 
-    const mealTotals = ['Breakfast','Lunch','Dinner','Snack','Drink'].reduce((acc,meal)=>{
+    renderMealOptions();
+    renderExerciseFavorites();
+    renderExerciseFavoritesManage();
+    const meals=mealNames();
+    const mealTotals = meals.reduce((acc,meal)=>{
       acc[meal] = foods.filter(f=>f.meal===meal).reduce((sum,f)=>sum+num(f.calories),0);
       return acc;
     },{});
@@ -1054,7 +1126,7 @@
       (remaining >= 0 ? Math.round(remaining) + ' calories remaining' : Math.abs(Math.round(remaining)) + ' calories over goal') +
       ' • ' + format1(totals.protein) + '/' + format1(proteinGoal) + 'g protein';
 
-    $('mealSummary').innerHTML = ['Breakfast','Lunch','Dinner','Snack','Drink'].map(meal => `
+    $('mealSummary').innerHTML = meals.map(meal => `
       <div class="meal-summary-row">
         <span>${meal}</span>
         <span>${Math.round(mealTotals[meal])} cal</span>
@@ -1162,10 +1234,10 @@
     renderHomeDashboard();
     renderDashboard();
     renderExerciseProgress();
+    checkAchievementUnlocks();
     renderWeek();
     renderFavs();
     renderMonthlySummary();
-    checkAchievementUnlocks();
     renderAchievements();
     checkMilestones();
   }
@@ -1176,7 +1248,7 @@
     $('foodProtein').value='';
     $('foodCarbs').value='';
     $('foodFat').value='';
-    $('mealType').value='Breakfast';
+    $('mealType').value=mealNames()[0]||'Breakfast';
     $('foodName').focus();
   }
 
@@ -1217,6 +1289,12 @@
   });
 
   $('clearFoodBtn').addEventListener('click', clearFoodForm);
+  $('addCustomMealBtn').addEventListener('click',()=>{
+    const name=$('customMealName').value.trim();if(!name)return;
+    if(mealNames().some(m=>m.toLowerCase()===name.toLowerCase())){alert('That meal name already exists.');return}
+    state.customMeals.push(name);$('customMealName').value='';saveState();renderMealOptions();$('mealType').value=name;
+  });
+  $('customMealList').addEventListener('click',e=>{const btn=e.target.closest('[data-remove-meal]');if(!btn)return;const name=btn.dataset.removeMeal;state.customMeals=(state.customMeals||[]).filter(m=>m!==name);saveState();renderMealOptions()});
 
 
   $('addExerciseBtn').addEventListener('click',()=>{
@@ -1236,6 +1314,14 @@
     render();
   });
   $('clearExerciseBtn').addEventListener('click',clearExerciseForm);
+  $('favoriteExerciseBtn').addEventListener('click',()=>{
+    const name=$('exerciseName').value.trim();if(!name){alert('Enter an exercise name first.');$('exerciseName').focus();return}
+    const type=$('exerciseType').value;
+    if((state.exerciseFavorites||[]).some(f=>f.name.toLowerCase()===name.toLowerCase())){alert('That exercise is already a favorite.');return}
+    state.exerciseFavorites.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random(),name,type});saveState();renderExerciseFavorites();renderExerciseFavoritesManage();
+  });
+  $('exerciseFavorites').addEventListener('click',e=>{const btn=e.target.closest('[data-ex-fav-id]');if(!btn)return;const f=(state.exerciseFavorites||[]).find(x=>x.id===btn.dataset.exFavId);if(!f)return;$('exerciseName').value=f.name;$('exerciseType').value=f.type});
+  $('exerciseFavoritesManage').addEventListener('click',e=>{const btn=e.target.closest('[data-remove-ex-fav]');if(!btn)return;state.exerciseFavorites=(state.exerciseFavorites||[]).filter(x=>x.id!==btn.dataset.removeExFav);saveState();renderExerciseFavorites();renderExerciseFavoritesManage()});
 
   $('prExercise').addEventListener('change',()=>{
     $('customPRWrap').style.display=$('prExercise').value==='Other / Custom'?'block':'none';
@@ -1411,6 +1497,8 @@
       closeMenu();
       closeHistory();
       closeStreakPopup();
+      closePhotoViewer();
+      closeReportAchievements();
     }
   });
 
@@ -1594,15 +1682,16 @@
       return best;
     },null)?.item||null;
   }
+  let photoViewerItems=[],photoViewerIndex=0;
   async function renderProgressPhotos(){
     const gallery=$('progressPhotoGallery');if(!gallery)return;
     try{
-      const photos=await getProgressPhotos();
+      const photos=await getProgressPhotos();photoViewerItems=photos.slice().reverse();
       if(!photos.length){gallery.innerHTML='<div class="tiny" style="grid-column:1/-1">No progress photos yet.</div>';return}
       gallery.innerHTML=photos.map(p=>{
         const weight=closestWeightToDate(p.date);
         const weightLine=weight?`<div class="photo-weight">${format1(weight.value)} lb <span class="tiny">closest logged weight • ${escapeHtml(friendlyDate(weight.date))}</span></div>`:`<div class="photo-weight none">No logged weight near this photo yet</div>`;
-        return `<article class="progress-photo"><img src="${p.dataUrl}" alt="Progress photo from ${escapeHtml(p.date)}"><div class="progress-photo-info"><strong class="photo-date-line">${escapeHtml(friendlyDate(p.date))}</strong>${weightLine}${p.note?`<p>${escapeHtml(p.note)}</p>`:''}<button type="button" data-delete-photo="${p.id}">Delete</button></div></article>`;
+        return `<article class="progress-photo"><button type="button" class="photo-open" data-open-photo="${p.id}" aria-label="Open progress photo from ${escapeHtml(p.date)}"><img src="${p.dataUrl}" alt="Progress photo from ${escapeHtml(p.date)}"></button><div class="progress-photo-info"><strong class="photo-date-line">${escapeHtml(friendlyDate(p.date))}</strong>${weightLine}${p.note?`<p>${escapeHtml(p.note)}</p>`:''}<button type="button" data-delete-photo="${p.id}">Delete</button></div></article>`;
       }).join('');
     }catch(_){gallery.innerHTML='<div class="tiny" style="grid-column:1/-1">Progress photos are not available in this browser.</div>'}
   }
@@ -1627,24 +1716,43 @@
     const date=$('progressPhotoDate').value||todayLocal();if(!pendingPhotoData){$('progressPhotoMessage').textContent='Choose a photo first.';return}
     try{await putProgressPhoto({id:`photo_${Date.now()}_${Math.random().toString(36).slice(2,8)}`,date,note:$('progressPhotoNote').value.trim(),dataUrl:pendingPhotoData,createdAt:Date.now()});pendingPhotoData='';$('progressPhotoFile').value='';$('progressPhotoNote').value='';$('progressPhotoPreview').style.display='none';$('progressPhotoMessage').textContent='Progress photo saved.';await renderProgressPhotos()}catch(_){$('progressPhotoMessage').textContent='Could not save this photo. Your device storage may be full.'}
   });
-  $('progressPhotoGallery').addEventListener('click',async e=>{const btn=e.target.closest('[data-delete-photo]');if(!btn)return;if(confirm('Delete this progress photo?')){await deleteProgressPhoto(btn.dataset.deletePhoto);renderProgressPhotos()}});
+  function renderPhotoViewer(){
+    const p=photoViewerItems[photoViewerIndex];if(!p)return;
+    $('photoViewerImage').src=p.dataUrl;$('photoViewerDate').textContent=friendlyDate(p.date);
+    const weight=closestWeightToDate(p.date);$('photoViewerWeight').textContent=weight?`${format1(weight.value)} lb • closest logged weight ${friendlyDate(weight.date)}`:'No logged weight near this photo yet';
+    $('photoViewerNote').textContent=p.note||'';$('photoViewerCounter').textContent=`${photoViewerIndex+1} / ${photoViewerItems.length}`;
+    $('photoViewerPrev').disabled=photoViewerIndex<=0;$('photoViewerNext').disabled=photoViewerIndex>=photoViewerItems.length-1;
+  }
+  function openPhotoViewer(id){const idx=photoViewerItems.findIndex(p=>p.id===id);if(idx<0)return;photoViewerIndex=idx;renderPhotoViewer();$('photoViewerBackdrop').classList.add('open');$('photoViewerBackdrop').setAttribute('aria-hidden','false')}
+  function closePhotoViewer(){$('photoViewerBackdrop').classList.remove('open');$('photoViewerBackdrop').setAttribute('aria-hidden','true')}
+  function movePhotoViewer(delta){const next=photoViewerIndex+delta;if(next<0||next>=photoViewerItems.length)return;photoViewerIndex=next;renderPhotoViewer()}
+  $('progressPhotoGallery').addEventListener('click',async e=>{const del=e.target.closest('[data-delete-photo]');if(del){if(confirm('Delete this progress photo?')){await deleteProgressPhoto(del.dataset.deletePhoto);renderProgressPhotos()}return}const open=e.target.closest('[data-open-photo]');if(open)openPhotoViewer(open.dataset.openPhoto)});
+  $('photoViewerClose').addEventListener('click',closePhotoViewer);$('photoViewerPrev').addEventListener('click',()=>movePhotoViewer(-1));$('photoViewerNext').addEventListener('click',()=>movePhotoViewer(1));$('photoViewerBackdrop').addEventListener('click',e=>{if(e.target===$('photoViewerBackdrop'))closePhotoViewer()});
+  let photoTouchX=0;$('photoViewer').addEventListener('touchstart',e=>{photoTouchX=e.changedTouches[0].clientX},{passive:true});$('photoViewer').addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-photoTouchX;if(Math.abs(dx)>55)movePhotoViewer(dx<0?1:-1)},{passive:true});
   renderProgressPhotos();
 
-  // ----- V26 backup reminder -----
-  const BACKUP_INTERVAL=2*86400000;
-  function backupReferenceTime(){return Date.parse(state.settings.lastBackupAt||state.settings.backupReminderStartedAt||'')||0}
-  function renderBackupReminder(){
-    const el=$('backupReminder');if(!el)return;
-    if(!state.settings.backupReminderStartedAt){state.settings.backupReminderStartedAt=new Date().toISOString();saveState()}
-    el.classList.toggle('show',Date.now()-backupReferenceTime()>=BACKUP_INTERVAL);
+  // ----- V32 daily backup reminder -----
+  const BACKUP_REMINDER_DELAY=5*60*1000;
+  let backupReminderTimer=null;
+  function showDailyBackupReminder(){
+    const today=todayLocal();if(state.settings.dailyBackupReminderShownDate===today)return;
+    state.settings.dailyBackupReminderShownDate=today;saveState();
+    queueTopNotice('💾 BACK UP YOUR IRONLOG DATA','Export a backup so your tracking data stays safe.',2000);
+  }
+  function scheduleDailyBackupReminder(){
+    const today=todayLocal();
+    if(state.settings.dailyBackupReminderDate!==today){state.settings.dailyBackupReminderDate=today;state.settings.dailyBackupReminderStartedAt=new Date().toISOString();saveState()}
+    if(state.settings.dailyBackupReminderShownDate===today)return;
+    const started=Date.parse(state.settings.dailyBackupReminderStartedAt)||Date.now();
+    const wait=Math.max(0,BACKUP_REMINDER_DELAY-(Date.now()-started));
+    clearTimeout(backupReminderTimer);backupReminderTimer=setTimeout(showDailyBackupReminder,wait);
   }
   function exportIronlogData(){
     const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='ironlog-data.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
-    state.settings.lastBackupAt=new Date().toISOString();saveState();renderBackupReminder();
+    state.settings.lastBackupAt=new Date().toISOString();saveState();
   }
-  $('backupNowBtn').addEventListener('click',exportIronlogData);
-  $('backupLaterBtn').addEventListener('click',()=>{state.settings.backupReminderStartedAt=new Date().toISOString();state.settings.lastBackupAt='';saveState();renderBackupReminder()});
-  renderBackupReminder();
+  scheduleDailyBackupReminder();
+
 
   // ----- PWA installation -----
   let deferredInstallPrompt = null;
@@ -1709,6 +1817,25 @@
   });
 
 
+  // ----- V32 report achievement details -----
+  $('weekAchievementsCard').addEventListener('click',()=>openReportAchievements('Achievements earned this week',$('weekAchievementsCard').dataset.rangeStart,$('weekAchievementsCard').dataset.rangeEnd));
+  $('monthAchievementsCard').addEventListener('click',()=>openReportAchievements('Achievements earned this month',$('monthAchievementsCard').dataset.rangeStart,$('monthAchievementsCard').dataset.rangeEnd));
+  $('reportAchievementClose').addEventListener('click',closeReportAchievements);$('reportAchievementBackdrop').addEventListener('click',e=>{if(e.target===$('reportAchievementBackdrop'))closeReportAchievements()});
+  $('reportAchievementList').addEventListener('click',e=>{const b=e.target.closest('[data-report-achievement-id]');if(b){closeReportAchievements();openAchievementDetail(b.dataset.reportAchievementId)}});
+
+  // ----- V32 swipe day navigation -----
+  let daySwipeStartX=0,daySwipeStartY=0;
+  const appShell=$('appShell');
+  appShell.addEventListener('touchstart',e=>{if(e.touches.length!==1)return;daySwipeStartX=e.touches[0].clientX;daySwipeStartY=e.touches[0].clientY},{passive:true});
+  appShell.addEventListener('touchend',e=>{
+    if(!daySwipeStartX)return;const t=e.changedTouches[0],dx=t.clientX-daySwipeStartX,dy=t.clientY-daySwipeStartY;daySwipeStartX=0;
+    if(Math.abs(dx)<70||Math.abs(dx)<Math.abs(dy)*1.35)return;
+    if(e.target.closest('input,select,textarea,button,.achievement-strip,.photo-gallery,.menu-drawer,.history-drawer,.streak-modal,.photo-viewer,.pr-timeline-modal'))return;
+    const next=addDays(selectedDate(),dx<0?1:-1);$('selectedDate').value=next;appShell.classList.remove('day-swipe-left','day-swipe-right');void appShell.offsetWidth;appShell.classList.add(dx<0?'day-swipe-left':'day-swipe-right');render();setTimeout(()=>appShell.classList.remove('day-swipe-left','day-swipe-right'),260);
+  },{passive:true});
+
+  if($('appVersion'))$('appVersion').textContent=`IRONLOG ${APP_VERSION}`;
+
   // ----- Live device clock -----
   let liveClockTimer = null;
 
@@ -1758,7 +1885,7 @@
   // Refresh immediately when the app comes back into view so the clock
   // always catches up to the phone/computer's current time.
   document.addEventListener('visibilitychange', () => {
-    if(!document.hidden) updateLiveClock();
+    if(!document.hidden){updateLiveClock();scheduleDailyBackupReminder()}
   });
 
   // ----- Service worker -----

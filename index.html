@@ -1072,12 +1072,9 @@
     .exercise-progress-controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}.progress-chart-card{background:#0b1220;border:1px solid var(--line);border-radius:16px;padding:12px;margin-top:10px}.progress-chart-card h3{font-size:14px;margin:0 0 4px}.progress-chart-card p{font-size:11px;margin:0 0 8px}.progress-svg{display:block;width:100%;height:190px}.progress-empty{fill:#94a3b8;font-size:14px}
     .achievement-pop{position:fixed;left:50%;top:18px;transform:translate(-50%,-100px);z-index:170;width:min(440px,calc(100% - 28px));padding:14px 16px;border-radius:16px;background:linear-gradient(135deg,#312e81,#7c2d12);border:1px solid #fbbf24;opacity:0;transition:.28s ease;color:#fff;box-shadow:0 18px 50px rgba(0,0,0,.45);pointer-events:none}.achievement-pop.show{transform:translate(-50%,0);opacity:1}.achievement-pop strong{display:block;font-size:14px;margin-bottom:3px}.achievement-pop span{font-size:12px;color:#fde68a}
     .badge{position:relative;filter:grayscale(1);opacity:.42;background:#080d18!important;border-color:#263244!important}.badge.unlocked{filter:none;opacity:1}.badge.unlocked.tier-bronze{border-color:#b45309!important;background:linear-gradient(145deg,rgba(180,83,9,.22),rgba(120,53,15,.08))!important;box-shadow:0 0 18px rgba(180,83,9,.09)}.badge.unlocked.tier-silver{border-color:#94a3b8!important;background:linear-gradient(145deg,rgba(148,163,184,.18),rgba(71,85,105,.08))!important;box-shadow:0 0 18px rgba(148,163,184,.08)}.badge.unlocked.tier-gold{border-color:#f59e0b!important;background:linear-gradient(145deg,rgba(245,158,11,.22),rgba(126,34,206,.08))!important;box-shadow:0 0 20px rgba(245,158,11,.11)}.badge.unlocked.tier-diamond{border-color:#22d3ee!important;background:linear-gradient(145deg,rgba(34,211,238,.18),rgba(168,85,247,.13))!important;box-shadow:0 0 22px rgba(34,211,238,.12)}.badge-tier{display:inline-block!important;margin-top:6px!important;font-size:8px!important;text-transform:uppercase;letter-spacing:.12em;color:#64748b!important}.badge.unlocked .badge-tier{color:#e2e8f0!important}.achievements-note{font-size:11px;color:#94a3b8;margin:0 0 10px}
-    .backup-reminder{display:none;margin:0 0 14px;padding:14px 16px;border:1px solid rgba(56,189,248,.28);border-radius:16px;background:linear-gradient(135deg,rgba(14,116,144,.18),rgba(30,64,175,.14));box-shadow:0 12px 35px rgba(0,0,0,.18)}
-    .backup-reminder.show{display:flex;align-items:center;justify-content:space-between;gap:14px}
-    .backup-reminder strong{display:block;margin-bottom:3px}.backup-reminder .actions{margin:0;flex-wrap:nowrap}.backup-reminder button{white-space:nowrap}
     .photo-card .photo-intro{color:#94a3b8;line-height:1.55}.photo-upload-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.photo-upload-grid .wide{grid-column:1/-1}.photo-preview{display:none;margin-top:12px;max-width:220px;border-radius:16px;border:1px solid rgba(255,255,255,.1)}
     .photo-gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}.progress-photo{overflow:hidden;border:1px solid rgba(255,255,255,.09);border-radius:16px;background:rgba(255,255,255,.035)}.progress-photo img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;background:#020617}.progress-photo-info{padding:10px}.progress-photo-info strong{display:block}.progress-photo-info p{margin:5px 0 8px;color:#94a3b8;font-size:.82rem;white-space:pre-wrap}.progress-photo-info button{width:100%;padding:8px;background:rgba(239,68,68,.13);border:1px solid rgba(239,68,68,.25);color:#fca5a5}
-    @media(max-width:640px){.home-dashboard{padding-bottom:76px}.backup-reminder.show{align-items:stretch;flex-direction:column}.photo-upload-grid{grid-template-columns:1fr}.photo-gallery{grid-template-columns:repeat(2,1fr)}.goal-life-grid{grid-template-columns:1fr}.home-pr-board{grid-template-columns:1fr}.pr-home-summary{grid-template-columns:1fr}.exercise-progress-controls{grid-template-columns:1fr}.home-goal-pr{grid-template-columns:1fr}.home-hero{min-height:auto;padding-bottom:26px}.home-dashboard-card{padding:15px}}
+    @media(max-width:640px){.home-dashboard{padding-bottom:76px}.photo-upload-grid{grid-template-columns:1fr}.photo-gallery{grid-template-columns:repeat(2,1fr)}.goal-life-grid{grid-template-columns:1fr}.home-pr-board{grid-template-columns:1fr}.pr-home-summary{grid-template-columns:1fr}.exercise-progress-controls{grid-template-columns:1fr}.home-goal-pr{grid-template-columns:1fr}.home-hero{min-height:auto;padding-bottom:26px}.home-dashboard-card{padding:15px}}
 
 
 
@@ -1374,6 +1371,24 @@
       .app{padding-left:18px!important;padding-right:18px!important}
     }
 
+
+    /* ===== V32 interaction polish ===== */
+    .app-version{margin-top:5px;text-align:center;font-size:9px;font-weight:900;letter-spacing:.18em;color:#94a3b8;text-transform:uppercase}
+    .custom-meal-tools{margin-top:10px;padding:10px;border:1px solid rgba(148,163,184,.16);border-radius:14px;background:rgba(255,255,255,.025)}
+    .custom-meal-row{display:flex;gap:8px;align-items:center}.custom-meal-row input{flex:1}.custom-meal-row button{width:auto;white-space:nowrap}
+    .custom-meal-list{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.custom-meal-chip{width:auto!important;padding:7px 9px!important;border-radius:999px!important;background:#111827!important;border:1px solid #475569!important;color:#cbd5e1!important;font-size:11px!important}
+    .exercise-fav-zone{margin:12px 0;padding:11px;border:1px solid rgba(168,85,247,.18);border-radius:14px;background:linear-gradient(145deg,rgba(88,28,135,.08),rgba(14,116,144,.06))}.exercise-fav-zone .tiny{margin-bottom:7px}
+    .exercise-favorites{display:flex;gap:8px;overflow-x:auto;padding-bottom:3px;scrollbar-width:thin}.exercise-fav-chip{width:auto!important;min-width:150px;padding:9px 11px!important;border-radius:12px!important;background:#0d1524!important;border:1px solid #334155!important;text-align:left!important;color:#fff!important;display:flex!important;flex-direction:column;gap:2px;flex:0 0 auto}.exercise-fav-chip small{color:#94a3b8}
+    .exercise-fav-manage-wrap{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.exercise-fav-manage{display:inline-flex;align-items:center;gap:6px;padding:5px 7px 5px 9px;border:1px solid #334155;border-radius:999px;background:#0b1220;font-size:11px}.exercise-fav-manage button{width:24px!important;height:24px!important;padding:0!important;border-radius:50%!important;background:#2a1520!important;color:#fca5a5!important}
+    .report-achievement-card{cursor:pointer;appearance:none;text-align:inherit;color:inherit}.report-achievement-card:hover,.report-achievement-card:focus-visible{border-color:#f59e0b!important;outline:none;box-shadow:0 0 18px rgba(245,158,11,.09)}
+    .report-achievement-backdrop{position:fixed;inset:0;z-index:205;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(2,6,12,.78);backdrop-filter:blur(5px)}.report-achievement-backdrop.open{display:flex}
+    .report-achievement-modal{width:min(470px,100%);max-height:min(72vh,640px);overflow:auto;border-radius:20px;border:1px solid #46556b;background:linear-gradient(160deg,#111a29,#080d16);box-shadow:0 24px 70px rgba(0,0,0,.62);padding:18px;position:relative}.report-achievement-modal h3{margin:0 42px 12px 0}.report-achievement-close{position:absolute;right:10px;top:10px;width:34px!important;height:34px!important;padding:0!important;border-radius:50%!important;background:#172033!important}.report-achievement-list{display:grid;gap:8px}.report-achievement-item{display:flex!important;gap:10px!important;align-items:center!important;width:100%!important;padding:10px!important;background:#0b1220!important;border:1px solid #334155!important;text-align:left!important}.report-achievement-item span:last-child{display:grid}.report-achievement-item small{color:#94a3b8;margin-top:2px}.report-achievement-icon{width:38px;height:38px}
+    .photo-open{display:block!important;width:100%!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important}.photo-open img{transition:transform .2s ease}.photo-open:hover img{transform:scale(1.02)}
+    .photo-viewer-backdrop{position:fixed;inset:0;z-index:210;display:none;align-items:center;justify-content:center;padding:14px;background:rgba(0,0,0,.9);backdrop-filter:blur(7px)}.photo-viewer-backdrop.open{display:flex}
+    .photo-viewer{width:min(760px,100%);position:relative;text-align:center;touch-action:pan-y}.photo-viewer-image{display:block;max-width:100%;max-height:68vh;margin:auto;border-radius:16px;border:1px solid rgba(255,255,255,.13);object-fit:contain}.photo-viewer-close{position:absolute;right:5px;top:5px;width:38px!important;height:38px!important;padding:0!important;border-radius:50%!important;background:rgba(8,12,20,.86)!important}.photo-viewer-nav{display:flex;justify-content:center;align-items:center;gap:12px;margin-top:12px}.photo-viewer-nav button{width:auto!important;min-width:74px}.photo-viewer-meta{margin-top:10px}.photo-viewer-meta strong{display:block}.photo-viewer-meta .tiny{margin-top:3px}.photo-viewer-note{margin:6px auto 0;max-width:560px;color:#cbd5e1;font-size:12px}
+    .day-swipe-left{animation:v32SwipeLeft .24s ease}.day-swipe-right{animation:v32SwipeRight .24s ease}@keyframes v32SwipeLeft{0%{transform:translateX(0);opacity:1}45%{transform:translateX(-18px);opacity:.72}100%{transform:translateX(0);opacity:1}}@keyframes v32SwipeRight{0%{transform:translateX(0);opacity:1}45%{transform:translateX(18px);opacity:.72}100%{transform:translateX(0);opacity:1}}
+    @media(max-width:640px){.custom-meal-row{align-items:stretch;flex-direction:column}.custom-meal-row button{width:100%}.exercise-fav-chip{min-width:135px}.photo-viewer-image{max-height:62vh}}
+
 </style>
 
 <style id="v31-gothic-sk8-side-art">
@@ -1433,6 +1448,7 @@
       <div class="live-clock" aria-live="polite" aria-label="Live device clock">
         <div class="live-clock-time" id="liveClockTime">--:--:--</div>
         <div class="live-clock-zone" id="liveClockZone">Local Time</div>
+        <div class="app-version" id="appVersion">IRONLOG V32</div>
       </div>
       <input id="selectedDate" class="datebox" type="date" />
     </div>
@@ -1446,10 +1462,6 @@
 </section>
 
 <section id="homeDashboard" class="home-dashboard" aria-label="IRONLOG home dashboard">
-  <div id="backupReminder" class="backup-reminder" role="status">
-    <div><strong>💾 Time to back up IRONLOG</strong><div class="tiny">Export a copy of your tracking data so you have a backup.</div></div>
-    <div class="actions"><button id="backupNowBtn" type="button">Back Up Now</button><button id="backupLaterBtn" class="secondary" type="button">Later</button></div>
-  </div>
   <div class="home-dashboard-card">
     <div class="home-card-head"><div><div class="home-card-kicker">Goals + Lifetime</div><h2>Goals Hub & Lifetime Stats</h2></div><div class="tiny">Your targets and all-time IRONLOG totals.</div></div>
     <div class="goal-life-grid">
@@ -1539,6 +1551,7 @@
       <div class="v16-stat"><strong id="weekPRs">0</strong><span>PRs logged</span></div>
       <div class="v16-stat"><strong id="weekWeight">—</strong><span>Weight change</span></div>
       <div class="v16-stat"><strong id="weekStreak">0</strong><span>Current streak</span></div>
+      <button id="weekAchievementsCard" class="v16-stat report-achievement-card" type="button"><strong id="weekAchievements">0</strong><span>Achievements earned</span></button>
     </div>
     <div class="week-compare" id="weekCompare">Your comparison will build as you log more weeks.</div>
   </div>
@@ -1561,6 +1574,7 @@
       <div class="v16-stat"><strong id="monthPRs">0</strong><span>PRs logged</span></div>
       <div class="v16-stat"><strong id="monthWeighIns">0</strong><span>Weigh-ins</span></div>
       <div class="v16-stat"><strong id="monthWeight">—</strong><span>Weight change</span></div>
+      <button id="monthAchievementsCard" class="v16-stat report-achievement-card" type="button"><strong id="monthAchievements">0</strong><span>Achievements earned</span></button>
     </div>
   </div>
 
@@ -1586,7 +1600,7 @@
     <div class="install-message" id="installMessage"></div>
   </div>
 
-  <div id="sectionSummary" class="card summary-card feature-section" id="dailySummaryCard">
+  <div id="sectionSummary" class="card summary-card feature-section">
     <div class="summary-title-row">
       <h2 style="margin:0">Daily Summary</h2>
       <div class="summary-date" id="summaryDateLabel"></div>
@@ -1641,6 +1655,11 @@
           <option>Snack</option>
           <option>Drink</option>
         </select>
+        <div class="custom-meal-tools">
+          <div class="tiny">Custom meal names</div>
+          <div class="custom-meal-row"><input id="customMealName" maxlength="28" placeholder="e.g. Post-Workout"><button id="addCustomMealBtn" type="button">Add Meal</button></div>
+          <div id="customMealList" class="custom-meal-list"></div>
+        </div>
       </div>
       <div>
         <label for="foodCalories">Calories</label>
@@ -1672,6 +1691,7 @@
 
   <div id="sectionExercise" class="card exercise-card feature-section">
     <div class="v16-head"><div><div class="v16-kicker">Activity</div><h2 style="margin:3px 0 0">Exercise + Calories Burned</h2></div><div class="tiny">Log the calories you burned during exercise.</div></div>
+    <div class="exercise-fav-zone"><div class="tiny">Favorite Exercises — tap one to fill the form</div><div id="exerciseFavorites" class="exercise-favorites"></div><div id="exerciseFavoritesManage" class="exercise-fav-manage-wrap"></div></div>
     <div class="exercise-grid">
       <div>
         <label for="exerciseName">Exercise</label>
@@ -1708,6 +1728,7 @@
     </div>
     <div class="actions">
       <button id="addExerciseBtn" type="button">Log Exercise</button>
+      <button id="favoriteExerciseBtn" class="secondary" type="button">☆ Favorite Exercise</button>
       <button id="clearExerciseBtn" class="secondary" type="button">Clear</button>
     </div>
     <div id="exerciseLog" class="exercise-log"></div>
@@ -1863,16 +1884,6 @@
     <button class="menu-item" type="button" data-menu-home>⌂ <span>Home</span></button>
   </div>
 
-  <div class="menu-group"><div class="menu-group-title">Progress</div>
-    <button class="menu-item" type="button" data-menu-section="sectionProgress">↗ <span>Progress Dashboard</span></button>
-    <button class="menu-item" type="button" data-menu-section="sectionPR">◆ <span>Weight Lifting PR Log</span></button>
-    <button class="menu-item" type="button" data-menu-section="sectionExerciseProgress">⌁ <span>Exercise Progress</span></button>
-    <button class="menu-item" type="button" data-menu-section="sectionPhotos">▣ <span>Progress Photos</span></button>
-    <button class="menu-item" type="button" data-menu-section="sectionWeek">▦ <span>Weekly Report</span></button>
-    <button class="menu-item" type="button" data-menu-section="sectionMonth">◫ <span>Monthly Summary</span></button>
-    <button class="menu-item" type="button" data-menu-section="sectionAchievements">★ <span>Achievements</span></button>
-  </div>
-
   <div class="menu-group"><div class="menu-group-title">Food</div>
     <button class="menu-item" type="button" data-menu-section="sectionSummary">◉ <span>Daily Summary</span></button>
     <button class="menu-item" type="button" data-menu-section="sectionAddFood">＋ <span>Add Food</span></button>
@@ -1886,6 +1897,16 @@
 
   <div class="menu-group"><div class="menu-group-title">Weight</div>
     <button class="menu-item" type="button" data-menu-section="sectionWeightLog">◈ <span>Weight Log + Goal</span></button>
+    <button class="menu-item" type="button" data-menu-section="sectionPR">◆ <span>Weight Lifting PR</span></button>
+  </div>
+
+  <div class="menu-group"><div class="menu-group-title">Progress</div>
+    <button class="menu-item" type="button" data-menu-section="sectionProgress">↗ <span>Progress Dashboard</span></button>
+    <button class="menu-item" type="button" data-menu-section="sectionWeek">▦ <span>Weekly Report</span></button>
+    <button class="menu-item" type="button" data-menu-section="sectionMonth">◫ <span>Monthly Summary</span></button>
+    <button class="menu-item" type="button" data-menu-section="sectionAchievements">★ <span>Achievements</span></button>
+    <button class="menu-item" type="button" data-menu-section="sectionPhotos">▣ <span>Progress Photos</span></button>
+    <button class="menu-item" type="button" data-menu-section="sectionExerciseProgress">⌁ <span>Exercise Progress</span></button>
   </div>
 
   <div class="menu-group"><div class="menu-group-title">App</div>
@@ -1965,6 +1986,21 @@
       <span id="achievementDetailCategory" class="achievement-pill">Progress</span>
     </div>
     <p id="achievementDetailHint" class="achievement-detail-hint"></p>
+  </div>
+</div>
+<div id="reportAchievementBackdrop" class="report-achievement-backdrop" aria-hidden="true">
+  <div class="report-achievement-modal" role="dialog" aria-modal="true" aria-labelledby="reportAchievementTitle">
+    <button id="reportAchievementClose" class="report-achievement-close" type="button" aria-label="Close achievements">×</button>
+    <h3 id="reportAchievementTitle">Achievements earned</h3>
+    <div id="reportAchievementList" class="report-achievement-list"></div>
+  </div>
+</div>
+<div id="photoViewerBackdrop" class="photo-viewer-backdrop" aria-hidden="true">
+  <div id="photoViewer" class="photo-viewer" role="dialog" aria-modal="true" aria-label="Progress photo viewer">
+    <button id="photoViewerClose" class="photo-viewer-close" type="button" aria-label="Close photo viewer">×</button>
+    <img id="photoViewerImage" class="photo-viewer-image" alt="Progress photo">
+    <div class="photo-viewer-meta"><strong id="photoViewerDate"></strong><div id="photoViewerWeight" class="tiny"></div><div id="photoViewerNote" class="photo-viewer-note"></div></div>
+    <div class="photo-viewer-nav"><button id="photoViewerPrev" type="button">← Previous</button><span id="photoViewerCounter" class="tiny"></span><button id="photoViewerNext" type="button">Next →</button></div>
   </div>
 </div>
 <div id="achievementPop" class="achievement-pop" aria-live="polite"></div>
